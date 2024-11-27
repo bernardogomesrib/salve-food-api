@@ -8,7 +8,7 @@ services:
       POSTGRES_DB: salve-food
       POSTGRES_USER: usuario
     ports:
-      - 5433:5432
+      - 5434:5432
     volumes:
       - ./postgres-data:/bitnami/postgresql/data
     networks:
@@ -17,8 +17,8 @@ services:
     image: quay.io/minio/minio:latest
     restart: always
     ports:
-      - "9000:9000"
-      - "9090:9090"
+      - "9001:9001"
+      - "9091:9091"
     environment:
       MINIO_ROOT_USER: minio
       MINIO_ROOT_PASSWORD: minio123
@@ -29,9 +29,9 @@ services:
       MINIO_NOTIFY_POSTGRES_FORMAT: "namespace"
     volumes:
       - ./minio-data:/data
-    command: server --console-address "0.0.0.0:9090" /data --address 0.0.0.0:9000
+    command: server --console-address "0.0.0.0:9091" /data --address 0.0.0.0:9001
     healthcheck:
-      #test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      #test: ["CMD", "curl", "-f", "http://localhost:9001/minio/health/live"]
       test: ["CMD", "curl", "-f"]
       interval: 30s
       timeout: 20s
@@ -40,11 +40,12 @@ services:
       - db
     networks:
       - juntatudo
+
   api:
     build: ./
     restart: always
     environment:
-      SPRING_APPLICATION_NAME: salve-food-api 
+      SPRING_APPLICATION_NAME: salve-food-api
       SERVER_PORT: 8080
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/salve-food
@@ -58,7 +59,7 @@ services:
       SPRING_JPA_GENERATE_DDL: "true"
       SPRINGDOC_API_DOCS_PATH: /api-docs
       SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 10MB
-      MINIO_URL: http://minio:9000
+      MINIO_URL: http://minio:9001
       MINIO_ACCESS_KEY: 9AmF1hfTKjWvnXNQntBW
       MINIO_SECRET_KEY: LRou1qQPMGBvHavUg59WL21PYg38WGEdEmF1CSUP
     ports:
