@@ -37,6 +37,9 @@ public class MinIOInterfacing {
     @Transactional
     public String uploadFile(String bucketName, String nomeUnico, MultipartFile file) throws Exception {
         try {
+            if (!bucketExists(bucketName)) {
+                createBucket(bucketName);
+            }
             InputStream inputStream = file.getInputStream();
 
             minioClient.putObject(
@@ -56,10 +59,17 @@ public class MinIOInterfacing {
     @Transactional
     public boolean createBucket(String bucketName) throws Exception {
         try {
-            if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
-            }
+            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
             return true;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Transactional
+    public boolean bucketExists(String bucketName) throws Exception {
+        try {
+            return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
         } catch (Exception e) {
             throw e;
         }

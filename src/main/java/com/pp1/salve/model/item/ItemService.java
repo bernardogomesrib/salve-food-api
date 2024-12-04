@@ -32,14 +32,14 @@ public class ItemService {
     @Transactional
     public Item findById(Long id) throws Exception {
        Item i = repository.findById(id).orElseThrow(() -> new RuntimeException("Item não encontrado"));
-        i.setItemImage(minIOInterfacing.getSingleUrl("salve", i.getId().toString()));
+        i.setItemImage(minIOInterfacing.getSingleUrl("salve-items", i.getId().toString()));
        return i;
     }
 
     @Transactional
     public Item save(Item item,MultipartFile file) throws Exception {
         Item i = repository.save(item);
-        minIOInterfacing.uploadFile("salve", i.getId().toString(), file);
+        minIOInterfacing.uploadFile("salve-items", i.getId().toString(), file);
         return i;
     }
     @Transactional
