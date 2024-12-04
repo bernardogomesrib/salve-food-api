@@ -1,9 +1,9 @@
 package com.pp1.salve.model.usuario;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UsuarioService {
@@ -15,7 +15,7 @@ public class UsuarioService {
     return repository.findAll();
   }
 
-  public Usuario findById(Integer id) {
+  public Usuario findById(Long id) {
     return repository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
   }
 
@@ -23,7 +23,7 @@ public class UsuarioService {
     return repository.save(user);
   }
 
-  public void deleteById(Integer id) {
+  public void deleteById(Long id) {
     repository.deleteById(id);
   }
 }

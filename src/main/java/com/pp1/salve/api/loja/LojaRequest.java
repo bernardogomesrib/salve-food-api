@@ -1,10 +1,11 @@
 package com.pp1.salve.api.loja;
 
+import com.pp1.salve.model.loja.Loja;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.pp1.salve.model.loja.Loja;
 
 @Data
 @Builder
@@ -18,7 +19,7 @@ public class LojaRequest {
   private String bairro;
   private String cidade;
   private String estado;
-  private Integer segmentoLojaId;
+  private Long segmentoLojaId;
   private String longitude;
   private String latitude;
 

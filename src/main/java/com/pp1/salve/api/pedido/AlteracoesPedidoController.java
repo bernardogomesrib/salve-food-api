@@ -31,7 +31,7 @@ public class AlteracoesPedidoController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<AlteracoesPedido> getById(@PathVariable Integer id) {
+  public ResponseEntity<AlteracoesPedido> getById(@PathVariable Long id) {
     return ResponseEntity.ok(service.findById(id));
   }
 
@@ -41,13 +41,13 @@ public class AlteracoesPedidoController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<AlteracoesPedido> update(@PathVariable Integer id, @RequestBody AlteracoesPedido alteracao) {
+  public ResponseEntity<AlteracoesPedido> update(@PathVariable Long id, @RequestBody AlteracoesPedido alteracao) {
     alteracao.setId(id);
     return ResponseEntity.ok(service.save(alteracao));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Integer id) {
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
     service.deleteById(id);
     return ResponseEntity.noContent().build();
   }

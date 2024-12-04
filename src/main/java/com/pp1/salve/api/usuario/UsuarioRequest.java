@@ -18,7 +18,7 @@ public class UsuarioRequest {
     private String rg;
     private String cnh;
     private String tipoCnh;
-    private Integer lojaId;
+    private Long lojaId;
     private Boolean entregador;
 
     public Usuario build() {

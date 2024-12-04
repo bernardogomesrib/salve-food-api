@@ -1,10 +1,11 @@
 package com.pp1.salve.api.endereco;
 
+import com.pp1.salve.model.endereco.Endereco;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.pp1.salve.model.endereco.Endereco;
 
 @Data
 @Builder
@@ -12,7 +13,7 @@ import com.pp1.salve.model.endereco.Endereco;
 @AllArgsConstructor
 public class EnderecoRequest {
 
-    private Integer userId;
+    private Long userId;
     private String rua;
     private String numero;
     private String complemento;

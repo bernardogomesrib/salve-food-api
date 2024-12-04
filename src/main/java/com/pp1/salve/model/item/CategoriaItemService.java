@@ -1,11 +1,11 @@
 package com.pp1.salve.model.item;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-
-import java.util.List;
 
 @Service
 public class CategoriaItemService {
@@ -17,7 +17,7 @@ public class CategoriaItemService {
         return repository.findAll();
     }
 
-    public CategoriaItem findById(Integer id) {
+    public CategoriaItem findById(Long id) {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("CategoriaItem não encontrada"));
     }
 
@@ -27,7 +27,7 @@ public class CategoriaItemService {
     }
     
     @Transactional
-    public void deleteById(Integer id) {
+    public void deleteById(Long id) {
         repository.deleteById(id);
     }
 }

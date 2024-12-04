@@ -1,13 +1,21 @@
 package com.pp1.salve.api.funcionario;
 
-import com.pp1.salve.model.funcionario.Funcionario;
-import com.pp1.salve.model.funcionario.FuncionarioService;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.pp1.salve.model.funcionario.Funcionario;
+import com.pp1.salve.model.funcionario.FuncionarioService;
 
 @RestController
 @RequestMapping("/funcionario")
@@ -23,7 +31,7 @@ public class FuncionarioController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Funcionario> getById(@PathVariable Integer id) {
+  public ResponseEntity<Funcionario> getById(@PathVariable Long id) {
     return ResponseEntity.ok(service.findById(id));
   }
 
@@ -33,13 +41,13 @@ public class FuncionarioController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Funcionario> update(@PathVariable Integer id, @RequestBody Funcionario funcionario) {
+  public ResponseEntity<Funcionario> update(@PathVariable Long id, @RequestBody Funcionario funcionario) {
     funcionario.setId(id);
     return ResponseEntity.ok(service.save(funcionario));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Integer id) {
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
     service.deleteById(id);
     return ResponseEntity.noContent().build();
   }

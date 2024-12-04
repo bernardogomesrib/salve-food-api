@@ -24,7 +24,7 @@ public class CategoriaItem {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  private Long id;
 
   @Column(nullable = false, length = 45)
   private String nome;

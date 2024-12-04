@@ -17,7 +17,7 @@ public class AlteracoesPedidoService {
     return repository.findAll();
   }
 
-  public AlteracoesPedido findById(Integer id) {
+  public AlteracoesPedido findById(Long id) {
     return repository.findById(id).orElseThrow(() -> new RuntimeException("Alteração não encontrada"));
   }
 
@@ -27,7 +27,7 @@ public class AlteracoesPedidoService {
   }
   
   @Transactional
-  public void deleteById(Integer id) {
+  public void deleteById(Long id) {
     repository.deleteById(id);
   }
 }

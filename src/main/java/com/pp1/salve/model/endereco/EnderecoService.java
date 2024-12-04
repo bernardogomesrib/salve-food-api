@@ -1,9 +1,9 @@
 package com.pp1.salve.model.endereco;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class EnderecoService {
@@ -15,7 +15,7 @@ public class EnderecoService {
         return repository.findAll();
     }
 
-    public Endereco findById(Integer id) {
+    public Endereco findById(Long id) {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Endereço não encontrado"));
     }
 
@@ -23,7 +23,7 @@ public class EnderecoService {
         return repository.save(endereco);
     }
 
-    public void deleteById(Integer id) {
+    public void deleteById(Long id) {
         repository.deleteById(id);
     }
 }

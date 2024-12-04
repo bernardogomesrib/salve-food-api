@@ -1,10 +1,11 @@
 package com.pp1.salve.api.funcionario;
 
+import com.pp1.salve.model.funcionario.Funcionario;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.pp1.salve.model.funcionario.Funcionario;
 
 @Data
 @Builder
@@ -12,8 +13,8 @@ import com.pp1.salve.model.funcionario.Funcionario;
 @AllArgsConstructor
 public class FuncionarioRequest {
 
-    private Integer userId;
-    private Integer lojaId;
+    private Long userId;
+    private Long lojaId;
     private Boolean ativo;
 
     public Funcionario build() {

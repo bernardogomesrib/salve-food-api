@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class AlteracoesPedidoRequest {
   private String nome;
   private Double valor;
-  private Integer itemId;
+  private Long itemId;
 
   public AlteracoesPedido build(){
     return AlteracoesPedido.builder()

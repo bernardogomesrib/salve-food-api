@@ -1,9 +1,9 @@
 package com.pp1.salve.model.funcionario;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class FuncionarioService {
@@ -15,7 +15,7 @@ public class FuncionarioService {
         return repository.findAll();
     }
 
-    public Funcionario findById(Integer id) {
+    public Funcionario findById(Long id) {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Funcionário não encontrado"));
     }
 
@@ -23,7 +23,7 @@ public class FuncionarioService {
         return repository.save(funcionario);
     }
 
-    public void deleteById(Integer id) {
+    public void deleteById(Long id) {
         repository.deleteById(id);
     }
 }

@@ -1,9 +1,9 @@
 package com.pp1.salve.model.loja;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class LojaService {
@@ -15,7 +15,7 @@ public class LojaService {
     return repository.findAll();
   }
 
-  public Loja findById(Integer id) {
+  public Loja findById(Long id) {
     return repository.findById(id).orElseThrow(() -> new RuntimeException("Loja não encontrada"));
   }
 
@@ -23,7 +23,7 @@ public class LojaService {
     return repository.save(loja);
   }
 
-  public void deleteById(Integer id) {
+  public void deleteById(Long id) {
     repository.deleteById(id);
   }
 }
