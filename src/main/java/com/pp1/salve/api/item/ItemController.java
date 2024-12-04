@@ -1,8 +1,8 @@
 package com.pp1.salve.api.item;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,12 +26,12 @@ public class ItemController {
     private ItemService service;
 
     @GetMapping
-    public List<Item> getAll() {
-        return service.findAll();
+    public Page<Item> getAll(@PathVariable int page,@PathVariable int size) throws Exception {
+        return service.findAll(Pageable.ofSize(size).withPage(page));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Item> getById(@PathVariable Long id) {
+    public ResponseEntity<Item> getById(@PathVariable Long id) throws Exception {
         return ResponseEntity.ok(service.findById(id));
     }
 

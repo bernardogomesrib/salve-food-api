@@ -1,8 +1,8 @@
 package com.pp1.salve.model.item;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,13 +16,24 @@ public class ItemService {
     private MinIOInterfacing minIOInterfacing;
     @Autowired
     private ItemRepository repository;
-
-    public List<Item> findAll() {
-        return repository.findAll();
+    @Transactional
+    public Page<Item> findAll(Pageable pageable) throws Exception {
+        Page<Item> items = repository.findAll(pageable);
+        items.forEach(item -> {
+            try {
+                item.setItemImage(minIOInterfacing.getSingleUrl("salve", item.getId().toString()));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return items;
     }
-
-    public Item findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Item não encontrado"));
+    
+    @Transactional
+    public Item findById(Long id) throws Exception {
+       Item i = repository.findById(id).orElseThrow(() -> new RuntimeException("Item não encontrado"));
+        i.setItemImage(minIOInterfacing.getSingleUrl("salve", i.getId().toString()));
+       return i;
     }
 
     @Transactional
