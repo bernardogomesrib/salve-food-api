@@ -1,5 +1,8 @@
 package com.pp1.salve.model.pedido;
 
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pp1.salve.model.endereco.Endereco;
 
 import jakarta.persistence.Column;
@@ -49,6 +52,17 @@ public class Pedido {
 
     @Column(name = "taxa_entrega", nullable = false)
     private Double taxaEntrega;
+
+    @Column(name = "forma_pagamento", nullable = false)
+    private String formaPagamento;
+
+    @Column(name = "data_pedido", nullable = false)
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+    private LocalDateTime dataPedido;
+    
+    @Column(name = "data_entrega", nullable = false)
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+    private LocalDateTime dataEntrega;
 
     public enum Status {
         PENDENTE, PROCESSANDO, FINALIZADO, CANCELADO;

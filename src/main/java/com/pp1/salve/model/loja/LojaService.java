@@ -1,8 +1,9 @@
 package com.pp1.salve.model.loja;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,8 +12,8 @@ public class LojaService {
   @Autowired
   private LojaRepository repository;
 
-  public List<Loja> findAll() {
-    return repository.findAll();
+  public Page<Loja> findAll(Pageable pageable) {
+    return repository.findAll(pageable);
   }
 
   public Loja findById(Long id) {
