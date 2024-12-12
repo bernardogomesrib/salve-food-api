@@ -1,5 +1,6 @@
 package com.pp1.salve.model.endereco;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pp1.salve.model.usuario.Usuario;
 
 import jakarta.persistence.Column;
@@ -32,6 +33,7 @@ public class Endereco {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false)
     private Usuario usuario;
 

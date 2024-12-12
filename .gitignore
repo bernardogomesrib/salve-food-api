@@ -34,3 +34,4 @@ build/
 
 xl.meta.bkp
 xl.meta
+**/tmp/**

@@ -42,11 +42,11 @@ public class Item {
     private Boolean alteravel;
 
     @ManyToOne
-    @JoinColumn(name = "loja_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Loja loja;
 
     @ManyToOne
-    @JoinColumn(name = "categoria_item_id", nullable = false)
+    @JoinColumn(nullable = false)
     private CategoriaItem categoriaItem;
     @Transient
     private String itemImage;

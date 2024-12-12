@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pp1.salve.model.endereco.Endereco;
 import com.pp1.salve.model.endereco.EnderecoService;
 import com.pp1.salve.model.pedido.Pedido;
+import com.pp1.salve.model.usuario.Usuario;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PedidoRequest {
 
-    private Long userId;
+    private Usuario user;
     private Long enderecoEntregaId;
     private String status;
     private Double valorTotal;
@@ -26,7 +27,7 @@ public class PedidoRequest {
     public Pedido build() {
         Endereco endereco = enderecoController.findById(enderecoEntregaId);
         return Pedido.builder()
-            .userId(userId)
+            .user(user)
             .enderecoEntrega(endereco)
             .status(Pedido.Status.valueOf(status))
             .valorTotal(valorTotal)
