@@ -1,18 +1,15 @@
 package com.pp1.salve.model.usuario;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pp1.salve.model.entidadeBase.BusinessEntity;
 import com.pp1.salve.model.loja.Loja;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -21,6 +18,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -44,7 +42,7 @@ public class Usuario extends BusinessEntity implements UserDetails {
   @Column(nullable = false, length = 100)
   private String nome;
   @Column(nullable = false, length = 100)
-  private String username;
+  private String email;
   @Column(nullable = false, length = 100)
   private String password;
 
@@ -58,24 +56,24 @@ public class Usuario extends BusinessEntity implements UserDetails {
   private String cnh;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "tipo_cnh", length = 10)
+  @Column(name = "tipo_cnh", length = 10,nullable = true)
   private TipoCnh tipoCnh;
 
   @ManyToOne
-  @JoinColumn(name = "loja_id")
+  @JoinColumn(name = "loja_id",nullable = true)
   private Loja loja;
 
   @Column(nullable = false)
-  private Boolean entregador;
+  @Builder.Default
+  private Boolean entregador = false;
 
   public enum TipoCnh {
-    A, B, C, D, E;
+    A, B, C, D, E, AB, AC, AD, AE;
   }
 
-  @JsonIgnore
-  @ElementCollection(fetch = FetchType.EAGER)
-  @Builder.Default
-  private List<Role> roles = new ArrayList<>();
+
+  @ManyToMany(fetch = FetchType.EAGER)
+  private List<Role> roles;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -84,7 +82,7 @@ public class Usuario extends BusinessEntity implements UserDetails {
 
   @Override
   public String getUsername() {
-    return username;
+    return email;
   }
 
   public String getPassword() {
@@ -108,6 +106,6 @@ public class Usuario extends BusinessEntity implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return true;
+    return super.getHabilitado();
   }
 }

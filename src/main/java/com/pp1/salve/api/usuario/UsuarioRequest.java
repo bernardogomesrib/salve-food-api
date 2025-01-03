@@ -16,22 +16,24 @@ public class UsuarioRequest {
     private String nome;
     @NotNull
     private String email;
+    @NotNull
+    private String password;
     private String cpf;
     private String rg;
     private String cnh;
     private String tipoCnh;
     private Long lojaId;
-    private Boolean entregador;
 
     public Usuario build() {
         return Usuario.builder()
             .nome(nome)
-            .username(email)
+            .email(email)
+            .password(password)
             .cpf(cpf)
             .rg(rg)
             .cnh(cnh)
             .tipoCnh(Usuario.TipoCnh.valueOf(tipoCnh))
-            .entregador(entregador)
+            .entregador(false)
             .build();
     }
 }

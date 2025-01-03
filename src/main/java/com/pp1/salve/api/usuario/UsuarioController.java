@@ -36,8 +36,8 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> create(@RequestBody Usuario user) {
-        return ResponseEntity.ok(service.save(user));
+    public ResponseEntity<Usuario> create(@RequestBody UsuarioRequest user) {
+        return ResponseEntity.ok(service.save(user.build()));
     }
 
     @PutMapping("/{id}")

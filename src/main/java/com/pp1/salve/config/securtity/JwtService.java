@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -52,10 +53,11 @@ public class JwtService {
         return jwtExpiration;
     }
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
-
+            var authorities = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
+                .claim("authorities", authorities)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
@@ -94,5 +96,7 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+    
 
 }

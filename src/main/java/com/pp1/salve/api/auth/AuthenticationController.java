@@ -16,7 +16,7 @@ import com.pp1.salve.model.usuario.UsuarioService;
 
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("auth")
 public class AuthenticationController {
 
     private JwtService jwtService;
