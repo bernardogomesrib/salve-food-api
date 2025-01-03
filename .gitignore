@@ -35,3 +35,8 @@ build/
 xl.meta.bkp
 xl.meta
 **/tmp/**
+
+**/minio-data/**
+**/postgres-data/**
+postgres-data/**
+minio-data/**
