@@ -1,28 +1,28 @@
 package com.pp1.salve.api.usuario;
 
-import java.util.List;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+/* import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import com.pp1.salve.model.usuario.Usuario;
+ */import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pp1.salve.model.usuario.Usuario;
-import com.pp1.salve.model.usuario.UsuarioService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/usuario")
+@RequestMapping("/api/usuario")
 @CrossOrigin
+@Tag(name = "Usuario", description = "API de Usuario")
 public class UsuarioController {
 
-    @Autowired
+    /* @Autowired
     private UsuarioService service;
 
     @GetMapping
@@ -35,10 +35,7 @@ public class UsuarioController {
         return ResponseEntity.ok(service.findById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<Usuario> create(@RequestBody UsuarioRequest user) {
-        return ResponseEntity.ok(service.save(user.build()));
-    }
+  
 
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> update(@PathVariable Long id, @RequestBody Usuario user) {
@@ -50,5 +47,5 @@ public class UsuarioController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
-    }
+    } */
 }

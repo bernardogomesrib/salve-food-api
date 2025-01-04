@@ -20,9 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.loja.LojaService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
-@RequestMapping("/loja")
+@RequestMapping("/api/loja")
 @CrossOrigin
+@Tag(name = "Loja", description = "API de Loja")
 public class LojaController {
 
   @Autowired

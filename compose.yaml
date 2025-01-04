@@ -1,0 +1,70 @@
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: salve-food
+      POSTGRES_DB: salve-food
+      POSTGRES_USER: usuario
+    ports:
+      - 5434:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    networks:
+      - juntatudo
+  minio:
+    image: quay.io/minio/minio:latest
+    restart: always
+    ports:
+      - "9001:9001"
+      - "9091:9091"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+      MINIO_VOLUMES: "/data"
+      MINIO_NOTIFY_POSTGRES_ENABLE: "on"
+      MINIO_NOTIFY_POSTGRES_CONNECTION_STRING: "host=db user=usuario password=salve-food dbname=salve-food sslmode=disable"
+      MINIO_NOTIFY_POSTGRES_TABLE: "minio"
+      MINIO_NOTIFY_POSTGRES_FORMAT: "namespace"
+    volumes:
+      - ./minio-data:/data
+    command: server --console-address "0.0.0.0:9091" /data --address 0.0.0.0:9001
+    healthcheck:
+      #test: ["CMD", "curl", "-f", "http://localhost:9001/minio/health/live"]
+      test: ["CMD", "curl", "-f"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    depends_on:
+      - db
+    networks:
+      - juntatudo
+  o-temido:
+    image: quay.io/keycloak/keycloak:26.0.7
+    restart: always
+    hostname: keycloak.quiz.local
+    domainname: quiz.local
+    ports:
+      - "9080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: senha1234
+      KC_HEALTH_ENABLED: 'true'
+      KC_METRICS_ENABLED: 'true'
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/salve-food
+      KC_DB_USERNAME: usuario
+      KC_DB_PASSWORD: salve-food
+    depends_on:
+      - db
+    command: ["start-dev","--http-host=0.0.0.0"]
+    volumes:
+      - ./keycloak-data:/opt/jboss/keycloak/standalone/data
+      - ./keycloak-themes:/opt/jboss/keycloak/themes
+      - ./keycloak-realm:/opt/jboss/keycloak/standalone/configuration/keycloak-realm.json
+    networks:
+      - juntatudo
+
+networks:
+  juntatudo:
+    driver: bridge

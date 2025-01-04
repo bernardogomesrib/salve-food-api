@@ -1,5 +1,6 @@
 package com.pp1.salve.api.funcionario;
 
+
 import com.pp1.salve.model.funcionario.Funcionario;
 
 import lombok.AllArgsConstructor;

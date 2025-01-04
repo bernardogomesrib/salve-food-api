@@ -1,5 +1,6 @@
 package com.pp1.salve.model.funcionario;
 
+
 import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.usuario.Usuario;
 

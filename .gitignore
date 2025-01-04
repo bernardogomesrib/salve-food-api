@@ -37,6 +37,4 @@ xl.meta
 **/tmp/**
 
 **/minio-data/**
-**/postgres-data/**
-postgres-data/**
 minio-data/**

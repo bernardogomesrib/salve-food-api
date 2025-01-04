@@ -17,8 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pp1.salve.model.endereco.Endereco;
 import com.pp1.salve.model.endereco.EnderecoService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
-@RequestMapping("/endereco")
+@RequestMapping("/api/endereco")
+@Tag(name = "Endereço", description = "API de Endereço")
 @CrossOrigin
 public class EnderecoController {
 

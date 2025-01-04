@@ -20,9 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pp1.salve.model.funcionario.Funcionario;
 import com.pp1.salve.model.funcionario.FuncionarioService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
-@RequestMapping("/funcionario")
+@RequestMapping("/api/funcionario")
 @CrossOrigin
+@Tag(name = "Funcionário", description = "API de Funcionário")
 public class FuncionarioController {
 
   @Autowired

@@ -1,4 +1,4 @@
-package com.pp1.salve.model.pedido; 
+package com.pp1.salve.model.pedido;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

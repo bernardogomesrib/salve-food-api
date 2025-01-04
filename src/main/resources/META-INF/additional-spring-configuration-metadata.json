@@ -12,17 +12,41 @@
   {
     "name": "minio.secret-key",
     "type": "java.lang.String",
-    "description": "A description for 'minio.access-key'"
+    "description": "A description for 'minio.secret-key'"
   },
   {
-    "name": "security.jwt.secret-key",
+    "name": "public.server.url",
     "type": "java.lang.String",
-    "description": "A description for 'security.jwt.secret-key'"
+    "description": "A description for 'public.server.url'"
   },
   {
-    "name": "security.jwt.expiration-time",
+    "name": "application.url",
     "type": "java.lang.String",
-    "description": "A description for 'security.jwt.expiration-time'"
+    "description": "A description for 'application.url'"
   },
-
+  {
+    "name": "local.ip",
+    "type": "java.lang.String",
+    "description": "A description for 'local.ip'"
+  },
+  {
+    "name": "keycloak.admin.password",
+    "type": "java.lang.String",
+    "description": "A description for 'keycloak.admin.password'"
+  },
+  {
+    "name": "keycloak.admin.username",
+    "type": "java.lang.String",
+    "description": "A description for 'keycloak.admin.username'"
+  },
+  {
+    "name": "keycloak.admin.realm-uri",
+    "type": "java.lang.String",
+    "description": "A description for 'keycloak.admin.realm-uri'"
+  },
+  {
+    "name": "keycloak.admin.create-user-uri",
+    "type": "java.lang.String",
+    "description": "A description for 'keycloak.admin.create-user-uri'"
+  }
 ]}

@@ -1,5 +1,6 @@
 package com.pp1.salve.model.item;
 
+
 import com.pp1.salve.model.loja.Loja;
 
 import jakarta.persistence.Column;

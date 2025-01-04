@@ -1,5 +1,6 @@
 package com.pp1.salve.model.entregador;
 
+
 import com.pp1.salve.model.pedido.Pedido;
 import com.pp1.salve.model.usuario.Usuario;
 

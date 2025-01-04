@@ -1,10 +1,11 @@
 package com.pp1.salve.api.item;
 
+import com.pp1.salve.model.item.CategoriaItem;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.pp1.salve.model.item.CategoriaItem;
 
 @Data
 @Builder

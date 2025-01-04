@@ -40,7 +40,31 @@ services:
       - db
     networks:
       - juntatudo
-
+  o-temido:
+    image: quay.io/keycloak/keycloak:26.0.7
+    restart: always
+    hostname: keycloak.quiz.local
+    domainname: quiz.local
+    ports:
+      - "9080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: senha1234
+      KC_HEALTH_ENABLED: 'true'
+      KC_METRICS_ENABLED: 'true'
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/salve-food
+      KC_DB_USERNAME: usuario
+      KC_DB_PASSWORD: salve-food
+    depends_on:
+      - db
+    command: ["start-dev","--http-host=0.0.0.0"]
+    volumes:
+      - ./keycloak-data:/opt/jboss/keycloak/standalone/data
+      - ./keycloak-themes:/opt/jboss/keycloak/themes
+      - ./keycloak-realm:/opt/jboss/keycloak/standalone/configuration/keycloak-realm.json
+    networks:
+      - juntatudo
   api:
     build: ./
     restart: always

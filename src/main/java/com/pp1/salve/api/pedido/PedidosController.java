@@ -20,9 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pp1.salve.model.pedido.Pedido;
 import com.pp1.salve.model.pedido.PedidoService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
-@RequestMapping("/pedidos")
+@RequestMapping("/api/pedidos")
 @CrossOrigin
+@Tag(name = "Pedidos", description = "API de Pedidos")
 public class PedidosController {
 
     @Autowired

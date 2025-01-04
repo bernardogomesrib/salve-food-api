@@ -18,9 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pp1.salve.model.item.CategoriaItem;
 import com.pp1.salve.model.item.CategoriaItemService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
-@RequestMapping("/categoria-item")
+@RequestMapping("/api/categoria-item")
 @CrossOrigin
+@Tag(name = "Categoria dos Itens", description = "API de Categoria Item")
 public class CategoriaItemController {
 
     @Autowired
