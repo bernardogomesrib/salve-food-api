@@ -54,4 +54,8 @@ public class Endereco {
 
     @Column(nullable = false, length = 45)
     private String estado;
+
+    public void setUsuario(String id) {
+        this.usuario = Usuario.builder().id(id).build();
+    }
 }
