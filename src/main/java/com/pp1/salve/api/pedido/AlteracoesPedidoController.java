@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api/alteracoes-pedido")
 @CrossOrigin
-@Tag(name = "Alterações do Pedido", description = "API de Alterações do Pedido")
+@Tag(name = "Alterações do Pedido", description = "pontos de interação com Alterações do Pedido")
 public class AlteracoesPedidoController {
 
   @Autowired

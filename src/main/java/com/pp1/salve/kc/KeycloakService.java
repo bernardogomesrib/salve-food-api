@@ -1,5 +1,8 @@
 package com.pp1.salve.kc;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -10,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException.BadRequest;
 import org.springframework.web.client.RestTemplate;
 
 import jakarta.transaction.Transactional;
@@ -24,9 +28,9 @@ public class KeycloakService {
     private String realmLinkCriacao;
 
     @Transactional
-    public boolean createAccount(String firstName, String lastName, String username, String password, String email) {
+    public ResponseEntity<?> createAccount(String firstName, String lastName, String username, String password,
+            String email) {
 
-        System.out.println("url de criação de usuario: " + realmLinkCriacao);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + getAdminAccessToken());
@@ -34,23 +38,14 @@ public class KeycloakService {
         String requestBody = String.format(
                 "{\"firstName\":\"%s\", \"lastName\":\"%s\", \"username\": \"%s\", \"enabled\": true, \"email\": \"%s\", \"credentials\": [{\"type\": \"password\", \"value\": \"%s\", \"temporary\": false}]}",
                 firstName, lastName, username, email, password);
-        try {
-            HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.exchange(realmLinkCriacao, HttpMethod.POST, entity,
-                    String.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (Exception e) {
-            System.out.println("Error creating user: " + e.getMessage());
-            return false;
-        }
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<?> response = restTemplate.exchange(realmLinkCriacao, HttpMethod.POST, entity,
+                String.class);
+        return response;
     }
 
-    public String login(String username, String password) {
+    public ResponseEntity<?> login(String username, String password) {
         String url = issuerUri + "/protocol/openid-connect/token";
 
         HttpHeaders headers = new HttpHeaders();
@@ -62,12 +57,12 @@ public class KeycloakService {
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(url, entity, Map.class);
 
-        return response.getBody();
+        return response;
     }
 
-    public String logout(String refreshToken) {
+    public ResponseEntity<?> logout(String refreshToken) {
         String url = issuerUri + "/protocol/openid-connect/logout";
 
         HttpHeaders headers = new HttpHeaders();
@@ -79,13 +74,12 @@ public class KeycloakService {
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(url, entity, String.class);
 
-        return response.getBody();
+        return response;
     }
 
-    public Object refresh(String refreshToken) {
-        System.out.println("url de refresh: "+issuerUri+"/protocol/openid-connect/token");
+    public ResponseEntity<?> refresh(String refreshToken) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -94,18 +88,24 @@ public class KeycloakService {
         formData.add("refresh_token", refreshToken);
         formData.add("grant_type", "refresh_token");
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(formData, headers);
-        
-        System.out.println(request.toString());
 
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.postForEntity(issuerUri + "/protocol/openid-connect/token",
-                request, String.class);
-        return response.getBody();
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<?> response = restTemplate.postForEntity(issuerUri + "/protocol/openid-connect/token",
+                    request, Map.class);
+            return response;
+        } catch (BadRequest e) {
+            Map<String, String> map = new LinkedHashMap<>();
+            map.put("error", e.getMessage().replace("400 Bad Request: [", "").replace("]", ""));
+            return ResponseEntity.status(400).body(map);
+        } catch (Exception ex) {
+            return ResponseEntity.status(500).body(ex.getMessage());
+        }
     }
 
     private String getAdminAccessToken() {
 
         return KcAdmin.getAdminAccessToken();
     }
-
+    
 }

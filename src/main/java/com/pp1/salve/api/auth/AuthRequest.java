@@ -8,8 +8,8 @@ import lombok.Data;
 @Data
 @Builder
 public class AuthRequest {
-    @NotNull
-    @NotBlank
+    @NotNull(message = "O usuario não pode ser nulo")
+    @NotBlank(message = "O usuario não pode ser vazio")
     private String username;
     @NotNull
     @NotBlank

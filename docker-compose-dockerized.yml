@@ -76,16 +76,22 @@ services:
       SPRING_DATASOURCE_USERNAME: usuario
       SPRING_DATASOURCE_PASSWORD: salve-food
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_JPA_SHOW_SQL: "true"
-      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-      SPRING_JPA_PROPERTIES_HIBERNATE_TEMP_USE_JDBC_METADATA_DEFAULTS: "false"
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQL9Dialect
-      SPRING_JPA_GENERATE_DDL: "true"
-      SPRINGDOC_API_DOCS_PATH: /api-docs
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: INFO
+      LOGGING_LEVEL_COM_SALVEFOOD: DEBUG
       SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 10MB
       MINIO_URL: http://minio:9001
       MINIO_ACCESS_KEY: 9AmF1hfTKjWvnXNQntBW
       MINIO_SECRET_KEY: LRou1qQPMGBvHavUg59WL21PYg38WGEdEmF1CSUP
+      KEYCLOAK_ISSUER_URI: http://o-temido:8080/realms/salve
+      KEYCLOAK_JWK_SET_URI: http://o-temido:8080/realms/salve/protocol/openid-connect/certs
+      KEYCLOAK_LOGOUT_URI: http://o-temido:8080/realms/salve/protocol/openid-connect/logout
+      KEYCLOAK_ADMIN_USERNAME: adminsalve
+      KEYCLOAK_ADMIN_PASSWORD: adminsalve
+      KEYCLOAK_REALM_URI: http://o-temido:8080/realms/master
+      KEYCLOAK_CREATE_USER_URI: http://o-temido:8080/admin/realms/salve/users
+      PUBLIC_SERVER_URL: http://192.168.0.6
+      LOCAL_IP: http://192.168.0.6
+      APPLICATION_URL: http://localhost:3000,http://localhost:8080,http://:8080,http://:3000,http://192.168.0.6:3000,http://192.168.0.6:8080,192.168.0.6:3000,192.168.0.6:8080
     ports:
       - 8080:8080
     depends_on:

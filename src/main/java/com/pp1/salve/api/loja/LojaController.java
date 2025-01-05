@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api/loja")
 @CrossOrigin
-@Tag(name = "Loja", description = "API de Loja")
+@Tag(name = "Loja", description = "pontos de interação com um Loja")
 public class LojaController {
 
   @Autowired

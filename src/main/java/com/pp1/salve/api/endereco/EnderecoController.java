@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 
 @RequestMapping("/api/endereco")
-@Tag(name = "Endereço", description = "API de Endereço")
+@Tag(name = "Endereço", description = "pontos para interação com Endereço")
 @CrossOrigin
 public class EnderecoController {
 
