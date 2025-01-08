@@ -29,15 +29,15 @@ public class KeycloakService {
 
     @Transactional
     public ResponseEntity<?> createAccount(String firstName, String lastName, String username, String password,
-            String email) {
+            String phone) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + getAdminAccessToken());
 
         String requestBody = String.format(
-                "{\"firstName\":\"%s\", \"lastName\":\"%s\", \"username\": \"%s\", \"enabled\": true, \"email\": \"%s\", \"credentials\": [{\"type\": \"password\", \"value\": \"%s\", \"temporary\": false}]}",
-                firstName, lastName, username, email, password);
+                "{\"firstName\":\"%s\",\"lastName\":\"%s\",\"email\":\"%s\",\"enabled\":true,\"credentials\":[{\"type\":\"password\",\"value\":\"%s\",\"temporary\":false}],\"attributes\":{\"phone\":\"%s\"}}",
+                firstName, lastName, username, password, phone);
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<?> response = restTemplate.exchange(realmLinkCriacao, HttpMethod.POST, entity,

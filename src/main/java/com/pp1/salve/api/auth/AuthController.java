@@ -22,7 +22,7 @@ public class AuthController {
     @PostMapping("create")
     public ResponseEntity<?> postMethodName(@RequestBody @Valid AccountCreationRequest entity) {
         return keycloakService.createAccount(entity.getFirstName(), entity.getLastName(), entity.getEmail(),
-                entity.getPassword(), entity.getEmail());
+                entity.getPassword(),entity.getPhoneNumber());
     }
 
     @PostMapping("login")

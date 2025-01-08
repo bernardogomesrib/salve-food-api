@@ -18,4 +18,6 @@ public class AccountCreationRequest {
     @NotBlank
     @NotNull
     private String password;
+    @NotNull
+    private String phoneNumber;
 }
