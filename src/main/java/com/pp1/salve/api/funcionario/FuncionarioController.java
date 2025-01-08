@@ -39,19 +39,19 @@ public class FuncionarioController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Funcionario> getById(@PathVariable Long id) {
-    return ResponseEntity.ok(service.findById(id));
+  public Funcionario getById(@PathVariable Long id) {
+    return service.findById(id);
   }
 
   @PostMapping
-  public ResponseEntity<Funcionario> create(@RequestBody Funcionario funcionario) {
-    return ResponseEntity.ok(service.save(funcionario));
+  public Funcionario create(@RequestBody Funcionario funcionario) {
+    return service.save(funcionario);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Funcionario> update(@PathVariable Long id, @RequestBody Funcionario funcionario) {
+  public Funcionario update(@PathVariable Long id, @RequestBody Funcionario funcionario) {
     funcionario.setId(id);
-    return ResponseEntity.ok(service.save(funcionario));
+    return service.save(funcionario);
   }
 
   @DeleteMapping("/{id}")

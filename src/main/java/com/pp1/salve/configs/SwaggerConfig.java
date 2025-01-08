@@ -22,13 +22,15 @@ import io.swagger.v3.oas.annotations.servers.Server;
 
 }, security = {
             @SecurityRequirement(name = "bearerAuth"),
-            @SecurityRequirement(name = "bearerAuth2")
+            @SecurityRequirement(name = "bearerAuth2"),
+            @SecurityRequirement(name = "bearerAuth3")
 })
 
 @SecurityScheme(name = "bearerAuth", description = "JWT auth description", scheme = "bearer", type = SecuritySchemeType.OAUTH2, flows = @OAuthFlows(implicit = @OAuthFlow(authorizationUrl = "http://localhost:9080/realms/salve/protocol/openid-connect/auth", tokenUrl = "http://localhost:9080/realms/salve/protocol/openid-connect/token")
 
 ), bearerFormat = "JWT", in = SecuritySchemeIn.HEADER)
 @SecurityScheme(name = "bearerAuth2", description = "JWT auth description", scheme = "bearer", type = SecuritySchemeType.OAUTH2, flows = @OAuthFlows(implicit = @OAuthFlow(authorizationUrl = "${public.server.url}:9080/realms/salve/protocol/openid-connect/auth", tokenUrl = "${public.server.url}:9080/realms/salve/protocol/openid-connect/token")), bearerFormat = "JWT", in = SecuritySchemeIn.HEADER)
+@SecurityScheme(name = "bearerAuth3", description = "JWT auth description", scheme = "bearer", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", in = SecuritySchemeIn.HEADER)
 @Configuration
 public class SwaggerConfig {
       @Bean

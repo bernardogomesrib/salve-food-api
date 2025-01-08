@@ -12,6 +12,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.pp1.salve.exceptions.ResourceNotFoundException;
+
 
 @RestControllerAdvice
 public class ExceptionHandlerController {
@@ -30,13 +32,18 @@ public class ExceptionHandlerController {
         response.put("errors", errors);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> tratarErro404(ResourceNotFoundException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> tratarErro500(Exception ex) {
         Map<String, Object> response = new HashMap<>();
         response.put("message", ex.getMessage());
         response.put("cause", ex.getCause() != null ? ex.getCause().toString() : "N/A");
-        response.put("stackTrace", ex.getStackTrace());
+        //response.put("stackTrace", ex.getStackTrace());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
