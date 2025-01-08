@@ -12,6 +12,9 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
     networks:
       - juntatudo
+    depends_on:
+      - delete_gitkeep  # Garante que o DB será iniciado após o delete_gitkeep
+  
   minio:
     image: quay.io/minio/minio:latest
     restart: always
@@ -30,15 +33,16 @@ services:
       - ./minio-data:/data
     command: server --console-address "0.0.0.0:9091" /data --address 0.0.0.0:9001
     healthcheck:
-      #test: ["CMD", "curl", "-f", "http://localhost:9001/minio/health/live"]
       test: ["CMD", "curl", "-f"]
       interval: 30s
       timeout: 20s
       retries: 3
     depends_on:
       - db
+      - delete_gitkeep  # Garante que Minio só inicia após o DB e o delete_gitkeep
     networks:
       - juntatudo
+  
   o-temido:
     image: quay.io/keycloak/keycloak:26.0.7
     restart: always
@@ -57,11 +61,28 @@ services:
       KC_DB_PASSWORD: salve-food
     depends_on:
       - db
+      - delete_gitkeep  # Garante que Keycloak só inicia após o DB e o delete_gitkeep
     command: ["start-dev","--http-host=0.0.0.0"]
     volumes:
       - ./keycloak-data:/opt/jboss/keycloak/standalone/data
       - ./keycloak-themes:/opt/jboss/keycloak/themes
       - ./keycloak-realm:/opt/jboss/keycloak/standalone/configuration/keycloak-realm.json
+    networks:
+      - juntatudo
+  
+  delete_gitkeep:
+    image: python:3.9
+    restart: "no"
+    volumes:
+      - ./postgres-data:/postgres-data  # Mapeando corretamente a pasta local
+      - ./scripts:/scripts  # Mapeando a pasta onde está o script Python
+    command: ["python", "/scripts/delete_gitkeep.py"]  
+    healthcheck:
+      test: ["CMD", "echo", "Delete Gitkeep finished"]
+      interval: 10s
+      retries: 3
+      start_period: 30s  # Permite que o contêiner tenha tempo para rodar o script
+      timeout: 30s  # Tempo máximo permitido para o script ser executado
     networks:
       - juntatudo
 
