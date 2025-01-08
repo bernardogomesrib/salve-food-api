@@ -18,7 +18,6 @@ target/
 *.iws
 *.iml
 *.ipr
-.gitkeep
 
 ### NetBeans ###
 /nbproject/private/
@@ -39,3 +38,4 @@ xl.meta
 
 **/minio-data/**
 minio-data/**
+
