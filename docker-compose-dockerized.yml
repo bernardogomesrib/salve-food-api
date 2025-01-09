@@ -11,8 +11,11 @@ services:
       - 5434:5432
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
+      - ./scripts/entrypoint.sh:/docker-entrypoint-initdb.d/entrypoint.sh
     networks:
       - juntatudo
+    entrypoint: ["/bin/bash", "/docker-entrypoint-initdb.d/entrypoint.sh"]
+    command: ["postgres"]
   minio:
     image: quay.io/minio/minio:latest
     restart: always
@@ -79,7 +82,9 @@ services:
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: INFO
       LOGGING_LEVEL_COM_SALVEFOOD: DEBUG
       SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 10MB
-      MINIO_URL: http://minio:9001
+      PUBLIC_SERVER_URL: http://192.168.0.8/
+      LOCAL_IP: http://192.168.0.8/
+      MINIO_URL: ${LOCAL_IP}:9001
       MINIO_ACCESS_KEY: 9AmF1hfTKjWvnXNQntBW
       MINIO_SECRET_KEY: LRou1qQPMGBvHavUg59WL21PYg38WGEdEmF1CSUP
       KEYCLOAK_ISSUER_URI: http://o-temido:8080/realms/salve
@@ -89,9 +94,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: adminsalve
       KEYCLOAK_REALM_URI: http://o-temido:8080/realms/master
       KEYCLOAK_CREATE_USER_URI: http://o-temido:8080/admin/realms/salve/users
-      PUBLIC_SERVER_URL: http://192.168.0.6
-      LOCAL_IP: http://192.168.0.6
-      APPLICATION_URL: http://localhost:3000,http://localhost:8080,http://:8080,http://:3000,http://192.168.0.6:3000,http://192.168.0.6:8080,192.168.0.6:3000,192.168.0.6:8080
+      APPLICATION_URL: http://localhost:3000,http://localhost:8080,${LOCAL_IP}:3000,${LOCAL_IP}:8080,${PUBLIC_SERVER_URL}:3000,${PUBLIC_SERVER_URL}:8080
     ports:
       - 8080:8080
     depends_on:
