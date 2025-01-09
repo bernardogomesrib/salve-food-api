@@ -38,5 +38,6 @@ xl.meta
 
 **/minio-data/**
 minio-data/**
-#vai que né? kkkkk
-**postgresql-data/**
+**/postgresql-data/**
+postgresql-data/**
+.gitkeep
