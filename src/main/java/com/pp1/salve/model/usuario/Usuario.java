@@ -15,5 +15,5 @@ import lombok.NoArgsConstructor;
 public class Usuario {
     @Id
     private String id;
-    private String telefone;
+    
 }
