@@ -1,12 +1,17 @@
 package com.pp1.salve.api.auth;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.security.oauth2.jwt.Jwt;
 import com.pp1.salve.kc.KeycloakService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,4 +45,10 @@ public class AuthController {
         return keycloakService.logout(refreshtoken.getRefreshToken());
     }
 
+   @PreAuthorize("hasRole('usuario')")
+    @GetMapping("introspect")
+    public ResponseEntity<Map<String, Object>> getUserInfo(@AuthenticationPrincipal Jwt jwt) {
+        Map<String, Object> claims = jwt.getClaims();
+        return ResponseEntity.ok(claims);
+    }
 }
