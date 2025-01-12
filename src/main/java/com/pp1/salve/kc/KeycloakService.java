@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException.BadRequest;
+
+import com.pp1.salve.exceptions.ResourceNotFoundException;
+
 import org.springframework.web.client.RestTemplate;
 
 import jakarta.transaction.Transactional;
@@ -105,12 +108,15 @@ public class KeycloakService {
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
-    
+
     public ResponseEntity<?> addRoleToUser(String username, String roleName) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + getAdminAccessToken());
         Role role = getRoleByName(roleName);
+        if(role == null){
+            throw new ResourceNotFoundException("Role de nome"+roleName+" não encontrada");
+        }
         Map<String, Object> roleRepresentation = new LinkedHashMap<>();
 
         roleRepresentation.put("id", role.getId());
