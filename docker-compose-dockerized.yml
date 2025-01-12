@@ -94,7 +94,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: adminsalve
       KEYCLOAK_REALM_URI: http://o-temido:8080/realms/master
       KEYCLOAK_CREATE_USER_URI: http://o-temido:8080/admin/realms/salve/users
-      APPLICATION_URL: http://localhost:3000,http://localhost:8080,${LOCAL_IP}:3000,${LOCAL_IP}:8080,${PUBLIC_SERVER_URL}:3000,${PUBLIC_SERVER_URL}:8080
+      APPLICATION_URL: http://localhost:5173,http://localhost:3000,http://localhost:8080,${LOCAL_IP}:3000,${LOCAL_IP}:8080,${PUBLIC_SERVER_URL}:3000,${PUBLIC_SERVER_URL}:8080
     ports:
       - 8080:8080
     depends_on:
