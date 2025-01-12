@@ -89,6 +89,7 @@ services:
       KEYCLOAK_ISSUER_URI: http://o-temido:8080/realms/salve
       KEYCLOAK_JWK_SET_URI: http://o-temido:8080/realms/salve/protocol/openid-connect/certs
       KEYCLOAK_LOGOUT_URI: http://o-temido:8080/realms/salve/protocol/openid-connect/logout
+      KEYCLOAK_ROLES_URI: http://o-temido:8080/admin/realms/salve/roles
       KEYCLOAK_ADMIN_USERNAME: adminsalve
       KEYCLOAK_ADMIN_PASSWORD: adminsalve
       KEYCLOAK_REALM_URI: http://o-temido:8080/realms/master

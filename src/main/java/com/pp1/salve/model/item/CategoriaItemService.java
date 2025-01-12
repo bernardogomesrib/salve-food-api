@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pp1.salve.exceptions.ResourceNotFoundException;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -18,7 +20,7 @@ public class CategoriaItemService {
     }
 
     public CategoriaItem findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("CategoriaItem não encontrada"));
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Categoria de Item não encontrada com id: "+id));
     }
 
     @Transactional
@@ -28,6 +30,7 @@ public class CategoriaItemService {
     
     @Transactional
     public void deleteById(Long id) {
-        repository.deleteById(id);
+
+        repository.delete(findById(id));
     }
 }

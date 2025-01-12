@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pp1.salve.model.item.ItemService;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -12,7 +14,8 @@ public class AlteracoesPedidoService {
 
   @Autowired
   private AlteracoesPedidoRepository repository;
-
+  @Autowired
+  private ItemService itemService;
   public List<AlteracoesPedido> findAll() {
     return repository.findAll();
   }
@@ -22,7 +25,8 @@ public class AlteracoesPedidoService {
   }
 
   @Transactional
-  public AlteracoesPedido save(AlteracoesPedido alteracao) {
+  public AlteracoesPedido save(AlteracoesPedido alteracao) throws Exception {
+    alteracao.setItem(itemService.findById(alteracao.getItem().getId()));
     return repository.save(alteracao);
   }
   

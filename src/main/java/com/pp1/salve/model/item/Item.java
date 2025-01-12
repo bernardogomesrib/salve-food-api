@@ -29,7 +29,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Item {
 
-@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -51,4 +51,8 @@ public class Item {
     private CategoriaItem categoriaItem;
     @Transient
     private String itemImage;
+
+    public Item(Long id) {
+        this.id = id;
+    }
 }

@@ -1,8 +1,12 @@
 package com.pp1.salve.kc;
+import java.util.List;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,11 +26,13 @@ public class KcAdmin {
     private String ADMIN_USERNAME;
     @Value("${keycloak.admin.password}")
     private String ADMIN_PASSWORD;
+    @Value("${keycloak.admin.role-uri}")
+    private String roleUri;
     private static String ADMIN_ACCESS_TOKEN;
     private static String ADMIN_REFRESH_TOKEN;
     private static String ADMIN_CLIENT_ID = "admin-cli";
     private static long ADMIN_TOKEN_EXPIRATION_TIME;
-    
+    private static List<Role> roles;
     public void loginAdmin(){
         // Implement the logic to get the admin access token from Keycloak
         // Use the ADMIN_USERNAME, ADMIN_PASSWORD, ADMIN_CLIENT_ID to get the access token
@@ -43,7 +49,7 @@ public class KcAdmin {
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(formData, headers);
             RestTemplate restTemplate = new RestTemplate();
             String url = this.realmLinkMaster+"/protocol/openid-connect/token";
-            System.out.println("url de login de admin: "+url);
+            //System.out.println("url de login de admin: "+url);
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
             try {
                 JSONObject jsonObj = new JSONObject(response.getBody());
@@ -53,6 +59,33 @@ public class KcAdmin {
             } catch (Exception e) {
                 System.out.println("Error getting admin token: "+e.getMessage());
             }
+    }
+    public List<Role> getRoles(){
+        if(roles == null){
+            roles = getRolesFromKeycloak();
+        }
+        return roles;
+    
+    }
+
+    public Role getRoleByName(String roleName){
+        for(Role role : getRoles()){
+            if(role.getName().equals(roleName)){
+                return role;
+            }
+        }
+        return null;
+    }
+
+    public List<Role> getRolesFromKeycloak(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + getAdminAccessToken());
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        RestTemplate restTemplate = new RestTemplate();
+        String url = this.roleUri;
+        ResponseEntity<List<Role>> response = restTemplate.exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<List<Role>>(){});
+        return response.getBody();
     }
     public String getAdminAccessToken() {
         if(System.currentTimeMillis() > ADMIN_TOKEN_EXPIRATION_TIME) {

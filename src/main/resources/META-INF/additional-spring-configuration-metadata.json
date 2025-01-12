@@ -48,5 +48,10 @@
     "name": "keycloak.admin.create-user-uri",
     "type": "java.lang.String",
     "description": "A description for 'keycloak.admin.create-user-uri'"
+  },
+  {
+    "name": "keycloak.admin.role-uri",
+    "type": "java.lang.String",
+    "description": "A description for 'keycloak.admin.role-uri'"
   }
 ]}

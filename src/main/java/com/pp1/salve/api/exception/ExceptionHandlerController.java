@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.pp1.salve.exceptions.ResourceNotFoundException;
 
@@ -45,6 +46,29 @@ public class ExceptionHandlerController {
         response.put("cause", ex.getCause() != null ? ex.getCause().toString() : "N/A");
         //response.put("stackTrace", ex.getStackTrace());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(HttpClientErrorException.NotFound.class)
+    public ResponseEntity<Map<String, Object>> tratarErro404(HttpClientErrorException.NotFound ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", ex.getMessage());
+        response.put("cause", ex.getCause() != null ? ex.getCause().toString() : "N/A");
+        response.put("respostaDoServidor", ex.getResponseBodyAs(Object.class));
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(org.springframework.security.authorization.AuthorizationDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthorizationDeniedException(org.springframework.security.authorization.AuthorizationDeniedException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Access Denied");
+        response.put("details", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+    @ExceptionHandler(HttpClientErrorException.BadRequest.class)
+    public ResponseEntity<Map<String, Object>> handleBadRequest(HttpClientErrorException.BadRequest ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", ex.getMessage());
+        response.put("cause", ex.getCause() != null ? ex.getCause().toString() : "N/A");
+        response.put("respostaDoServidor", ex.getResponseBodyAs(Object.class));
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 }

@@ -17,6 +17,7 @@ import com.pp1.salve.kc.KeycloakService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Authentication", description = "Authentication points")
@@ -35,20 +36,34 @@ public class AuthController {
         return keycloakService.login(loginRequest.getUsername(), loginRequest.getPassword());
     }
 
+    @PreAuthorize("hasRole('usuario')")
     @PostMapping("refresh")
     public ResponseEntity<?> refreshToken(@RequestBody @Valid RefreshRequest refreshtoken) {
         return keycloakService.refresh(refreshtoken.getRefreshToken());
     }
-
+    @PreAuthorize("hasRole('usuario')")
     @PostMapping("logout")
-    public ResponseEntity<?> log(@RequestBody @Valid RefreshRequest refreshtoken) {
+    public ResponseEntity<?> log(@AuthenticationPrincipal Jwt jwt, @RequestBody @Valid RefreshRequest refreshtoken) {
         return keycloakService.logout(refreshtoken.getRefreshToken());
     }
 
-   @PreAuthorize("hasRole('usuario')")
+    @PreAuthorize("hasRole('usuario')")
     @GetMapping("introspect")
     public ResponseEntity<Map<String, Object>> getUserInfo(@AuthenticationPrincipal Jwt jwt) {
         Map<String, Object> claims = jwt.getClaims();
         return ResponseEntity.ok(claims);
     }
+    @PreAuthorize("hasRole('usuario')")
+    @PostMapping("logistaAddRole")
+    public ResponseEntity<?> postMethodName(@AuthenticationPrincipal Jwt jwt) {
+        Map<String,Object> usuario = getUserInfo(jwt).getBody();
+        return keycloakService.addRoleToUser(usuario.get("sub").toString(),"dono_de_loja");
+    }
+    @PreAuthorize("hasRole('usuario')")
+    @GetMapping("roles")
+    public ResponseEntity<?> getAllRoles() {
+        return keycloakService.listAllRoles();
+    }
+    
+    
 }

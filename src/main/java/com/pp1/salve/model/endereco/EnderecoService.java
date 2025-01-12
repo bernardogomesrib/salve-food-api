@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pp1.salve.exceptions.ResourceNotFoundException;
+
 @Service
 public class EnderecoService {
 
@@ -16,7 +18,7 @@ public class EnderecoService {
     }
 
     public Endereco findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Endereço não encontrado"));
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado"));
     }
 
     public Endereco save(Endereco endereco) {
@@ -24,6 +26,6 @@ public class EnderecoService {
     }
 
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        repository.delete(findById(id));
     }
 }

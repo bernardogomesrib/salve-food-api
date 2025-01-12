@@ -1,6 +1,8 @@
 package com.pp1.salve.kc;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,8 @@ public class KeycloakService {
     private String issuerUri;
     @Value("${keycloak.admin.create-user-uri}")
     private String realmLinkCriacao;
-
+    @Value("${keycloak.admin.role-uri}")
+    private String roleUri;
     @Transactional
     public ResponseEntity<?> createAccount(String firstName, String lastName, String username, String password,
             String phone) {
@@ -102,10 +105,37 @@ public class KeycloakService {
             return ResponseEntity.status(500).body(ex.getMessage());
         }
     }
+    
+    public ResponseEntity<?> addRoleToUser(String username, String roleName) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + getAdminAccessToken());
+        Role role = getRoleByName(roleName);
+        Map<String, Object> roleRepresentation = new LinkedHashMap<>();
 
+        roleRepresentation.put("id", role.getId());
+        roleRepresentation.put("name", role.getName());
+        roleRepresentation.put("description", role.getDescription());
+        roleRepresentation.put("composite", role.isComposite());
+        roleRepresentation.put("clientRole", role.isClientRole());
+        roleRepresentation.put("containerId", role.getContainerId());
+        List<Map<String, Object>> requestBody = new ArrayList<>();
+        requestBody.add(roleRepresentation);
+        HttpEntity<List<Map<String, Object>>> entity = new HttpEntity<>(requestBody, headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<?> response = restTemplate.exchange(realmLinkCriacao + "/" + username + "/role-mappings/realm",
+                HttpMethod.POST, entity, Object.class);
+        return response;
+    }
+
+    public ResponseEntity<?> listAllRoles(){
+        return ResponseEntity.status(200).body(KcAdmin.getRoles());
+    }
     private String getAdminAccessToken() {
 
         return KcAdmin.getAdminAccessToken();
     }
-    
+    private Role getRoleByName(String roleName) {
+        return KcAdmin.getRoleByName(roleName);
+    }
 }

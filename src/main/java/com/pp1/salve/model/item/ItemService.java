@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pp1.salve.exceptions.ResourceNotFoundException;
 import com.pp1.salve.minio.MinIOInterfacing;
 
 import jakarta.transaction.Transactional;
@@ -21,7 +22,7 @@ public class ItemService {
         Page<Item> items = repository.findAll(pageable);
         items.forEach(item -> {
             try {
-                item.setItemImage(minIOInterfacing.getSingleUrl("salve", item.getId().toString()));
+                item.setItemImage(minIOInterfacing.getSingleUrl("salve-items", item.getId().toString()));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -31,7 +32,7 @@ public class ItemService {
     
     @Transactional
     public Item findById(Long id) throws Exception {
-       Item i = repository.findById(id).orElseThrow(() -> new RuntimeException("Item não encontrado"));
+       Item i = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
         i.setItemImage(minIOInterfacing.getSingleUrl("salve-items", i.getId().toString()));
        return i;
     }
@@ -39,7 +40,7 @@ public class ItemService {
     @Transactional
     public Item save(Item item,MultipartFile file) throws Exception {
         Item i = repository.save(item);
-        minIOInterfacing.uploadFile("salve-items", i.getId().toString(), file);
+        i.setItemImage(minIOInterfacing.uploadFile("salve-items", i.getId().toString(), file));
         return i;
     }
     @Transactional
@@ -48,6 +49,13 @@ public class ItemService {
         return i;
     }
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        Item i = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
+        repository.delete(i);
+    }
+
+    public Item editarArquivo(Long id, MultipartFile file) throws Exception {
+        Item i = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
+        i.setItemImage(minIOInterfacing.uploadFile("salve-items", i.getId().toString(), file));
+        return i;
     }
 }

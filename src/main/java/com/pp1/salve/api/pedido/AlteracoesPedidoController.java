@@ -39,12 +39,12 @@ public class AlteracoesPedidoController {
   }
 
   @PostMapping
-  public ResponseEntity<AlteracoesPedido> create(@RequestBody AlteracoesPedido alteracao) {
+  public ResponseEntity<AlteracoesPedido> create(@RequestBody AlteracoesPedido alteracao) throws Exception {
     return ResponseEntity.ok(service.save(alteracao));
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<AlteracoesPedido> update(@PathVariable Long id, @RequestBody AlteracoesPedido alteracao) {
+  public ResponseEntity<AlteracoesPedido> update(@PathVariable Long id, @RequestBody AlteracoesPedido alteracao) throws Exception {
     alteracao.setId(id);
     return ResponseEntity.ok(service.save(alteracao));
   }
