@@ -51,7 +51,7 @@ public class KeycloakService {
         return response;
     }
 
-    public ResponseEntity<?> login(String username, String password) {
+    public ResponseEntity<LoginResponse> login(String username, String password) {
         String url = issuerUri + "/protocol/openid-connect/token";
 
         HttpHeaders headers = new HttpHeaders();
@@ -63,7 +63,7 @@ public class KeycloakService {
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<?> response = restTemplate.postForEntity(url, entity, Map.class);
+        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(url, entity, LoginResponse.class);
 
         return response;
     }
@@ -97,8 +97,8 @@ public class KeycloakService {
 
         try {
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<?> response = restTemplate.postForEntity(issuerUri + "/protocol/openid-connect/token",
-                    request, Map.class);
+            ResponseEntity<LoginResponse> response = restTemplate.postForEntity(issuerUri + "/protocol/openid-connect/token",
+                    request, LoginResponse.class);
             return response;
         } catch (BadRequest e) {
             Map<String, String> map = new LinkedHashMap<>();

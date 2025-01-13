@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.oauth2.jwt.Jwt;
 import com.pp1.salve.kc.KeycloakService;
+import com.pp1.salve.kc.LoginResponse;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
 
 
@@ -33,13 +35,65 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<?> postLogin(@RequestBody @Valid AuthRequest loginRequest) {
-        return keycloakService.login(loginRequest.getUsername(), loginRequest.getPassword());
+        LoginResponse response = keycloakService.login(loginRequest.getUsername(), loginRequest.getPassword()).getBody();
+        
+        Cookie refreshTokenCookie = new Cookie("refresh_token", response.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+        
+        Cookie accessTokenCookie = new Cookie("access_token", response.getAccessToken());
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+        
+        Cookie tokenTypeCookie = new Cookie("token_type", response.getTokenType());
+        tokenTypeCookie.setHttpOnly(true);
+        tokenTypeCookie.setPath("/");
+        tokenTypeCookie.setMaxAge(7 * 24 * 60 * 60);
+        
+        Cookie expiresInCookie = new Cookie("expires_in", String.valueOf(response.getExpiresIn()));
+        expiresInCookie.setHttpOnly(true);
+        expiresInCookie.setPath("/");
+        expiresInCookie.setMaxAge(7 * 24 * 60 * 60);
+        
+        return ResponseEntity.status(200)
+                .header("Set-Cookie", refreshTokenCookie.toString())
+                .header("Set-Cookie", accessTokenCookie.toString())
+                .header("Set-Cookie", tokenTypeCookie.toString())
+                .header("Set-Cookie", expiresInCookie.toString())
+                .body(response);
     }
 
     @PreAuthorize("hasRole('usuario')")
     @PostMapping("refresh")
     public ResponseEntity<?> refreshToken(@RequestBody @Valid RefreshRequest refreshtoken) {
-        return keycloakService.refresh(refreshtoken.getRefreshToken());
+        LoginResponse response = (LoginResponse) keycloakService.refresh(refreshtoken.getRefreshToken()).getBody();
+            Cookie refreshTokenCookie = new Cookie("refresh_token", response.getRefreshToken());
+            refreshTokenCookie.setHttpOnly(true);
+            refreshTokenCookie.setPath("/");
+            refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+            
+            Cookie accessTokenCookie = new Cookie("access_token", response.getAccessToken());
+            accessTokenCookie.setHttpOnly(true);
+            accessTokenCookie.setPath("/");
+            accessTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+            
+            Cookie tokenTypeCookie = new Cookie("token_type", response.getTokenType());
+            tokenTypeCookie.setHttpOnly(true);
+            tokenTypeCookie.setPath("/");
+            tokenTypeCookie.setMaxAge(7 * 24 * 60 * 60);
+            
+            Cookie expiresInCookie = new Cookie("expires_in", String.valueOf(response.getExpiresIn()));
+            expiresInCookie.setHttpOnly(true);
+            expiresInCookie.setPath("/");
+            expiresInCookie.setMaxAge(7 * 24 * 60 * 60);
+        return ResponseEntity.status(200)
+        .header("Set-Cookie", refreshTokenCookie.toString())
+                .header("Set-Cookie", accessTokenCookie.toString())
+                .header("Set-Cookie", tokenTypeCookie.toString())
+                .header("Set-Cookie", expiresInCookie.toString())
+                .body(response);
     }
     @PreAuthorize("hasRole('usuario')")
     @PostMapping("logout")
