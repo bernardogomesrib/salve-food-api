@@ -17,6 +17,9 @@ public class LojaService {
   @Autowired
   private LojaRepository repository;
 
+  @Autowired
+  private SegmentoLojaRepository segmentoLojaRepository;
+
   public Page<Loja> findAll(Pageable pageable) throws Exception {
     Page<Loja> loja = repository.findAll(pageable);
     for (Loja l : loja) {
@@ -30,10 +33,14 @@ public class LojaService {
   }
 
   public Loja save(Loja loja, MultipartFile file) throws Exception {
+    SegmentoLoja segmentoLoja = segmentoLojaRepository.findById(loja.getSegmentoLoja().getId())
+        .orElseThrow(() -> new RuntimeException("SegmentoLoja não encontrado com ID: " + loja.getSegmentoLoja().getId()));
+    
+    loja.setSegmentoLoja(segmentoLoja);
     Loja lojaSalva = repository.save(loja);
     lojaSalva.setImage(minIOInterfacing.uploadFile(lojaSalva.getId() + "loja", "lojaImage", file));
-    return repository.save(loja);
-  }
+    return repository.save(lojaSalva);
+}
 
   public Loja update(Long id, Loja loja, MultipartFile file) throws Exception {
     loja.setId(id);
