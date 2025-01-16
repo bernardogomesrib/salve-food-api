@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class LojaRequest {
 
   private String nome;
+  private String descricao;
   private String rua;
   private String numero;
   private String bairro;
