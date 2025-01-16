@@ -24,8 +24,8 @@ public class LojaRequest {
   private String cidade;
   private String estado;
   private Long segmentoLojaId;
-  private String longitude;
-  private String latitude;
+  private double longitude;
+  private double latitude;
   private MultipartFile file;
   public Loja build() {
     return Loja.builder()
