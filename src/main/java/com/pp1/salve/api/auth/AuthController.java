@@ -15,10 +15,11 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import com.pp1.salve.kc.KeycloakService;
 import com.pp1.salve.kc.LoginResponse;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
-
 
 @RestController
 @RequestMapping("/api/auth")
@@ -30,33 +31,38 @@ public class AuthController {
     @PostMapping("create")
     public ResponseEntity<?> postMethodName(@RequestBody @Valid AccountCreationRequest entity) {
         return keycloakService.createAccount(entity.getFirstName(), entity.getLastName(), entity.getEmail(),
-                entity.getPassword(),entity.getPhoneNumber());
+                entity.getPassword(), entity.getPhoneNumber());
     }
 
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Login completado, cookies definidos"),
+        @ApiResponse(responseCode = "401", description = "Não autorizado")
+    })
     @PostMapping("login")
     public ResponseEntity<?> postLogin(@RequestBody @Valid AuthRequest loginRequest) {
-        LoginResponse response = keycloakService.login(loginRequest.getUsername(), loginRequest.getPassword()).getBody();
-        
+        LoginResponse response = keycloakService.login(loginRequest.getUsername(), loginRequest.getPassword())
+                .getBody();
+
         Cookie refreshTokenCookie = new Cookie("refresh_token", response.getRefreshToken());
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
-        
+
         Cookie accessTokenCookie = new Cookie("access_token", response.getAccessToken());
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setPath("/");
         accessTokenCookie.setMaxAge(7 * 24 * 60 * 60);
-        
+
         Cookie tokenTypeCookie = new Cookie("token_type", response.getTokenType());
         tokenTypeCookie.setHttpOnly(true);
         tokenTypeCookie.setPath("/");
         tokenTypeCookie.setMaxAge(7 * 24 * 60 * 60);
-        
+
         Cookie expiresInCookie = new Cookie("expires_in", String.valueOf(response.getExpiresIn()));
         expiresInCookie.setHttpOnly(true);
         expiresInCookie.setPath("/");
         expiresInCookie.setMaxAge(7 * 24 * 60 * 60);
-        
+
         return ResponseEntity.status(200)
                 .header("Set-Cookie", refreshTokenCookie.toString())
                 .header("Set-Cookie", accessTokenCookie.toString())
@@ -65,36 +71,36 @@ public class AuthController {
                 .body(response);
     }
 
-    @PreAuthorize("hasRole('usuario')")
     @PostMapping("refresh")
     public ResponseEntity<?> refreshToken(@RequestBody @Valid RefreshRequest refreshtoken) {
         LoginResponse response = (LoginResponse) keycloakService.refresh(refreshtoken.getRefreshToken()).getBody();
-            Cookie refreshTokenCookie = new Cookie("refresh_token", response.getRefreshToken());
-            refreshTokenCookie.setHttpOnly(true);
-            refreshTokenCookie.setPath("/");
-            refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
-            
-            Cookie accessTokenCookie = new Cookie("access_token", response.getAccessToken());
-            accessTokenCookie.setHttpOnly(true);
-            accessTokenCookie.setPath("/");
-            accessTokenCookie.setMaxAge(7 * 24 * 60 * 60);
-            
-            Cookie tokenTypeCookie = new Cookie("token_type", response.getTokenType());
-            tokenTypeCookie.setHttpOnly(true);
-            tokenTypeCookie.setPath("/");
-            tokenTypeCookie.setMaxAge(7 * 24 * 60 * 60);
-            
-            Cookie expiresInCookie = new Cookie("expires_in", String.valueOf(response.getExpiresIn()));
-            expiresInCookie.setHttpOnly(true);
-            expiresInCookie.setPath("/");
-            expiresInCookie.setMaxAge(7 * 24 * 60 * 60);
+        Cookie refreshTokenCookie = new Cookie("refresh_token", response.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+
+        Cookie accessTokenCookie = new Cookie("access_token", response.getAccessToken());
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+
+        Cookie tokenTypeCookie = new Cookie("token_type", response.getTokenType());
+        tokenTypeCookie.setHttpOnly(true);
+        tokenTypeCookie.setPath("/");
+        tokenTypeCookie.setMaxAge(7 * 24 * 60 * 60);
+
+        Cookie expiresInCookie = new Cookie("expires_in", String.valueOf(response.getExpiresIn()));
+        expiresInCookie.setHttpOnly(true);
+        expiresInCookie.setPath("/");
+        expiresInCookie.setMaxAge(7 * 24 * 60 * 60);
         return ResponseEntity.status(200)
-        .header("Set-Cookie", refreshTokenCookie.toString())
+                .header("Set-Cookie", refreshTokenCookie.toString())
                 .header("Set-Cookie", accessTokenCookie.toString())
                 .header("Set-Cookie", tokenTypeCookie.toString())
                 .header("Set-Cookie", expiresInCookie.toString())
                 .body(response);
     }
+
     @PreAuthorize("hasRole('usuario')")
     @PostMapping("logout")
     public ResponseEntity<?> log(@AuthenticationPrincipal Jwt jwt, @RequestBody @Valid RefreshRequest refreshtoken) {
@@ -107,17 +113,18 @@ public class AuthController {
         Map<String, Object> claims = jwt.getClaims();
         return ResponseEntity.ok(claims);
     }
+
     @PreAuthorize("hasRole('usuario')")
     @PostMapping("logistaAddRole")
     public ResponseEntity<?> postMethodName(@AuthenticationPrincipal Jwt jwt) {
-        Map<String,Object> usuario = getUserInfo(jwt).getBody();
-        return keycloakService.addRoleToUser(usuario.get("sub").toString(),"dono_de_loja");
+        Map<String, Object> usuario = getUserInfo(jwt).getBody();
+        return keycloakService.addRoleToUser(usuario.get("sub").toString(), "dono_de_loja");
     }
+
     @PreAuthorize("hasRole('usuario')")
     @GetMapping("roles")
     public ResponseEntity<?> getAllRoles() {
         return keycloakService.listAllRoles();
     }
-    
-    
+
 }
