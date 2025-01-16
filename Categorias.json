@@ -1,0 +1,666 @@
+{
+    "categoriaItem":[
+        {
+          "id": 1,
+          "nome": "Carnes"
+        },
+        {
+          "id": 2,
+          "nome": "Peixes e Frutos do Mar"
+        },
+        {
+          "id": 3,
+          "nome": "Aves"
+        },
+        {
+          "id": 4,
+          "nome": "Vegetariana"
+        },
+        {
+          "id": 5,
+          "nome": "Vegana"
+        },
+        {
+          "id": 6,
+          "nome": "Massas"
+        },
+        {
+          "id": 7,
+          "nome": "Sopas e Caldos"
+        },
+        {
+          "id": 8,
+          "nome": "Saladas"
+        },
+        {
+          "id": 9,
+          "nome": "Sanduíches"
+        },
+        {
+          "id": 10,
+          "nome": "Sobremesas"
+        },
+        {
+          "id": 11,
+          "nome": "Snacks"
+        },
+        {
+          "id": 12,
+          "nome": "Lanches Rápidos"
+        },
+        {
+          "id": 13,
+          "nome": "Pratos Congelados"
+        },
+        {
+          "id": 14,
+          "nome": "Carne Bovina"
+        },
+        {
+          "id": 15,
+          "nome": "Carne Suína"
+        },
+        {
+          "id": 16,
+          "nome": "Carne de Frango"
+        },
+        {
+          "id": 17,
+          "nome": "Carne de Cordeiro"
+        },
+        {
+          "id": 18,
+          "nome": "Carne de Caça"
+        },
+        {
+          "id": 19,
+          "nome": "Carne Moída"
+        },
+        {
+          "id": 20,
+          "nome": "Camarão"
+        },
+        {
+          "id": 21,
+          "nome": "Lagosta"
+        },
+        {
+          "id": 22,
+          "nome": "Caranguejo"
+        },
+        {
+          "id": 23,
+          "nome": "Polvo"
+        },
+        {
+          "id": 24,
+          "nome": "Lula"
+        },
+        {
+          "id": 25,
+          "nome": "Ostras"
+        },
+        {
+          "id": 26,
+          "nome": "Salmão"
+        },
+        {
+          "id": 27,
+          "nome": "Atum"
+        },
+        {
+          "id": 28,
+          "nome": "Bacalhau"
+        },
+        {
+          "id": 29,
+          "nome": "Sardinha"
+        },
+        {
+          "id": 30,
+          "nome": "Macarrão"
+        },
+        {
+          "id": 31,
+          "nome": "Lasanha"
+        },
+        {
+          "id": 32,
+          "nome": "Ravioli"
+        },
+        {
+          "id": 33,
+          "nome": "Nhoque"
+        },
+        {
+          "id": 34,
+          "nome": "Fettuccine"
+        },
+        {
+          "id": 35,
+          "nome": "Canelone"
+        },
+        {
+          "id": 36,
+          "nome": "Pizzas clássicas"
+        },
+        {
+          "id": 37,
+          "nome": "Pizzas gourmet"
+        },
+        {
+          "id": 38,
+          "nome": "Pizzas calzones"
+        },
+        {
+          "id": 39,
+          "nome": "Arroz"
+        },
+        {
+          "id": 40,
+          "nome": "Feijão"
+        },
+        {
+          "id": 41,
+          "nome": "Lentilhas"
+        },
+        {
+          "id": 42,
+          "nome": "Grão-de-bico"
+        },
+        {
+          "id": 43,
+          "nome": "Quinoa"
+        },
+        {
+          "id": 44,
+          "nome": "Soja"
+        },
+        {
+          "id": 45,
+          "nome": "Pães Tradicionais"
+        },
+        {
+          "id": 46,
+          "nome": "Pães Artesanais"
+        },
+        {
+          "id": 47,
+          "nome": "Pães Integrais"
+        },
+        {
+          "id": 48,
+          "nome": "Pães Recheados"
+        },
+        {
+          "id": 49,
+          "nome": "Croissants"
+        },
+        {
+          "id": 50,
+          "nome": "Baguetes"
+        },
+        {
+          "id": 51,
+          "nome": "Pães Sem Glúten"
+        },
+        {
+          "id": 52,
+          "nome": "Bolos"
+        },
+        {
+          "id": 53,
+          "nome": "Tortas"
+        },
+        {
+          "id": 54,
+          "nome": "Mousses"
+        },
+        {
+          "id": 55,
+          "nome": "Pudins"
+        },
+        {
+          "id": 56,
+          "nome": "Sorvetes e Gelatos"
+        },
+        {
+          "id": 57,
+          "nome": "Doces Brasileiros"
+        },
+        {
+          "id": 58,
+          "nome": "Cheesecakes"
+        },
+        {
+          "id": 59,
+          "nome": "Brownies"
+        },
+        {
+          "id": 60,
+          "nome": "Sucos Naturais"
+        },
+        {
+          "id": 61,
+          "nome": "Smoothies"
+        },
+        {
+          "id": 62,
+          "nome": "Refrigerantes"
+        },
+        {
+          "id": 63,
+          "nome": "Chás"
+        },
+        {
+          "id": 64,
+          "nome": "Cafés"
+        },
+        {
+          "id": 65,
+          "nome": "Bebidas Alcoólicas"
+        },
+        {
+          "id": 66,
+          "nome": "Bebidas Funcionais"
+        },
+        {
+          "id": 67,
+          "nome": "Água Saborizada"
+        },
+        {
+          "id": 68,
+          "nome": "Hambúrgueres"
+        },
+        {
+          "id": 69,
+          "nome": "Cachorros-Quentes"
+        },
+        {
+          "id": 70,
+          "nome": "Tacos"
+        },
+        {
+          "id": 71,
+          "nome": "Burritos"
+        },
+        {
+          "id": 72,
+          "nome": "Wraps"
+        },
+        {
+          "id": 73,
+          "nome": "Pastéis"
+        },
+        {
+          "id": 74,
+          "nome": "Salgados"
+        },
+        {
+          "id": 75,
+          "nome": "Low Carb"
+        },
+        {
+          "id": 76,
+          "nome": "Sem Glúten"
+        },
+        {
+          "id": 77,
+          "nome": "Sem Lactose"
+        },
+        {
+          "id": 78,
+          "nome": "Diet"
+        },
+        {
+          "id": 79,
+          "nome": "Fitness"
+        },
+        {
+          "id": 80,
+          "nome": "Orgânica"
+        },
+        {
+          "id": 81,
+          "nome": "Plant-Based"
+        },
+        {
+          "id": 82,
+          "nome": "Frutas Frescas"
+        },
+        {
+          "id": 83,
+          "nome": "Japonesa"
+        },
+        {
+          "id": 84,
+          "nome": "Chinesa"
+        },
+        {
+          "id": 85,
+          "nome": "Mexicana"
+        },
+        {
+          "id": 86,
+          "nome": "Indiana"
+        },
+        {
+          "id": 87,
+          "nome": "Brasileira"
+        },
+        {
+          "id": 88,
+          "nome": "Árabe"
+        },
+        {
+          "id": 89,
+          "nome": "Italiana"
+        },
+        {
+          "id": 90,
+          "nome": "Francesa"
+        },
+        {
+          "id": 91,
+          "nome": "Alemã"
+        },
+        {
+          "id": 92,
+          "nome": "Coreana"
+        },
+        {
+          "id": 93,
+          "nome": "Petiscos"
+        },
+        {
+          "id": 94,
+          "nome": "Mix de Castanhas"
+        },
+        {
+          "id": 95,
+          "nome": "Pipoca"
+        },
+        {
+          "id": 96,
+          "nome": "Amendoins"
+        },
+        {
+          "id": 97,
+          "nome": "Queijos"
+        },
+        {
+          "id": 98,
+          "nome": "Frios e Embutidos"
+        },
+        {
+          "id": 99,
+          "nome": "Sopa de Legumes"
+        },
+        {
+          "id": 100,
+          "nome": "Caldo Verde"
+        },
+        {
+          "id": 101,
+          "nome": "Canja de Galinha"
+        },
+        {
+          "id": 102,
+          "nome": "Creme de Abóbora"
+        },
+        {
+          "id": 103,
+          "nome": "Sopa de Cebola"
+        },
+        {
+          "id": 104,
+          "nome": "Consommé"
+        },
+        {
+          "id": 105,
+          "nome": "Minestrone"
+        },
+        {
+          "id": 106,
+          "nome": "Molhos Clássicos"
+        },
+        {
+          "id": 107,
+          "nome": "Guarnições"
+        },
+        {
+          "id": 108,
+          "nome": "Farofas"
+        },
+        {
+          "id": 109,
+          "nome": "Vinagretes"
+        },
+        {
+          "id": 110,
+          "nome": "Conservas"
+        },
+        {
+          "id": 111,
+          "nome": "Café da Manhã"
+        },
+        {
+          "id": 112,
+          "nome": "Brunch"
+        },
+        {
+          "id": 113,
+          "nome": "Almoço"
+        },
+        {
+          "id": 114,
+          "nome": "Lanche da Tarde"
+        },
+        {
+          "id": 115,
+          "nome": "Jantar"
+        },
+        {
+          "id": 116,
+          "nome": "Ceias Festivas"
+        }
+      ],
+    "SegmentoRestaurante":[
+        {
+          "id": 1,
+          "nome": "japonêsa"
+        },
+        {
+          "id": 2,
+          "nome": "Carnes"
+        },
+        {
+          "id": 3,
+          "nome": "Churrasco"
+        },
+        {
+          "id": 5,
+          "nome": "Churrascarias"
+        },
+        {
+          "id": 6,
+          "nome": "Pizzarias"
+        },
+        {
+          "id": 7,
+          "nome": "Hamburguerias"
+        },
+        {
+          "id": 8,
+          "nome": "Pastelarias"
+        },
+        {
+          "id": 9,
+          "nome": "Sorveterias"
+        },
+        {
+          "id": 10,
+          "nome": "Confeitarias"
+        },
+        {
+          "id": 11,
+          "nome": "Padarias Gourmet"
+        },
+        {
+          "id": 12,
+          "nome": "Frutos do Mar"
+        },
+        {
+          "id": 13,
+          "nome": "Sopas e Caldos"
+        },
+        {
+          "id": 14,
+          "nome": "Lanchonetes"
+        },
+        {
+          "id": 15,
+          "nome": "Creperias"
+        },
+        {
+          "id": 16,
+          "nome": "Veganos"
+        },
+        {
+          "id": 17,
+          "nome": "Vegetarianos"
+        },
+        {
+          "id": 18,
+          "nome": "Sem Glúten"
+        },
+        {
+          "id": 19,
+          "nome": "Sem Lactose"
+        },
+        {
+          "id": 20,
+          "nome": "Orgânicos"
+        },
+        {
+          "id": 21,
+          "nome": "Comida Fitness"
+        },
+        {
+          "id": 22,
+          "nome": "Infantil"
+        },
+        {
+          "id": 23,
+          "nome": "Gourmet"
+        },
+        {
+          "id": 24,
+          "nome": "Low Carb/Keto"
+        },
+        {
+          "id": 25,
+          "nome": "Fast Food"
+        },
+        {
+          "id": 26,
+          "nome": "Italiana"
+        },
+        {
+          "id": 27,
+          "nome": "Japonesa"
+        },
+        {
+          "id": 28,
+          "nome": "Chinesa"
+        },
+        {
+          "id": 29,
+          "nome": "Brasileira"
+        },
+        {
+          "id": 30,
+          "nome": "Mexicana"
+        },
+        {
+          "id": 31,
+          "nome": "Árabe"
+        },
+        {
+          "id": 32,
+          "nome": "Indiana"
+        },
+        {
+          "id": 33,
+          "nome": "Francesa"
+        },
+        {
+          "id": 34,
+          "nome": "Tailandesa"
+        },
+        {
+          "id": 35,
+          "nome": "Coreana"
+        },
+        {
+          "id": 36,
+          "nome": "Mediterrânea"
+        },
+        {
+          "id": 37,
+          "nome": "Espanhola"
+        },
+        {
+          "id": 38,
+          "nome": "Alemã"
+        },
+        {
+          "id": 39,
+          "nome": "Portuguesa"
+        },
+        {
+          "id": 40,
+          "nome": "Peruana"
+        },
+        {
+          "id": 41,
+          "nome": "Americana"
+        },
+        {
+          "id": 42,
+          "nome": "Africana"
+        },
+        {
+          "id": 43,
+          "nome": "Turca"
+        },
+        {
+          "id": 44,
+          "nome": "Vietnamita"
+        },
+        {
+          "id": 45,
+          "nome": "Australiana "
+        },
+        {
+          "id": 46,
+          "nome": "Nordestina"
+        },
+        {
+          "id": 47,
+          "nome": "Mineira"
+        },
+        {
+          "id": 48,
+          "nome": "Gaúcha"
+        },
+        {
+          "id": 49,
+          "nome": "Amazônica"
+        },
+        {
+          "id": 50,
+          "nome": "Étnica"
+        }
+      ]
+}

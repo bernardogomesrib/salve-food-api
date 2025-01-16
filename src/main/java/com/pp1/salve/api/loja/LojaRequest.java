@@ -38,6 +38,7 @@ public class LojaRequest {
         .segmentoLoja(SegmentoLoja.builder().id(segmentoLojaId).build())
         .longitude(longitude)
         .latitude(latitude)
+        .descricao(descricao)
         .build();
   }
 }

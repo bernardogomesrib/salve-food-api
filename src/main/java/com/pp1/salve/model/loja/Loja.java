@@ -74,34 +74,21 @@ public class Loja {
   private List<ReviewRestaurante> reviews;
 
   @Transient
-  private double rating;
+  private Double rating;
   @Transient
-  private double deliveryTime;
+  private Double deliveryTime;
 
-  public double getRating() {
-    double rating = 0;
-    for (ReviewRestaurante reviewRestaurante : reviews) {
-      rating += reviewRestaurante.getNota();
+  public Double getRating() {
+    if (reviews != null && !reviews.isEmpty()) {
+        double rating = 0;
+        for (ReviewRestaurante reviewRestaurante : reviews) {
+            rating += reviewRestaurante.getNota();
+        }
+        this.rating = rating / reviews.size();
+        return this.rating;
+    } else {
+        return null;
     }
-    this.rating = rating / reviews.size();
-    return this.rating;
-  }
-  public double getDeliveryTime(double latitude, double longitude) {
-    double lojaLatitude = this.latitude;
-    double lojaLongitude = this.longitude;
-
-    double earthRadius = 6371; // Radius of the earth in km
-    double dLat = Math.toRadians(latitude - lojaLatitude);
-    double dLon = Math.toRadians(longitude - lojaLongitude);
-    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-      + Math.cos(Math.toRadians(lojaLatitude)) * Math.cos(Math.toRadians(latitude))
-      * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    double distance = earthRadius * c; // Distance in km
-
-    double averageBikeSpeed = 15; // Average speed of a bicycle in km/h
-    double deliveryTime = distance / averageBikeSpeed * 60; // Delivery time in minutes
-    this.deliveryTime = deliveryTime;
-    return this.deliveryTime;
-  }
+}
+  
 }

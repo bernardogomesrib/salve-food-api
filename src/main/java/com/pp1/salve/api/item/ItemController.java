@@ -1,5 +1,7 @@
 package com.pp1.salve.api.item;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,18 +12,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.pp1.salve.model.item.Item;
 import com.pp1.salve.model.item.ItemService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -41,27 +43,26 @@ public class ItemController {
         return service.findAll(pageable);
     }
 
+    @Operation(summary = "Busca items por id de loja")
     @GetMapping("/{id}")
-    public Item getById(@PathVariable Long id) throws Exception {
-        return service.findById(id);
+    public List<Item> getByLojaId(@PathVariable Long id) throws Exception {
+        return service.findByLojaId(id);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Item create(@RequestBody @Valid ItemRequest item) throws Exception {
-        return service.save(item.build(), item.getFile());
-    }
-
-    @PutMapping("/{id}")
-    public Item update(@PathVariable Long id, @RequestBody Item item) {
-        item.setId(id);
+    public Item create(@ModelAttribute @Valid ItemRequestSave item) throws Exception {
         return service.save(item);
     }
-    @PutMapping("file/{id}")
-    public Item editarArquivo(@PathVariable Long id, @RequestBody MultipartFile file) throws Exception {
-        return service.editarArquivo(id, file);
+
+    @PutMapping(value = "/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Item update(@PathVariable Long id,@ModelAttribute @Valid ItemRequest item) throws Exception {
+        return service.editarItem(id,item);
     }
+
+
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) throws Exception {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }

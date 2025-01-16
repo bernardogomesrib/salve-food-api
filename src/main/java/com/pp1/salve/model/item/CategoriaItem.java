@@ -26,6 +26,6 @@ public class CategoriaItem {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false, length = 45)
+  @Column(nullable = false, length = 45,unique = true)
   private String nome;
 }

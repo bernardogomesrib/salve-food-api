@@ -1,6 +1,7 @@
 package com.pp1.salve.model.item;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pp1.salve.model.loja.Loja;
 
 import jakarta.persistence.Column;
@@ -30,7 +31,7 @@ import lombok.Setter;
 public class Item {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false, length = 45)
@@ -41,7 +42,7 @@ public class Item {
 
     @Column(nullable = false)
     private Boolean alteravel;
-
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(nullable = false)
     private Loja loja;

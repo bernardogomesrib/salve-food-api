@@ -1,9 +1,12 @@
 package com.pp1.salve.api.segmento;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pp1.salve.model.loja.SegmentoLoja;
+import com.pp1.salve.model.loja.SegmentoLojaSaveEmMassResponse;
 import com.pp1.salve.model.loja.SegmentoLojaService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +31,12 @@ public class SegmentoController {
     @Autowired
     private SegmentoLojaService service;
 
+    @PreAuthorize("hasRole('admin')")
+    @PostMapping("mass")
+    public SegmentoLojaSaveEmMassResponse postSegmentoEmMassa(@RequestBody List<String> entity) {
+        return service.saveAll(entity);
+    }
+    
     @PostMapping
     public SegmentoLoja save(@RequestBody SegmentoLojaPost segmentoLoja) {
         return service.save(segmentoLoja.build());

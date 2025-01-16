@@ -11,6 +11,7 @@ import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import io.minio.http.Method;
 import jakarta.transaction.Transactional;
 
@@ -70,6 +71,14 @@ public class MinIOInterfacing {
     public boolean bucketExists(String bucketName) throws Exception {
         try {
             return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+    @Transactional
+    public void deleteFile(String bucketName, String fileName) throws Exception {
+        try {
+            minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(fileName).build());
         } catch (Exception e) {
             throw e;
         }

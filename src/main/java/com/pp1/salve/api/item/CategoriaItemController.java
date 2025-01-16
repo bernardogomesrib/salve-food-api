@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pp1.salve.model.item.CategoriaItem;
 import com.pp1.salve.model.item.CategoriaItemService;
+import com.pp1.salve.model.item.ResponseCategoriaEnMass;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -39,6 +41,13 @@ public class CategoriaItemController {
         return ResponseEntity.ok(service.findById(id));
     }
 
+    @PreAuthorize("hasRole('admin')")
+    @PostMapping("mass")
+    public ResponseCategoriaEnMass postMass(@RequestBody List<String> entity) {
+        
+        return service.saveAll(entity);
+    }
+    
     @PostMapping
     public ResponseEntity<CategoriaItem> save(@RequestBody CategoriaItemRequest request) {
         CategoriaItem categoriaItem = service.save(request.build());

@@ -26,8 +26,8 @@ public class ItemRequest {
   private Long lojaId;
   @NotNull
   private Long categoriaItemId;
-  @NotNull
   private MultipartFile file;
+
   public Item build() {
     return Item.builder()
         .nome(nome)

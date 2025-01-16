@@ -34,9 +34,15 @@ public class LojaController {
 
   @GetMapping
   public Page<Loja> getAll(@RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "10") int size) throws Exception {
-    Pageable pageable = PageRequest.of(page, size,Sort.by("id").descending());
-    return service.findAll(pageable);
+      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(required = false) Double lat,
+      @RequestParam(required = false) Double longi) throws Exception {
+    Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+    if (lat != null && longi != null) {
+      return service.findAll(pageable, lat, longi);
+    } else {
+      return service.findAll(pageable);
+    }
   }
 
   @GetMapping("/{id}")
