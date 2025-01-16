@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 
+import com.pp1.salve.exceptions.NoDuplicatedEntityException;
 import com.pp1.salve.exceptions.ResourceNotFoundException;
 
 
@@ -68,6 +69,12 @@ public class ExceptionHandlerController {
         response.put("message", ex.getMessage());
         response.put("cause", ex.getCause() != null ? ex.getCause().toString() : "N/A");
         response.put("respostaDoServidor", ex.getResponseBodyAs(Object.class));
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(NoDuplicatedEntityException.class)
+    public ResponseEntity<Map<String, Object>> handleNoDuplicatedEntityException(NoDuplicatedEntityException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

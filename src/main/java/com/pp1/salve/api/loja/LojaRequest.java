@@ -1,5 +1,7 @@
 package com.pp1.salve.api.loja;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.pp1.salve.model.loja.Loja;
 
 import lombok.AllArgsConstructor;
@@ -22,7 +24,7 @@ public class LojaRequest {
   private Long segmentoLojaId;
   private String longitude;
   private String latitude;
-
+  private MultipartFile file;
   public Loja build() {
     return Loja.builder()
         .nome(nome)

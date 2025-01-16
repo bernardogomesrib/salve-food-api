@@ -33,12 +33,5 @@ import io.swagger.v3.oas.annotations.servers.Server;
 @SecurityScheme(name = "bearerAuth3", description = "JWT auth description", scheme = "bearer", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", in = SecuritySchemeIn.HEADER)
 @Configuration
 public class SwaggerConfig {
-      @Bean
-      public GroupedOpenApi customApi() {
-            return GroupedOpenApi.builder()
-                        .group("api")
-                        .pathsToMatch("/api/**")
-                        .pathsToExclude("/error", "/actuator/**")
-                        .build();
-      }/*  */
+ 
 }

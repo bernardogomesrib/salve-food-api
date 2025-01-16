@@ -21,6 +21,7 @@ import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.loja.LojaService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/loja")
@@ -43,15 +44,14 @@ public class LojaController {
     return ResponseEntity.ok(service.findById(id));
   }
 
-  @PostMapping
-  public ResponseEntity<Loja> create(@RequestBody Loja loja) {
-    return ResponseEntity.ok(service.save(loja));
+  @PostMapping(consumes = "multipart/form-data")
+  public ResponseEntity<Loja> create(@RequestBody @Valid LojaRequest loja) throws Exception {
+    return ResponseEntity.ok(service.save(loja.build(),loja.getFile()));
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<Loja> update(@PathVariable Long id, @RequestBody Loja loja) {
-    loja.setId(id);
-    return ResponseEntity.ok(service.save(loja));
+  @PutMapping(name = "/{id}",consumes = "multipart/form-data")
+  public ResponseEntity<Loja> update(@PathVariable Long id, @RequestBody @Valid LojaRequest loja) throws Exception {
+    return ResponseEntity.ok(service.update(id,loja.build(),loja.getFile()));
   }
 
   @DeleteMapping("/{id}")

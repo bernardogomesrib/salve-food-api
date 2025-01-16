@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.pp1.salve.exceptions.NoDuplicatedEntityException;
 import com.pp1.salve.exceptions.ResourceNotFoundException;
 
 @Service
@@ -11,6 +12,9 @@ public class SegmentoLojaService {
     @Autowired
     private SegmentoLojaRepository segmentoLojaRepository;
     public SegmentoLoja save(SegmentoLoja segmentoLoja) {
+        if(segmentoLojaRepository.findByNome(segmentoLoja.getNome()).size() > 0) {
+            throw new NoDuplicatedEntityException("Segmento de loja já cadastrado com nome " + segmentoLoja.getNome());
+        }
         return segmentoLojaRepository.save(segmentoLoja);
     }
     public SegmentoLoja findById(Long id) {
