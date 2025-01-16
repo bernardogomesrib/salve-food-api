@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,12 +46,12 @@ public class LojaController {
   }
 
   @PostMapping(consumes = "multipart/form-data")
-  public ResponseEntity<Loja> create(@RequestBody @Valid LojaRequest loja) throws Exception {
+  public ResponseEntity<Loja> create(@ModelAttribute @Valid LojaRequest loja) throws Exception {
     return ResponseEntity.ok(service.save(loja.build(),loja.getFile()));
   }
 
   @PutMapping(name = "/{id}",consumes = "multipart/form-data")
-  public ResponseEntity<Loja> update(@PathVariable Long id, @RequestBody @Valid LojaRequest loja) throws Exception {
+  public ResponseEntity<Loja> update(@PathVariable Long id, @ModelAttribute @Valid LojaRequest loja) throws Exception {
     return ResponseEntity.ok(service.update(id,loja.build(),loja.getFile()));
   }
 

@@ -3,6 +3,7 @@ package com.pp1.salve.api.loja;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.pp1.salve.model.loja.Loja;
+import com.pp1.salve.model.loja.SegmentoLoja;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +34,7 @@ public class LojaRequest {
         .bairro(bairro)
         .cidade(cidade)
         .estado(estado)
+        .segmentoLoja(SegmentoLoja.builder().id(segmentoLojaId).build())
         .longitude(longitude)
         .latitude(latitude)
         .build();

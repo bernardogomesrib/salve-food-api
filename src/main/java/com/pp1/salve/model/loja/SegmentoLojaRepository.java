@@ -7,7 +7,7 @@ import java.util.List;
 
 
 public interface SegmentoLojaRepository extends JpaRepository<SegmentoLoja, Long> {
-    @Query("SELECT s FROM SegmentoLoja s WHERE s.nome.toLower() = ?1")
+    @Query("SELECT s FROM SegmentoLoja s WHERE LOWER(s.nome) = LOWER(?1)")
     List<SegmentoLoja> findByNome(String nome);
 
 }
