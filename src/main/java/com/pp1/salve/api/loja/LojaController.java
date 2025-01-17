@@ -1,11 +1,18 @@
 package com.pp1.salve.api.loja;
 
+
+import java.util.List;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +30,7 @@ import com.pp1.salve.model.loja.LojaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+
 @RestController
 @RequestMapping("/api/loja")
 @CrossOrigin
@@ -31,7 +39,11 @@ public class LojaController {
 
   @Autowired
   private LojaService service;
-
+  @GetMapping("minha")
+  public ResponseEntity<List<Loja>> getMinhaLoja(Authentication authentication) throws Exception {
+      return ResponseEntity.ok(service.findMyLojas(authentication));
+  }
+  
   @GetMapping
   public Page<Loja> getAll(@RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size,
@@ -51,15 +63,17 @@ public class LojaController {
   }
 
   @PostMapping(consumes = "multipart/form-data")
-  public ResponseEntity<Loja> create(@ModelAttribute @Valid LojaRequest loja) throws Exception {
-    return ResponseEntity.ok(service.save(loja.build(),loja.getFile()));
+  public ResponseEntity<Loja> create(@ModelAttribute @Valid LojaRequest loja, Authentication authentication) throws Exception {
+    return ResponseEntity.ok(service.save(loja.build(),loja.getFile(),authentication));
   }
 
-  @PutMapping(name = "/{id}",consumes = "multipart/form-data")
-  public ResponseEntity<Loja> update(@PathVariable Long id, @ModelAttribute @Valid LojaRequest loja) throws Exception {
-    return ResponseEntity.ok(service.update(id,loja.build(),loja.getFile()));
+  @PreAuthorize("hasRole('dono_de_loja')")
+  @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<Loja> update(@PathVariable Long id, @ModelAttribute @Valid LojaRequest loja, Authentication authentication) throws Exception {
+    return ResponseEntity.ok(service.update(id,loja.build(),loja.getFile(),authentication));
   }
 
+  @PreAuthorize("hasRole('dono_de_loja')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
     service.deleteById(id);

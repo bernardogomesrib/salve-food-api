@@ -15,6 +15,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import com.pp1.salve.exceptions.NoDuplicatedEntityException;
 import com.pp1.salve.exceptions.ResourceNotFoundException;
+import com.pp1.salve.exceptions.UnauthorizedAccessException;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -36,54 +37,87 @@ public class ExceptionHandlerController {
         response.put("errors", errors);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> tratarErro404(ResourceNotFoundException ex) {
         Map<String, Object> response = new HashMap<>();
-        response.put("message", ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> tratarErro500(Exception ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", ex.getMessage());
-        response.put("cause", ex.getCause() != null ? ex.getCause().toString() : "N/A");
-        //response.put("stackTrace", ex.getStackTrace());
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    @ExceptionHandler(HttpClientErrorException.NotFound.class)
-    public ResponseEntity<Map<String, Object>> tratarErro404(HttpClientErrorException.NotFound ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", ex.getMessage());
-        response.put("cause", ex.getCause() != null ? ex.getCause().toString() : "N/A");
-        response.put("respostaDoServidor", ex.getResponseBodyAs(Object.class));
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
-    @ExceptionHandler(org.springframework.security.authorization.AuthorizationDeniedException.class)
-    public ResponseEntity<Map<String, Object>> handleAuthorizationDeniedException(org.springframework.security.authorization.AuthorizationDeniedException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Access Denied");
-        response.put("details", ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
-    }
-    @ExceptionHandler(HttpClientErrorException.BadRequest.class)
-    public ResponseEntity<Map<String, Object>> handleBadRequest(HttpClientErrorException.BadRequest ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", ex.getMessage());
-        response.put("cause", ex.getCause() != null ? ex.getCause().toString() : "N/A");
-        response.put("respostaDoServidor", ex.getResponseBodyAs(Object.class));
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-    @ExceptionHandler(NoDuplicatedEntityException.class)
-    public ResponseEntity<Map<String, Object>> handleNoDuplicatedEntityException(NoDuplicatedEntityException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleEntityNotFoundException(EntityNotFoundException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", ex.getMessage());
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        response.put("error", error);
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> tratarErro500(Exception ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        if (ex.getCause() != null) {
+            error.put("cause", ex.getCause().toString());
+        }
+        response.put("error", error);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(HttpClientErrorException.NotFound.class)
+    public ResponseEntity<Map<String, Object>> tratarErro404(HttpClientErrorException.NotFound ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        if (ex.getCause() != null) {
+            error.put("cause", ex.getCause().toString());
+        }
+        response.put("error", error);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(org.springframework.security.authorization.AuthorizationDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthorizationDeniedException(org.springframework.security.authorization.AuthorizationDeniedException ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, String> error = new HashMap<>();
+        error.put("message", "Access Denied");
+        error.put("details", ex.getMessage());
+        response.put("error", error);
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(HttpClientErrorException.BadRequest.class)
+    public ResponseEntity<Map<String, Object>> handleBadRequest(HttpClientErrorException.BadRequest ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        if (ex.getCause() != null) {
+            error.put("cause", ex.getCause().toString());
+        }
+        response.put("error", error);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoDuplicatedEntityException.class)
+    public ResponseEntity<Map<String, Object>> handleNoDuplicatedEntityException(NoDuplicatedEntityException ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        response.put("error", error);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleEntityNotFoundException(EntityNotFoundException ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        response.put("error", error);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<Map<String, Object>> handleUnauthorizedModificationException(UnauthorizedAccessException ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, String> error = new HashMap<>();
+        error.put("message", "You do not have permission to modify this entity.");
+        error.put("details", ex.getMessage());
+        response.put("error", error);
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
 }

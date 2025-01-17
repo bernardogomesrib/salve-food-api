@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -38,11 +39,35 @@ public class SegmentoLojaService {
     }
 
     @Transactional
+    public SegmentoLojaSaveEmMassResponse updateAll(List<SegmentoLoja> entity) {
+        SegmentoLojaSaveEmMassResponse response = new SegmentoLojaSaveEmMassResponse();
+        for (SegmentoLoja segmentoLoja : entity) {
+            try {
+                segmentoLoja = update(segmentoLoja);
+                response.getSegmentoLojas().add(segmentoLoja);
+            } catch (NoDuplicatedEntityException e) {
+                response.getErrors().add(e.getMessage());
+            }
+        }
+        return response;
+    }
+
+
+    @Transactional
     public SegmentoLoja save(SegmentoLoja segmentoLoja) {
         if (segmentoLojaRepository.findByNome(segmentoLoja.getNome()).size() > 0) {
             throw new NoDuplicatedEntityException("Segmento de loja já cadastrado com nome " + segmentoLoja.getNome());
         }
         return segmentoLojaRepository.save(segmentoLoja);
+    }
+
+    @Transactional
+    public SegmentoLoja update(SegmentoLoja segmentoLoja) {
+        if(segmentoLojaRepository.existsById(segmentoLoja.getId())){
+            return segmentoLojaRepository.save(segmentoLoja);
+        }else{
+            throw new ResourceNotFoundException("Segmento de loja não encontrado com id " + segmentoLoja.getId());
+        }
     }
 
     public SegmentoLoja findById(Long id) {
@@ -54,8 +79,11 @@ public class SegmentoLojaService {
         segmentoLojaRepository.deleteById(id);
     }
 
-    public Iterable<SegmentoLoja> findAll(Pageable pageable) {
+    public Page<SegmentoLoja> findAll(Pageable pageable) {
         return segmentoLojaRepository.findAll(pageable);
     }
 
+    public List<SegmentoLoja> findAllUsed() {
+        return segmentoLojaRepository.findAllUsedSegments();
+    }
 }

@@ -466,201 +466,250 @@
         }
       ],
     "SegmentoRestaurante":[
-        {
-          "id": 1,
-          "nome": "japonêsa"
-        },
-        {
-          "id": 2,
-          "nome": "Carnes"
-        },
-        {
-          "id": 3,
-          "nome": "Churrasco"
-        },
-        {
-          "id": 5,
-          "nome": "Churrascarias"
-        },
-        {
-          "id": 6,
-          "nome": "Pizzarias"
-        },
-        {
-          "id": 7,
-          "nome": "Hamburguerias"
-        },
-        {
-          "id": 8,
-          "nome": "Pastelarias"
-        },
-        {
-          "id": 9,
-          "nome": "Sorveterias"
-        },
-        {
-          "id": 10,
-          "nome": "Confeitarias"
-        },
-        {
-          "id": 11,
-          "nome": "Padarias Gourmet"
-        },
-        {
-          "id": 12,
-          "nome": "Frutos do Mar"
-        },
-        {
-          "id": 13,
-          "nome": "Sopas e Caldos"
-        },
-        {
-          "id": 14,
-          "nome": "Lanchonetes"
-        },
-        {
-          "id": 15,
-          "nome": "Creperias"
-        },
-        {
-          "id": 16,
-          "nome": "Veganos"
-        },
-        {
-          "id": 17,
-          "nome": "Vegetarianos"
-        },
-        {
-          "id": 18,
-          "nome": "Sem Glúten"
-        },
-        {
-          "id": 19,
-          "nome": "Sem Lactose"
-        },
-        {
-          "id": 20,
-          "nome": "Orgânicos"
-        },
-        {
-          "id": 21,
-          "nome": "Comida Fitness"
-        },
-        {
-          "id": 22,
-          "nome": "Infantil"
-        },
-        {
-          "id": 23,
-          "nome": "Gourmet"
-        },
-        {
-          "id": 24,
-          "nome": "Low Carb/Keto"
-        },
-        {
-          "id": 25,
-          "nome": "Fast Food"
-        },
-        {
-          "id": 26,
-          "nome": "Italiana"
-        },
-        {
-          "id": 27,
-          "nome": "Japonesa"
-        },
-        {
-          "id": 28,
-          "nome": "Chinesa"
-        },
-        {
-          "id": 29,
-          "nome": "Brasileira"
-        },
-        {
-          "id": 30,
-          "nome": "Mexicana"
-        },
-        {
-          "id": 31,
-          "nome": "Árabe"
-        },
-        {
-          "id": 32,
-          "nome": "Indiana"
-        },
-        {
-          "id": 33,
-          "nome": "Francesa"
-        },
-        {
-          "id": 34,
-          "nome": "Tailandesa"
-        },
-        {
-          "id": 35,
-          "nome": "Coreana"
-        },
-        {
-          "id": 36,
-          "nome": "Mediterrânea"
-        },
-        {
-          "id": 37,
-          "nome": "Espanhola"
-        },
-        {
-          "id": 38,
-          "nome": "Alemã"
-        },
-        {
-          "id": 39,
-          "nome": "Portuguesa"
-        },
-        {
-          "id": 40,
-          "nome": "Peruana"
-        },
-        {
-          "id": 41,
-          "nome": "Americana"
-        },
-        {
-          "id": 42,
-          "nome": "Africana"
-        },
-        {
-          "id": 43,
-          "nome": "Turca"
-        },
-        {
-          "id": 44,
-          "nome": "Vietnamita"
-        },
-        {
-          "id": 45,
-          "nome": "Australiana "
-        },
-        {
-          "id": 46,
-          "nome": "Nordestina"
-        },
-        {
-          "id": 47,
-          "nome": "Mineira"
-        },
-        {
-          "id": 48,
-          "nome": "Gaúcha"
-        },
-        {
-          "id": 49,
-          "nome": "Amazônica"
-        },
-        {
-          "id": 50,
-          "nome": "Étnica"
-        }
+      {
+        "id": 1,
+        "nome": "japonêsa",
+        "emoji": "🇯🇵"
+      },
+      {
+        "id": 2,
+        "nome": "Carnes",
+        "emoji": "🥩"
+      },
+      {
+        "id": 3,
+        "nome": "Churrasco",
+        "emoji": "🍖"
+      },
+      {
+        "id": 5,
+        "nome": "Churrascarias",
+        "emoji": "🍖"
+      },
+      {
+        "id": 6,
+        "nome": "Pizzarias",
+        "emoji": "🍕"
+      },
+      {
+        "id": 7,
+        "nome": "Hamburguerias",
+        "emoji": "🍔"
+      },
+      {
+        "id": 8,
+        "nome": "Pastelarias",
+        "emoji": "🥟"
+      },
+      {
+        "id": 9,
+        "nome": "Sorveterias",
+        "emoji": "🍦"
+      },
+      {
+        "id": 10,
+        "nome": "Confeitarias",
+        "emoji": "🍰"
+      },
+      {
+        "id": 11,
+        "nome": "Padarias Gourmet",
+        "emoji": "🥐"
+      },
+      {
+        "id": 12,
+        "nome": "Frutos do Mar",
+        "emoji": "🦞"
+      },
+      {
+        "id": 13,
+        "nome": "Sopas e Caldos",
+        "emoji": "🥣"
+      },
+      {
+        "id": 14,
+        "nome": "Lanchonetes",
+        "emoji": "🥪"
+      },
+      {
+        "id": 15,
+        "nome": "Creperias",
+        "emoji": "🥞"
+      },
+      {
+        "id": 16,
+        "nome": "Veganos",
+        "emoji": "🥗"
+      },
+      {
+        "id": 17,
+        "nome": "Vegetarianos",
+        "emoji": "🥗"
+      },
+      {
+        "id": 18,
+        "nome": "Sem Glúten",
+        "emoji": "🚫🌾"
+      },
+      {
+        "id": 19,
+        "nome": "Sem Lactose",
+        "emoji": "🚫🥛"
+      },
+      {
+        "id": 20,
+        "nome": "Orgânicos",
+        "emoji": "🌱"
+      },
+      {
+        "id": 21,
+        "nome": "Comida Fitness",
+        "emoji": "💪"
+      },
+      {
+        "id": 22,
+        "nome": "Infantil",
+        "emoji": "👶"
+      },
+      {
+        "id": 23,
+        "nome": "Gourmet",
+        "emoji": "🍽️"
+      },
+      {
+        "id": 24,
+        "nome": "Low Carb/Keto",
+        "emoji": "🥑"
+      },
+      {
+        "id": 25,
+        "nome": "Fast Food",
+        "emoji": "🍟"
+      },
+      {
+        "id": 26,
+        "nome": "Italiana",
+        "emoji": "🇮🇹"
+      },
+      {
+        "id": 27,
+        "nome": "Japonesa",
+        "emoji": "🇯🇵"
+      },
+      {
+        "id": 28,
+        "nome": "Chinesa",
+        "emoji": "🇨🇳"
+      },
+      {
+        "id": 29,
+        "nome": "Brasileira",
+        "emoji": "🇧🇷"
+      },
+      {
+        "id": 30,
+        "nome": "Mexicana",
+        "emoji": "🇲🇽"
+      },
+      {
+        "id": 31,
+        "nome": "Árabe",
+        "emoji": "🥙"
+      },
+      {
+        "id": 32,
+        "nome": "Indiana",
+        "emoji": "🇮🇳"
+      },
+      {
+        "id": 33,
+        "nome": "Francesa",
+        "emoji": "🇫🇷"
+      },
+      {
+        "id": 34,
+        "nome": "Tailandesa",
+        "emoji": "🍜"
+      },
+      {
+        "id": 35,
+        "nome": "Coreana",
+        "emoji": "🇰🇷"
+      },
+      {
+        "id": 36,
+        "nome": "Mediterrânea",
+        "emoji": "🥗"
+      },
+      {
+        "id": 37,
+        "nome": "Espanhola",
+        "emoji": "🇪🇸"
+      },
+      {
+        "id": 38,
+        "nome": "Alemã",
+        "emoji": "🇩🇪"
+      },
+      {
+        "id": 39,
+        "nome": "Portuguesa",
+        "emoji": "🇵🇹"
+      },
+      {
+        "id": 40,
+        "nome": "Peruana",
+        "emoji": "🇵🇪"
+      },
+      {
+        "id": 41,
+        "nome": "Americana",
+        "emoji": "🇺🇸"
+      },
+      {
+        "id": 42,
+        "nome": "Africana",
+        "emoji": "🍲"
+      },
+      {
+        "id": 43,
+        "nome": "Turca",
+        "emoji": "🇹🇷"
+      },
+      {
+        "id": 44,
+        "nome": "Vietnamita",
+        "emoji": "🇻🇳"
+      },
+      {
+        "id": 45,
+        "nome": "Australiana",
+        "emoji": "🇦🇺"
+      },
+      {
+        "id": 46,
+        "nome": "Nordestina",
+        "emoji": "🍤"
+      },
+      {
+        "id": 47,
+        "nome": "Mineira",
+        "emoji": "🍲"
+      },
+      {
+        "id": 48,
+        "nome": "Gaúcha",
+        "emoji": "🍖"
+      },
+      {
+        "id": 49,
+        "nome": "Amazônica",
+        "emoji": "🍃"
+      },
+      {
+        "id": 50,
+        "nome": "Étnica",
+        "emoji": "🌍"
+      }
       ]
 }

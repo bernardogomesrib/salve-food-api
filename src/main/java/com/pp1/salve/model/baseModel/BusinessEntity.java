@@ -2,9 +2,6 @@ package com.pp1.salve.model.baseModel;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,11 +16,6 @@ import lombok.Setter;
 @MappedSuperclass
 public abstract class BusinessEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
-    
-    @JsonIgnore
-    @Column
-    private Boolean habilitado;
-    
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;   
 }

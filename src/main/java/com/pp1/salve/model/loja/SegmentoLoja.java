@@ -23,4 +23,6 @@ public class SegmentoLoja  {
 
     @Column(nullable = false, length = 45, unique = true)
     private String nome;
+    @Column(nullable = true, length = 12)
+    private String emoji;
 }

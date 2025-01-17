@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pp1.salve.model.usuario.Usuario;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -41,11 +42,11 @@ public abstract class AuditEntity extends BusinessEntity {
    @JsonIgnore
    @CreatedBy
    @ManyToOne
-   private String criadoPor;
+   private Usuario criadoPor;
 
    @JsonIgnore
    @LastModifiedBy
    @ManyToOne
-   private String ultimaModificacaoPor;
+   private Usuario ultimaModificacaoPor;
 
 }

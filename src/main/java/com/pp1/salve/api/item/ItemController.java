@@ -54,12 +54,10 @@ public class ItemController {
         return service.save(item);
     }
 
-    @PutMapping(value = "/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Item update(@PathVariable Long id,@ModelAttribute @Valid ItemRequest item) throws Exception {
-        return service.editarItem(id,item);
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Item update(@PathVariable Long id, @ModelAttribute @Valid ItemRequest item) throws Exception {
+        return service.editarItem(id, item);
     }
-
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) throws Exception {

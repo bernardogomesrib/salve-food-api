@@ -3,11 +3,13 @@ package com.pp1.salve.api.segmento;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,10 +33,22 @@ public class SegmentoController {
     @Autowired
     private SegmentoLojaService service;
 
+    @GetMapping("usados")
+    public List<SegmentoLoja> getMethodName() {
+        return service.findAllUsed();
+    }
+    
+
+
     @PreAuthorize("hasRole('admin')")
     @PostMapping("mass")
     public SegmentoLojaSaveEmMassResponse postSegmentoEmMassa(@RequestBody List<String> entity) {
         return service.saveAll(entity);
+    }
+    @PreAuthorize("hasRole('admin')")
+    @PutMapping("mass")
+    public SegmentoLojaSaveEmMassResponse putSegmentoEmMassa(@RequestBody List<SegmentoLoja> entity) {
+        return service.updateAll(entity);
     }
     
     @PostMapping
@@ -50,7 +64,7 @@ public class SegmentoController {
         service.deleteById(id);
     }
     @GetMapping
-    public Iterable<SegmentoLoja> findAll(
+    public Page<SegmentoLoja> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,

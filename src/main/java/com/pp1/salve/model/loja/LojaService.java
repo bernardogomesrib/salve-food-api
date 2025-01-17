@@ -1,25 +1,44 @@
 package com.pp1.salve.model.loja;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pp1.salve.exceptions.UnauthorizedAccessException;
+import com.pp1.salve.kc.KeycloakService;
 import com.pp1.salve.minio.MinIOInterfacing;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LojaService {
+  private static final String LOJA = "loja";
+  private static final String LOJA_IMAGE = "lojaImage";
   private final MinIOInterfacing minIOInterfacing;
-  @Autowired
-  private LojaRepository repository;
 
-  @Autowired
-  private SegmentoLojaRepository segmentoLojaRepository;
+  private final LojaRepository repository;
+
+  private final SegmentoLojaRepository segmentoLojaRepository;
+
+  private final KeycloakService keycloakService;
+
+  public List<Loja> findMyLojas(Authentication authentication) throws Exception {
+    List<Loja> lojas = repository.findByCriadoPorId(authentication.getName());
+    for (Loja l : lojas) {
+      l = monta(l);
+    }
+    return lojas;
+  }
 
   public Page<Loja> findAll(Pageable pageable) throws Exception {
     Page<Loja> loja = repository.findAll(pageable);
@@ -41,22 +60,52 @@ public class LojaService {
     return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Loja não encontrada"));
   }
 
-  public Loja save(Loja loja, MultipartFile file) throws Exception {
+  public Loja save(Loja loja, MultipartFile file, Authentication authentication) throws Exception {
+
+    keycloakService.addRoleToUser(authentication.getName(), "dono_de_loja");
+
     SegmentoLoja segmentoLoja = segmentoLojaRepository.findById(loja.getSegmentoLoja().getId())
         .orElseThrow(() -> new EntityNotFoundException(
             "Segmento de Loja não encontrado com ID: " + loja.getSegmentoLoja().getId()));
     loja.setSegmentoLoja(segmentoLoja);
     Loja lojaSalva = repository.save(loja);
-    lojaSalva.setImage(minIOInterfacing.uploadFile(lojaSalva.getId() + "loja", "lojaImage", file));
+    lojaSalva.setImage(minIOInterfacing.uploadFile(lojaSalva.getId() + LOJA, LOJA_IMAGE, file));
     return repository.save(lojaSalva);
   }
 
-  public Loja update(Long id, Loja loja, MultipartFile file) throws Exception {
-    loja.setId(id);
-    if (file != null) {
-      loja.setImage(minIOInterfacing.uploadFile(loja.getId() + "loja", "lojaImage", file));
+  @Transactional(rollbackFor = Exception.class)
+  public Loja update(Long id, Loja loja, MultipartFile file, Authentication authentication) throws Exception {
+    Optional<Loja> lojaOptional = repository.findById(id);
+    if (lojaOptional.isEmpty()) {
+      throw new EntityNotFoundException("Loja não encontrada");
+    } else {
+      if (!lojaOptional.get().getCriadoPor().getId().equals(authentication.getName()))
+        throw new UnauthorizedAccessException("Você não tem autoridade de modificar esta loja.");
     }
-    return monta(repository.save(loja));
+    final long ids = loja.getSegmentoLoja().getId();
+    SegmentoLoja segmentoLoja = segmentoLojaRepository.findById(ids)
+        .orElseThrow(() -> new EntityNotFoundException(
+            "Segmento de Loja não encontrado com ID: " + ids));
+
+    Loja lojaLocal = lojaOptional.get();
+    lojaLocal.setBairro(loja.getBairro());
+    lojaLocal.setCidade(loja.getCidade());
+    lojaLocal.setDescricao(loja.getDescricao());
+    lojaLocal.setEstado(loja.getEstado());
+    lojaLocal.setLatitude(loja.getLatitude());
+    lojaLocal.setLongitude(loja.getLongitude());
+    lojaLocal.setNome(loja.getNome());
+    lojaLocal.setNumero(loja.getNumero());
+    lojaLocal.setRua(loja.getRua());
+    lojaLocal.setSegmentoLoja(segmentoLoja);
+
+    if (file != null) {
+      log.info("File is not null");
+      loja = repository.save(lojaLocal);
+      loja.setImage(minIOInterfacing.uploadFile(getUniqueName(lojaLocal.getId()), LOJA_IMAGE, file));
+      return loja;
+    }
+    return monta(repository.save(lojaLocal));
   }
 
   public void deleteById(Long id) {
@@ -64,12 +113,12 @@ public class LojaService {
   }
 
   public Loja monta(Loja loja) throws Exception {
-    loja.setImage(minIOInterfacing.getSingleUrl(loja.getId() + "loja", "lojaImage"));
+    loja.setImage(minIOInterfacing.getSingleUrl(getUniqueName(loja.getId()), LOJA_IMAGE));
     return loja;
   }
 
   public Loja monta(Loja loja, double lati, double longi) throws Exception {
-    loja.setImage(minIOInterfacing.getSingleUrl(loja.getId() + "loja", "lojaImage"));
+    loja.setImage(minIOInterfacing.getSingleUrl(getUniqueName(loja.getId()), LOJA_IMAGE));
     loja.setDeliveryTime(deliveryTimeCalculator(loja, lati, longi));
     return loja;
   }
@@ -79,10 +128,10 @@ public class LojaService {
     double lojaLongitude = loja.getLongitude();
 
     return calculateTravelTime(lojaLatitude, lojaLongitude, latitude, longitude);
-}
-  //TODO: encontrar onde no código do projeto inteiro que está invertido, tive que inverter latitude e longitude da loja para que funcionasse corretamente o calculo de distancia
-  // passei em 2 gpts diferentes e ambos só reclamaram do ponto em que eu inverti de propósito para que funcionasse
-  public static double calculateTravelTime(double storeLongitude , double storeLatitude, double userLatitude, double userLongitude) {
+  }
+
+  public static double calculateTravelTime(double storeLatitude, double storeLongitude, double userLatitude,
+      double userLongitude) {
     // Raio médio da Terra em quilômetros
     final double EARTH_RADIUS_KM = 6371.0;
 
@@ -104,6 +153,9 @@ public class LojaService {
 
     // Converter o tempo de viagem para minutos
     return travelTimeHours * 60;
-}
+  }
 
+  private String getUniqueName(Long id) {
+    return id + "" + LOJA;
+  }
 }

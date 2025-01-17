@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +19,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import com.pp1.salve.model.usuario.Usuario;
+
 import lombok.RequiredArgsConstructor;
 
 
@@ -26,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity(securedEnabled = true)
+@EnableJpaAuditing
 public class SecurityConfig {
 
     @Bean
@@ -59,7 +63,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuditorAware<String> auditorAware() {
+    public AuditorAware<Usuario> auditorAware() {
         return new ApplicationAuditAware();
     }
 
