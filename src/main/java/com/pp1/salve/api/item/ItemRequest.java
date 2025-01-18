@@ -18,6 +18,8 @@ import lombok.NoArgsConstructor;
 public class ItemRequest {
   @NotBlank
   private String nome;
+  @NotBlank
+  private String descricao;
   @NotNull
   private Double valor;
   @NotNull
@@ -33,6 +35,7 @@ public class ItemRequest {
         .nome(nome)
         .valor(valor)
         .alteravel(alteravel)
+        .descricao(descricao)
         .build();
   }
 }

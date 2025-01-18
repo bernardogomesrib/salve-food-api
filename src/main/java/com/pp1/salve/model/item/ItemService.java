@@ -70,6 +70,7 @@ public class ItemService {
         i.setAlteravel(itemRequest.getAlteravel());
         i.setLoja(lojaService.findById(itemRequest.getLojaId()));
         i.setCategoriaItem(categoriaItemService.findById(itemRequest.getCategoriaItemId()));
+        i.setDescricao(itemRequest.getDescricao());
         i = repository.save(i);
         if (itemRequest.getFile() != null) {
             i.setItemImage(minIOInterfacing.uploadFile(itemRequest.getLojaId() + "loja", i.getId().toString(),

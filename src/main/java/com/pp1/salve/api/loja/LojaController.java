@@ -57,6 +57,22 @@ public class LojaController {
     }
   }
 
+  @GetMapping("segmento/{id}")
+  public Page<Loja> getViaSegmento(@PathVariable long id,@RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(required = false) Double lat,
+      @RequestParam(required = false) Double longi) throws Exception {
+    Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+    if (lat != null && longi != null) {
+      return service.findAllSegmento(id,pageable, lat, longi);
+    } else {
+      return service.findAllSegmento(id,pageable);
+    }
+  }
+
+  
+
+
   @GetMapping("/{id}")
   public ResponseEntity<Loja> getById(@PathVariable Long id) {
     return ResponseEntity.ok(service.findById(id));

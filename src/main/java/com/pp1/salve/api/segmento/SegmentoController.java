@@ -38,8 +38,6 @@ public class SegmentoController {
         return service.findAllUsed();
     }
     
-
-
     @PreAuthorize("hasRole('admin')")
     @PostMapping("mass")
     public SegmentoLojaSaveEmMassResponse postSegmentoEmMassa(@RequestBody List<String> entity) {

@@ -1,6 +1,5 @@
 package com.pp1.salve.model.item;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pp1.salve.model.loja.Loja;
 
@@ -36,7 +35,8 @@ public class Item {
 
     @Column(nullable = false, length = 45)
     private String nome;
-
+    @Column(nullable = false, length = 500)
+    private String descricao;
     @Column(nullable = false)
     private Double valor;
 
