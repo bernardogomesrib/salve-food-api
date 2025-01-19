@@ -36,24 +36,34 @@ public class Endereco {
     @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false)
     private Usuario usuario;
+    @Column(nullable = true, length = 45)
+    private String apelido;
 
-    @Column(nullable = false, length = 45)
+    @Column(nullable = false, length = 255)
     private String rua;
 
-    @Column(nullable = false, length = 45)
+    @Column(nullable = false, length = 255)
     private String numero;
 
     @Column(length = 255)
     private String complemento;
 
-    @Column(nullable = false, length = 45)
+    @Column(nullable = false, length = 255)
     private String bairro;
 
-    @Column(nullable = false, length = 45)
+    @Column(nullable = false, length = 255)
     private String cidade;
 
-    @Column(nullable = false, length = 45)
+    @Column(nullable = false, length = 255)
     private String estado;
+
+    @Column(nullable = false)
+    private double latitude;
+
+    @Column(nullable = false)
+    private double longitude;
+    @Column(nullable = true, length = 10)
+    private String cep;
 
     public void setUsuario(String id) {
         this.usuario = Usuario.builder().id(id).build();

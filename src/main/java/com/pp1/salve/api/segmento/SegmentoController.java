@@ -34,7 +34,7 @@ public class SegmentoController {
     private SegmentoLojaService service;
 
     @GetMapping("usados")
-    public List<SegmentoLoja> getMethodName() {
+    public List<SegmentoLoja> getSegmentosUsados() {
         return service.findAllUsed();
     }
     
@@ -70,5 +70,9 @@ public class SegmentoController {
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return service.findAll(pageable);
+    }
+    @PutMapping("")
+    public SegmentoLoja putUpdateSegmentoLoja( @RequestBody SegmentoLoja entity) {
+        return service.update(entity);
     }
 }

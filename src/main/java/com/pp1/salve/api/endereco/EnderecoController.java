@@ -5,8 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +20,7 @@ import com.pp1.salve.model.endereco.Endereco;
 import com.pp1.salve.model.endereco.EnderecoService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 @RestController
 
@@ -43,16 +43,15 @@ public class EnderecoController {
     }
     @PreAuthorize("hasRole('usuario')")
     @PostMapping
-    public ResponseEntity<Endereco> create(@RequestBody EnderecoRequest endereco,@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<Endereco> create(@RequestBody EnderecoRequest endereco,Authentication authentication) {
         Endereco end = endereco.build();
-        end.setUsuario(jwt.getClaim("sub"));
+        end.setUsuario(authentication.getName());
         return ResponseEntity.ok(service.save(end));
     }
     @PreAuthorize("hasRole('usuario')")
-    @PutMapping("/{id}")
-    public ResponseEntity<Endereco> update(@PathVariable Long id, @RequestBody Endereco endereco) {
-        endereco.setId(id);
-        return ResponseEntity.ok(service.save(endereco));
+    @PutMapping()
+    public ResponseEntity<Endereco> update(@RequestBody Endereco endereco,Authentication authentication) {
+        return ResponseEntity.ok(service.update(endereco,authentication));
     }
     @PreAuthorize("hasRole('usuario')")
     @DeleteMapping("/{id}")
@@ -60,4 +59,10 @@ public class EnderecoController {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("mine")
+    public ResponseEntity<List<Endereco>> getEnderecosDoUsuario(Authentication authentication) {
+
+        return ResponseEntity.ok().body(service.findByUsuario(authentication));
+    }
+    
 }

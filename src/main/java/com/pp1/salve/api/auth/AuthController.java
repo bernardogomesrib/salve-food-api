@@ -1,10 +1,12 @@
 package com.pp1.salve.api.auth;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.oauth2.jwt.Jwt;
 import com.pp1.salve.kc.KeycloakService;
 import com.pp1.salve.kc.LoginResponse;
+import com.pp1.salve.model.endereco.EnderecoService;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -27,6 +30,8 @@ import jakarta.validation.Valid;
 public class AuthController {
     @Autowired
     private KeycloakService keycloakService;
+    @Autowired
+    private EnderecoService enderecoService;
 
     @PostMapping("create")
     public ResponseEntity<?> postMethodName(@RequestBody @Valid AccountCreationRequest entity) {
@@ -109,15 +114,18 @@ public class AuthController {
 
     @PreAuthorize("hasRole('usuario')")
     @GetMapping("introspect")
-    public ResponseEntity<Map<String, Object>> getUserInfo(@AuthenticationPrincipal Jwt jwt) {
-        Map<String, Object> claims = jwt.getClaims();
+    public ResponseEntity<Map<String, Object>> getUserInfo(@AuthenticationPrincipal Jwt jwt,Authentication authentication) {
+
+        Map<String, Object> claims = new HashMap<>(jwt.getClaims());
+        claims.put("enderecos", enderecoService.findByUsuario(authentication));
         return ResponseEntity.ok(claims);
     }
 
+
     @PreAuthorize("hasRole('usuario')")
     @PostMapping("logistaAddRole")
-    public ResponseEntity<?> postMethodName(@AuthenticationPrincipal Jwt jwt) {
-        Map<String, Object> usuario = getUserInfo(jwt).getBody();
+    public ResponseEntity<?> postCriaRoleDeLogistaNoUsuario(@AuthenticationPrincipal Jwt jwt,Authentication authentication) {
+        Map<String, Object> usuario = getUserInfo(jwt,authentication).getBody();
         return keycloakService.addRoleToUser(usuario.get("sub").toString(), "dono_de_loja");
     }
 
