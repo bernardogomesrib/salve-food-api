@@ -84,8 +84,9 @@ public class ExceptionHandlerController {
     @ExceptionHandler(HttpClientErrorException.BadRequest.class)
     public ResponseEntity<Map<String, Object>> handleBadRequest(HttpClientErrorException.BadRequest ex) {
         Map<String, Object> response = new HashMap<>();
-        Map<String, String> error = new HashMap<>();
-        error.put("message", ex.getMessage());
+        Map<String, Object> error = new HashMap<>();
+        error.put("message", ex.getStatusText());
+        error.put("description", ex.getResponseBodyAs(Map.class));
         if (ex.getCause() != null) {
             error.put("cause", ex.getCause().toString());
         }

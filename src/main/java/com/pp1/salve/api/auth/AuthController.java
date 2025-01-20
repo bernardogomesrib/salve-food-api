@@ -8,12 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.oauth2.jwt.Jwt;
+
 import com.pp1.salve.kc.KeycloakService;
 import com.pp1.salve.kc.LoginResponse;
 import com.pp1.salve.model.endereco.EnderecoService;
@@ -23,6 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -133,6 +136,12 @@ public class AuthController {
     @GetMapping("roles")
     public ResponseEntity<?> getAllRoles() {
         return keycloakService.listAllRoles();
+    }
+
+    @PreAuthorize("hasRole('usuario')")
+    @PutMapping()
+    public ResponseEntity<?> putEditarPerfil(@RequestBody EditProfileRequest entity, Authentication authentication) {
+        return keycloakService.editProfile(entity.getEmail(),entity.getFirstName(), entity.getLastName(), entity.getPhone(),authentication);
     }
 
 }

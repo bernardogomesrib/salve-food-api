@@ -12,14 +12,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException.BadRequest;
+import org.springframework.web.client.RestTemplate;
 
 import com.pp1.salve.exceptions.ResourceNotFoundException;
-
-import org.springframework.web.client.RestTemplate;
 
 import jakarta.transaction.Transactional;
 
@@ -133,6 +133,28 @@ public class KeycloakService {
                 HttpMethod.POST, entity, Object.class);
         return response;
     }
+
+
+    public ResponseEntity<?> editProfile(String email,String firstName, String lastName, String phone,Authentication authentication) {
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + getAdminAccessToken());
+        Map<String, Object> requestBody = new LinkedHashMap<>();
+        requestBody.put("firstName", firstName);
+        requestBody.put("lastName", lastName);
+        requestBody.put("email", email);
+        requestBody.put("attributes", Map.of("phone", List.of(phone)));
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+        RestTemplate restTemplate = new RestTemplate();
+        
+        ResponseEntity<?> response = restTemplate.exchange(realmLinkCriacao + "/" + authentication.getName(), HttpMethod.PUT, entity,
+                Object.class);
+        return response;
+    }
+
+
+
 
     public ResponseEntity<?> listAllRoles(){
         return ResponseEntity.status(200).body(KcAdmin.getRoles());
