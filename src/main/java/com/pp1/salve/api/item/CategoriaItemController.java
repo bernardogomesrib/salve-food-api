@@ -47,19 +47,19 @@ public class CategoriaItemController {
         
         return service.saveAll(entity);
     }
-    
+    @PreAuthorize("hasRole('admin')")
     @PostMapping
     public ResponseEntity<CategoriaItem> save(@RequestBody CategoriaItemRequest request) {
         CategoriaItem categoriaItem = service.save(request.build());
         return new ResponseEntity<CategoriaItem>(categoriaItem, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasRole('admin')")
     @PutMapping("/{id}")
     public ResponseEntity<CategoriaItem> update(@PathVariable Long id, @RequestBody CategoriaItem categoriaItem) {
         categoriaItem.setId(id);
         return ResponseEntity.ok(service.save(categoriaItem));
     }
-
+    @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.deleteById(id);

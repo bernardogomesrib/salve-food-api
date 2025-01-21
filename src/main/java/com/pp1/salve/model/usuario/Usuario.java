@@ -2,12 +2,9 @@ package com.pp1.salve.model.usuario;
 
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pp1.salve.model.loja.Loja;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,11 +23,9 @@ public class Usuario {
     private String firstName;
     private String lastName;
     private String email;
+    private String phone;
     private LocalDateTime lastSeenAt;
-    @JsonIgnore
-    @OneToOne
-    private Loja loja;
-
+  
     @Transient
     public boolean isOnline() {
         return lastSeenAt != null && lastSeenAt.isAfter(LocalDateTime.now().minusMinutes(LAST_ACTIVE_INTERVAL));

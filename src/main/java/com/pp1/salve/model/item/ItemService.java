@@ -12,7 +12,6 @@ import com.pp1.salve.api.item.ItemRequestSave;
 import com.pp1.salve.exceptions.ResourceNotFoundException;
 import com.pp1.salve.exceptions.UnauthorizedAccessException;
 import com.pp1.salve.minio.MinIOInterfacing;
-import com.pp1.salve.model.item.itemDoPedido.Item;
 import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.loja.LojaService;
 
@@ -39,6 +38,10 @@ public class ItemService {
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
 
         return monta(i);
+    }
+    @Transactional(readOnly = true)
+    public Item findOne(Long id){
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
     }
 
     @Transactional
@@ -117,8 +120,8 @@ public class ItemService {
         return items;
     }
     @Transactional(readOnly = true)
-    public List<Item> findByListId(List<Long> ids) {
-        return repository.findAllById(ids);
+    public boolean isSameStore(Long lojaId,List<Long> ids) {
+        return !repository.existsItemNotBelongingToLoja(lojaId,ids);
     }
 
 }

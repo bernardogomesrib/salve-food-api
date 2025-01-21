@@ -27,7 +27,11 @@ public class EnderecoService {
         return repository.save(endereco);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Long id,Authentication authentication) {
+        Endereco endereco = findById(id);
+        if(endereco.getUsuario().getId().equals(authentication.getName())) {
+            throw new UnauthorizedAccessException("Você não tem autoridade de deletar este endereço.");
+        }
         repository.delete(findById(id));
     }
     public List<Endereco> findByUsuario(Authentication authentication) {

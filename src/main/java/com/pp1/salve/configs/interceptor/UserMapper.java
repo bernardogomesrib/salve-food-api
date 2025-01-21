@@ -30,7 +30,7 @@ public class UserMapper {
             user.setLastName(token.get("family_name").toString());
         }
         user.setEmail(token.get("email").toString());
-
+        user.setPhone(token.get("phone").toString());
         user.setLastSeenAt(LocalDateTime.now());
         return user;
     }

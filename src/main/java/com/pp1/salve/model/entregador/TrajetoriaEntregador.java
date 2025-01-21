@@ -6,8 +6,6 @@ import com.pp1.salve.model.usuario.Usuario;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -42,11 +40,4 @@ public class TrajetoriaEntregador {
     @Column(columnDefinition = "json")
     private String trajetoria;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status;
-
-    public enum Status {
-        ATIVO, COMPLETO, CANCELADO;
-    }
 }

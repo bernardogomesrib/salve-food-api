@@ -55,8 +55,8 @@ public class EnderecoController {
     }
     @PreAuthorize("hasRole('usuario')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.deleteById(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id,Authentication authentication) {
+        service.deleteById(id,authentication);
         return ResponseEntity.noContent().build();
     }
     @GetMapping("mine")

@@ -2,7 +2,7 @@ package com.pp1.salve.api.item;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.pp1.salve.model.item.itemDoPedido.Item;
+import com.pp1.salve.model.item.Item;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

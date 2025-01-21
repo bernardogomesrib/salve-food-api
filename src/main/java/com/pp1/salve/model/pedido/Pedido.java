@@ -1,13 +1,12 @@
 package com.pp1.salve.model.pedido;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.pp1.salve.model.baseModel.AuditEntityUserVisible;
+import com.pp1.salve.model.baseModel.AuditEntityPedido;
 import com.pp1.salve.model.endereco.Endereco;
 import com.pp1.salve.model.entregador.TrajetoriaEntregador;
-import com.pp1.salve.model.item.itemDoPedido.ItemPedido;
+import com.pp1.salve.model.loja.Loja;
+import com.pp1.salve.model.pedido.itemDoPedido.ItemPedido;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,7 +30,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Pedido extends AuditEntityUserVisible {
+public class Pedido extends AuditEntityPedido{
 
 
     @ManyToOne(fetch = jakarta.persistence.FetchType.EAGER)
@@ -51,21 +50,16 @@ public class Pedido extends AuditEntityUserVisible {
     @Column(name = "forma_pagamento", nullable = false)
     private String formaPagamento;
 
-    @Column(name = "data_pedido", nullable = false)
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    private LocalDateTime dataPedido;
-    
-    @Column(name = "data_entrega", nullable = false)
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    private LocalDateTime dataEntrega;
-
     @OneToMany
     private List<ItemPedido> itens;
+
+    @ManyToOne
+    private Loja loja;
 
     @OneToOne
     private TrajetoriaEntregador trajetoriaEntregador;
 
     public enum Status {
-        PENDENTE, PREPARANDO, AGUARDANDO_ENTREGADOR, A_CAMINHO, FINALIZADO, CANCELADO;
+        PENDENTE, PREPARANDO, AGUARDANDO_ENTREGADOR, A_CAMINHO, ENTREGUE, CANCELADO;
     }
 }

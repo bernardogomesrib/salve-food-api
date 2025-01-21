@@ -41,7 +41,7 @@ services:
       - db
     networks:
       - juntatudo
-  o-temido:
+  keycloak:
     image: quay.io/keycloak/keycloak:26.0.7
     restart: always
     hostname: keycloak.quiz.local

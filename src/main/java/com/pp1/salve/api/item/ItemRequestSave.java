@@ -2,7 +2,7 @@ package com.pp1.salve.api.item;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.pp1.salve.model.item.itemDoPedido.Item;
+import com.pp1.salve.model.item.Item;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,11 +17,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ItemRequestSave {
   @NotBlank
+  @NotNull
+  private String descricao;
+  @NotBlank
   private String nome;
   @NotNull
   private Double valor;
-  @NotNull
-  private Boolean alteravel;
   @NotNull
   private Long lojaId;
   @NotNull
@@ -33,6 +34,7 @@ public class ItemRequestSave {
     return Item.builder()
         .nome(nome)
         .valor(valor)
+        .descricao(descricao)
         .build();
   }
 }

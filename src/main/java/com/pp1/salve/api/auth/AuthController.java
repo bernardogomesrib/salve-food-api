@@ -126,13 +126,6 @@ public class AuthController {
 
 
     @PreAuthorize("hasRole('usuario')")
-    @PostMapping("logistaAddRole")
-    public ResponseEntity<?> postCriaRoleDeLogistaNoUsuario(@AuthenticationPrincipal Jwt jwt,Authentication authentication) {
-        Map<String, Object> usuario = getUserInfo(jwt,authentication).getBody();
-        return keycloakService.addRoleToUser(usuario.get("sub").toString(), "dono_de_loja");
-    }
-
-    @PreAuthorize("hasRole('usuario')")
     @GetMapping("roles")
     public ResponseEntity<?> getAllRoles() {
         return keycloakService.listAllRoles();
