@@ -4,12 +4,16 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.pp1.salve.api.item.ItemRequest;
 import com.pp1.salve.api.item.ItemRequestSave;
 import com.pp1.salve.exceptions.ResourceNotFoundException;
+import com.pp1.salve.exceptions.UnauthorizedAccessException;
 import com.pp1.salve.minio.MinIOInterfacing;
+import com.pp1.salve.model.item.itemDoPedido.Item;
+import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.loja.LojaService;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -55,19 +59,26 @@ public class ItemService {
         return i;
     }
 
-    public void deleteById(Long id) throws Exception {
+    public void deleteById(Long id,Authentication authentication) throws Exception {
         Item i = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
+        if(i.getLoja().getCriadoPor().getId().equals(authentication.getName())){
+            throw new UnauthorizedAccessException("Você não tem permissão para deletar esse item");
+        }
         minIOInterfacing.deleteFile(i.getLoja().getId() + "loja", i.getId().toString());
         repository.delete(i);
     }
 
-    public Item editarItem(Long id, ItemRequest itemRequest) throws Exception {
+    public Item editarItem(Long id, ItemRequest itemRequest,Authentication authentication) throws Exception {
+        Loja loja = lojaService.findById(itemRequest.getLojaId());
+        if (!loja.getCriadoPor().getId().equals(authentication.getName())) {
+            throw new UnauthorizedAccessException("Você não tem permissão para editar esse item");
+        }
         Item i = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
         i.setNome(itemRequest.getNome());
         i.setValor(itemRequest.getValor());
-        i.setLoja(lojaService.findById(itemRequest.getLojaId()));
+        i.setLoja(loja);
         i.setCategoriaItem(categoriaItemService.findById(itemRequest.getCategoriaItemId()));
         i.setDescricao(itemRequest.getDescricao());
         i = repository.save(i);

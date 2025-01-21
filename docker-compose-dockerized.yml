@@ -42,7 +42,7 @@ services:
       - db
     networks:
       - juntatudo
-  o-temido:
+  keycloak:
     image: quay.io/keycloak/keycloak:26.0.7
     restart: always
     hostname: keycloak.quiz.local
@@ -81,20 +81,19 @@ services:
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: INFO
       LOGGING_LEVEL_COM_SALVEFOOD: DEBUG
       SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 10MB
-      PUBLIC_SERVER_URL: ${PUBLIC_SERVER_URL}
       LOCAL_IP: ${LOCAL_IP}
       MINIO_URL: http://${LOCAL_IP}:9001
       MINIO_ACCESS_KEY: 9AmF1hfTKjWvnXNQntBW
       MINIO_SECRET_KEY: LRou1qQPMGBvHavUg59WL21PYg38WGEdEmF1CSUP
-      KEYCLOAK_ISSUER_URI: http://o-temido:8080/realms/salve
-      KEYCLOAK_JWK_SET_URI: http://o-temido:8080/realms/salve/protocol/openid-connect/certs
-      KEYCLOAK_LOGOUT_URI: http://o-temido:8080/realms/salve/protocol/openid-connect/logout
-      KEYCLOAK_ROLES_URI: http://o-temido:8080/admin/realms/salve/roles
+      KEYCLOAK_ISSUER_URI: http://${LOCAL_IP}:8080/realms/salve
+      KEYCLOAK_JWK_SET_URI: http://${LOCAL_IP}:8080/realms/salve/protocol/openid-connect/certs
+      KEYCLOAK_LOGOUT_URI: http://${LOCAL_IP}:8080/realms/salve/protocol/openid-connect/logout
+      KEYCLOAK_ROLES_URI: http://${LOCAL_IP}:8080/admin/realms/salve/roles
       KEYCLOAK_ADMIN_USERNAME: adminsalve
       KEYCLOAK_ADMIN_PASSWORD: adminsalve
-      KEYCLOAK_REALM_URI: http://o-temido:8080/realms/master
-      KEYCLOAK_CREATE_USER_URI: http://o-temido:8080/admin/realms/salve/users
-      APPLICATION_URL: http://localhost:5173,http://localhost:3000,http://localhost:8080,${LOCAL_IP}:3000,${LOCAL_IP}:8080,${PUBLIC_SERVER_URL}:3000,${PUBLIC_SERVER_URL}:8080
+      KEYCLOAK_REALM_URI: http://${LOCAL_IP}:8080/realms/master
+      KEYCLOAK_CREATE_USER_URI: http://${LOCAL_IP}:8080/admin/realms/salve/users
+      APPLICATION_URL: http://${LOCAL_IP}:5173,http://${LOCAL_IP}:8080,http://${LOCAL_IP}:9080
     ports:
       - 8080:8080
     depends_on:

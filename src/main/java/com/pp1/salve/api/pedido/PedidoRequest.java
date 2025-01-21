@@ -4,7 +4,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pp1.salve.model.endereco.EnderecoService;
-import com.pp1.salve.model.item.ItemPedido;
+import com.pp1.salve.model.item.itemDoPedido.ItemPedido;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

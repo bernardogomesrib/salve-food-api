@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pp1.salve.model.baseModel.AuditEntityUserVisible;
 import com.pp1.salve.model.endereco.Endereco;
 import com.pp1.salve.model.entregador.TrajetoriaEntregador;
-import com.pp1.salve.model.item.ItemPedido;
+import com.pp1.salve.model.item.itemDoPedido.ItemPedido;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

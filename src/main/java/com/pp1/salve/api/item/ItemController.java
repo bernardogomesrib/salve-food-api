@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pp1.salve.model.item.Item;
 import com.pp1.salve.model.item.ItemService;
+import com.pp1.salve.model.item.itemDoPedido.Item;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -55,13 +56,13 @@ public class ItemController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Item update(@PathVariable Long id, @ModelAttribute @Valid ItemRequest item) throws Exception {
-        return service.editarItem(id, item);
+    public Item update(@PathVariable Long id, @ModelAttribute @Valid ItemRequest item,Authentication authentication) throws Exception {
+        return service.editarItem(id, item, authentication);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) throws Exception {
-        service.deleteById(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id,Authentication authentication) throws Exception {
+        service.deleteById(id,authentication);
         return ResponseEntity.noContent().build();
     }
 }
