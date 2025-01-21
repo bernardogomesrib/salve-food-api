@@ -33,7 +33,6 @@ public class ItemRequestSave {
     return Item.builder()
         .nome(nome)
         .valor(valor)
-        .alteravel(alteravel)
         .build();
   }
 }

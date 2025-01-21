@@ -19,21 +19,20 @@ import com.pp1.salve.exceptions.UnauthorizedAccessException;
 
 import jakarta.persistence.EntityNotFoundException;
 
-
 @RestControllerAdvice
 public class ExceptionHandlerController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, Object> response = new HashMap<>();
         List<Map<String, String>> errors = new ArrayList<>();
-        
+
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             Map<String, String> errorDetails = new HashMap<>();
             errorDetails.put("fieldName", ((FieldError) error).getField());
             errorDetails.put("defaultMessage", error.getDefaultMessage());
             errors.add(errorDetails);
         });
-        
+
         response.put("errors", errors);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -72,7 +71,8 @@ public class ExceptionHandlerController {
     }
 
     @ExceptionHandler(org.springframework.security.authorization.AuthorizationDeniedException.class)
-    public ResponseEntity<Map<String, Object>> handleAuthorizationDeniedException(org.springframework.security.authorization.AuthorizationDeniedException ex) {
+    public ResponseEntity<Map<String, Object>> handleAuthorizationDeniedException(
+            org.springframework.security.authorization.AuthorizationDeniedException ex) {
         Map<String, Object> response = new HashMap<>();
         Map<String, String> error = new HashMap<>();
         error.put("message", "Access Denied");
@@ -120,5 +120,21 @@ public class ExceptionHandlerController {
         error.put("details", ex.getMessage());
         response.put("error", error);
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(org.springframework.web.client.HttpClientErrorException.Unauthorized.class)
+    public ResponseEntity<Map<String, Object>> handleUnauthorizedModificationException(
+            org.springframework.web.client.HttpClientErrorException.Unauthorized ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        error.put("details", ex.getCause());
+        error.put("body", ex.getStatusText());
+        error.put("status", ex.getStatusCode());
+        error.put("response", ex.getResponseBodyAsString());
+        error.put("cause", ex.getCause());
+
+        response.put("error", error);
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 }

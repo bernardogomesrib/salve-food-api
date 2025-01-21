@@ -1,13 +1,20 @@
 package com.pp1.salve.model.pedido;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-@Service
-public class PedidoService {
+import com.pp1.salve.api.pedido.PedidoRequest;
+import com.pp1.salve.model.endereco.EnderecoService;
 
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class PedidoService {
+    private final EnderecoService enderecoSerice;
     @Autowired
     private PedidoRepository repository;
 
@@ -19,8 +26,17 @@ public class PedidoService {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
     }
 
-    public Pedido save(Pedido pedido) {
-        return repository.save(pedido);
+    public Pedido save(PedidoRequest pedido) {
+        
+        
+        Pedido p = Pedido.builder()
+            .enderecoEntrega(enderecoSerice.findById(pedido.getEnderecoEntregaId()))
+            .valorTotal(pedido.getValorTotal())
+            .taxaEntrega(pedido.getTaxaEntrega())
+            .itens(pedido.getItens())
+            .build();
+
+        return repository.save(p);
     }
 
     public void deleteById(Long id) {

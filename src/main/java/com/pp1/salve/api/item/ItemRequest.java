@@ -34,7 +34,6 @@ public class ItemRequest {
     return Item.builder()
         .nome(nome)
         .valor(valor)
-        .alteravel(alteravel)
         .descricao(descricao)
         .build();
   }

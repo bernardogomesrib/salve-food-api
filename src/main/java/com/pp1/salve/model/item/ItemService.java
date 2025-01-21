@@ -67,7 +67,6 @@ public class ItemService {
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
         i.setNome(itemRequest.getNome());
         i.setValor(itemRequest.getValor());
-        i.setAlteravel(itemRequest.getAlteravel());
         i.setLoja(lojaService.findById(itemRequest.getLojaId()));
         i.setCategoriaItem(categoriaItemService.findById(itemRequest.getCategoriaItemId()));
         i.setDescricao(itemRequest.getDescricao());
@@ -105,6 +104,10 @@ public class ItemService {
             item = monta(item);
         }
         return items;
+    }
+    @Transactional(readOnly = true)
+    public List<Item> findByListId(List<Long> ids) {
+        return repository.findAllById(ids);
     }
 
 }

@@ -44,14 +44,14 @@ public class PedidosController {
     }
 
     @PostMapping
-    public ResponseEntity<Pedido> create(@RequestBody Pedido pedido) {
+    public ResponseEntity<Pedido> create(@RequestBody PedidoRequest pedido) {
         return ResponseEntity.ok(service.save(pedido));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Pedido> update(@PathVariable Long id, @RequestBody Pedido pedido) {
+    public ResponseEntity<RuntimeException> update(@PathVariable Long id, @RequestBody Pedido pedido) {
         pedido.setId(id);
-        return ResponseEntity.ok(service.save(pedido));
+        return ResponseEntity.ok(new RuntimeException("Not implemented"));
     }
 
     @DeleteMapping("/{id}")

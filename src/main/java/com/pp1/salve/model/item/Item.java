@@ -39,9 +39,7 @@ public class Item {
     private String descricao;
     @Column(nullable = false)
     private Double valor;
-
-    @Column(nullable = false)
-    private Boolean alteravel;
+    
     @JsonIgnore
     @ManyToOne
     @JoinColumn(nullable = false)
