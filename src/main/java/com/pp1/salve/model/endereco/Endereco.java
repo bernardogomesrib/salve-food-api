@@ -1,5 +1,7 @@
 package com.pp1.salve.model.endereco;
 
+import org.hibernate.annotations.SQLRestriction;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pp1.salve.model.usuario.Usuario;
 
@@ -24,6 +26,7 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
+@SQLRestriction("ativo = true")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Endereco {
@@ -64,6 +67,10 @@ public class Endereco {
     private double longitude;
     @Column(nullable = true, length = 10)
     private String cep;
+    
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean ativo = true;
 
     public void setUsuario(String id) {
         this.usuario = Usuario.builder().id(id).build();

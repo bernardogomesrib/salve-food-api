@@ -29,10 +29,16 @@ public class EnderecoService {
 
     public void deleteById(Long id,Authentication authentication) {
         Endereco endereco = findById(id);
-        if(endereco.getUsuario().getId().equals(authentication.getName())) {
+        if(!endereco.getUsuario().getId().equals(authentication.getName())) {
             throw new UnauthorizedAccessException("Você não tem autoridade de deletar este endereço.");
         }
-        repository.delete(findById(id));
+        endereco.setAtivo(false);
+        repository.save(endereco);
+        try {
+            repository.deleteById(id);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            return;
+        }
     }
     public List<Endereco> findByUsuario(Authentication authentication) {
         return repository.findByUsuarioId(authentication.getName());

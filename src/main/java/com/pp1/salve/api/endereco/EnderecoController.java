@@ -57,7 +57,7 @@ public class EnderecoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id,Authentication authentication) {
         service.deleteById(id,authentication);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
     @GetMapping("mine")
     public ResponseEntity<List<Endereco>> getEnderecosDoUsuario(Authentication authentication) {
