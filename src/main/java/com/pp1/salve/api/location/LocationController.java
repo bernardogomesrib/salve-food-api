@@ -30,8 +30,8 @@ public class LocationController {
             @RequestParam(required = false, defaultValue = "") String numero,
             @RequestParam(required = false, defaultValue = "") String bairro,
             @RequestParam(required = false, defaultValue = "") String cidade,
-            @RequestParam(required = false, defaultValue = "") String estado,
-            @RequestParam(required = false, defaultValue = "") String cep) {
+            @RequestParam(required = false, defaultValue = "") String estado
+            ) {
 
         StringBuilder enderecoBuilder = new StringBuilder();
         if (!rua.isEmpty())
@@ -43,9 +43,7 @@ public class LocationController {
         if (!cidade.isEmpty())
             enderecoBuilder.append(cidade).append(", ");
         if (!estado.isEmpty())
-            enderecoBuilder.append(estado).append(", ");
-        if (!cep.isEmpty())
-            enderecoBuilder.append(cep);
+            enderecoBuilder.append(estado);
 
         String enderecoFormatado = enderecoBuilder.toString().trim();
         if (enderecoFormatado.endsWith(",")) {

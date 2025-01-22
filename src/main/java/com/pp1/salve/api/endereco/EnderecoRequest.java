@@ -38,12 +38,8 @@ public class EnderecoRequest {
     @NotBlank
     @Size(max = 255, min = 2)
     private String estado;
-    @NotNull
-    private double latitude;
-    @NotNull
-    private double longitude;
-    @NotNull
-    @Size(min= 8,max = 10)
+  
+    @Size(min = 8,max = 10)
     private String cep;
     @Size(min = 2,max = 45)
     private String apelido;
@@ -55,10 +51,8 @@ public class EnderecoRequest {
             .complemento(complemento)
             .bairro(bairro)
             .cidade(cidade)
-            .estado(estado)
-            .latitude(latitude)
-            .longitude(longitude)
             .cep(cep)
+            .estado(estado)
             .apelido(apelido)
             .build();
     }
