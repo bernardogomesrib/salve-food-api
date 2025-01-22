@@ -56,17 +56,16 @@ public class LojaService {
     return loja;
   }
 
-
-  public Page<Loja> findAllSegmento(Long id,Pageable pageable) throws Exception {
-    Page<Loja> loja = repository.findBySegmentoLojaId(id,pageable);
+  public Page<Loja> findAllSegmento(Long id, Pageable pageable) throws Exception {
+    Page<Loja> loja = repository.findBySegmentoLojaId(id, pageable);
     for (Loja l : loja) {
       l = monta(l);
     }
     return loja;
   }
 
-  public Page<Loja> findAllSegmento(Long id,Pageable pageable, double lat, double longi) throws Exception {
-    Page<Loja> loja = repository.findBySegmentoLojaId(id,pageable, lat, longi);
+  public Page<Loja> findAllSegmento(Long id, Pageable pageable, double lat, double longi) throws Exception {
+    Page<Loja> loja = repository.findBySegmentoLojaId(id, pageable, lat, longi);
     for (Loja l : loja) {
       l = monta(l, lat, longi);
     }
@@ -79,15 +78,19 @@ public class LojaService {
 
   public Loja save(Loja loja, MultipartFile file, Authentication authentication) throws Exception {
 
-    keycloakService.addRoleToUser(authentication.getName(), "dono_de_loja");
+    if (this.findMyLojas(authentication).size() == 0) {
+      keycloakService.addRoleToUser(authentication.getName(), "dono_de_loja");
 
-    SegmentoLoja segmentoLoja = segmentoLojaRepository.findById(loja.getSegmentoLoja().getId())
-        .orElseThrow(() -> new EntityNotFoundException(
-            "Segmento de Loja não encontrado com ID: " + loja.getSegmentoLoja().getId()));
-    loja.setSegmentoLoja(segmentoLoja);
-    Loja lojaSalva = repository.save(loja);
-    lojaSalva.setImage(minIOInterfacing.uploadFile(lojaSalva.getId() + LOJA, LOJA_IMAGE, file));
-    return repository.save(lojaSalva);
+      SegmentoLoja segmentoLoja = segmentoLojaRepository.findById(loja.getSegmentoLoja().getId())
+          .orElseThrow(() -> new EntityNotFoundException(
+              "Segmento de Loja não encontrado com ID: " + loja.getSegmentoLoja().getId()));
+      loja.setSegmentoLoja(segmentoLoja);
+      Loja lojaSalva = repository.save(loja);
+      lojaSalva.setImage(minIOInterfacing.uploadFile(lojaSalva.getId() + LOJA, LOJA_IMAGE, file));
+      return repository.save(lojaSalva);
+    } else {
+      throw new UnauthorizedAccessException("Você já possui uma loja cadastrada.");
+    }
   }
 
   @Transactional(rollbackFor = Exception.class)
