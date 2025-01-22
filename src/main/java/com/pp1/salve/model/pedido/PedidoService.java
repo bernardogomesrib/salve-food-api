@@ -33,10 +33,32 @@ public class PedidoService {
     private final ItemPedidoRepository itemPedidoRepository;
 
     @Transactional(readOnly = true)
-    public List<Pedido> getMeusPedidos(Authentication authentication) {
-        return repository.findByCriadoPorId(authentication.getName());
+    public Page<Pedido> getMeusPedidos(Authentication authentication,Pageable pageable) throws Exception {
+        Page<Pedido> pedido = repository.findByCriadoPorId(authentication.getName(),pageable);
+      
+        /*   isso serve para por as imagens dos itens no pedido mas no front não ta usando, pelo menos no front mobile
+        for (Pedido p : pedido) {
+            for (ItemPedido i : p.getItens()) {
+                i.setItem(itemService.monta(i.getItem()));
+            }
+        } */
+        return pedido;
     }
 
+    @Transactional(readOnly = true)
+    public Page<Pedido> getPedidosDaMinhaLoja(Authentication authentication,Pageable pageable) throws Exception {
+        Loja loja = lojaService.findMyLoja(authentication);
+        if (loja != null) {
+            Page<Pedido> pedido = repository.findByLoja(loja,pageable);
+            for (Pedido p : pedido) {
+                for (ItemPedido i : p.getItens()) {
+                    i.setItem(itemService.monta(i.getItem()));
+                }
+            }
+            return pedido;
+        }
+        throw new EntityNotFoundException("Loja não encontrada ao procurar pedidos, você tem uma loja mesmo?");
+    }
     public Page<Pedido> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
