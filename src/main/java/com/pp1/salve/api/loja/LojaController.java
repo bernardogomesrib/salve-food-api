@@ -3,15 +3,11 @@ package com.pp1.salve.api.loja;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,22 +22,25 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
+import com.pp1.salve.api.location.LocationController;
 import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.loja.LojaService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/loja")
 @CrossOrigin
 @Tag(name = "Loja", description = "pontos de interação com um Loja")
+@RequiredArgsConstructor
 public class LojaController {
 
-  @Autowired
-  private LojaService service;
+  private final LocationController locationController;
+
+  private final LojaService service;
 
   @Value("${api.url}")
   private String apiBaseUrl;
@@ -85,34 +84,15 @@ public class LojaController {
   @PostMapping(consumes = "multipart/form-data")
   public ResponseEntity<Loja> create(@ModelAttribute @Valid LojaRequest loja, Authentication authentication)
       throws Exception {
-    RestTemplate restTemplate = new RestTemplate();
 
-    String token = ((org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken) authentication)
-        .getToken()
-        .getTokenValue();
+    Map<String, Object> cordinates = (Map<String, Object>) locationController.getCoordinates(loja.getRua(), loja.getNumero(), loja.getBairro(), loja.getCidade(), loja.getEstado()).getBody();
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.setBearerAuth(token);
-    HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-    String url = String.format(
-        "%s/api/location?rua=%s&numero=%s&bairro=%s&cidade=%s&estado=%s",
-        apiBaseUrl,
-        loja.getRua(),
-        loja.getNumero(),
-        loja.getBairro(),
-        loja.getCidade(),
-        loja.getEstado());
-
-    ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-    Map<String, Object> responseBody = response.getBody();
-
-    if (responseBody == null || !responseBody.containsKey("latitude") || !responseBody.containsKey("longitude")) {
+    if (cordinates == null || !cordinates.containsKey("latitude") || !cordinates.containsKey("longitude")) {
       throw new RuntimeException("Coordenadas não retornadas pelo serviço de localização");
     }
 
-    Double latitude = (Double) responseBody.get("latitude");
-    Double longitude = (Double) responseBody.get("longitude");
+    Double latitude = (Double) cordinates.get("latitude");
+    Double longitude = (Double) cordinates.get("longitude");
 
     Loja lojaEntity = loja.build();
     lojaEntity.setLatitude(latitude);

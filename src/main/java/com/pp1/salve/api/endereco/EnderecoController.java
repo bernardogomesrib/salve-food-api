@@ -51,9 +51,8 @@ public class EnderecoController {
     @PreAuthorize("hasRole('usuario')")
     @PostMapping
     public ResponseEntity<Endereco> create(@RequestBody @Valid EnderecoRequest endereco, Authentication authentication) {
-        // Obter coordenadas antes de salvar
     
-        Map<String, Double> coordinates = (Map<String, Double>) locationController.getCoordinates(endereco.getRua(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade(), endereco.getEstado(), endereco.getCep()).getBody();
+        Map<String, Double> coordinates = (Map<String, Double>) locationController.getCoordinates(endereco.getRua(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade(), endereco.getEstado()).getBody();
 
         Endereco end = endereco.build();
         end.setLatitude(coordinates.get("latitude"));
