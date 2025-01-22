@@ -32,11 +32,7 @@ public class LojaRequest {
   private String estado;
   @NotNull
   private Long segmentoLojaId;
-  @NotNull
-  private double longitude;
-  @NotNull
-  private double latitude;
-  
+
   private MultipartFile file;
 
   public Loja build() {
@@ -48,8 +44,6 @@ public class LojaRequest {
         .cidade(cidade)
         .estado(estado)
         .segmentoLoja(SegmentoLoja.builder().id(segmentoLojaId).build())
-        .longitude(longitude)
-        .latitude(latitude)
         .descricao(descricao)
         .build();
   }
