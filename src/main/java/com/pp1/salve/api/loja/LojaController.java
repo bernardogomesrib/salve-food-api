@@ -43,7 +43,7 @@ public class LojaController {
   @Autowired
   private LojaService service;
 
-  @Value("${application.url}")
+  @Value("${api.url}")
   private String apiBaseUrl;
 
   @GetMapping("minha")
@@ -96,7 +96,7 @@ public class LojaController {
     HttpEntity<Void> entity = new HttpEntity<>(headers);
 
     String url = String.format(
-        "%s?rua=%s&numero=%s&bairro=%s&cidade=%s&estado=%s",
+        "%s/api/location?rua=%s&numero=%s&bairro=%s&cidade=%s&estado=%s",
         apiBaseUrl,
         loja.getRua(),
         loja.getNumero(),

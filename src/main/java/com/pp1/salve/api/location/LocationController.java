@@ -24,7 +24,7 @@ public class LocationController {
     @Value("${google.maps.api.key}")
     private String apiKey;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<?> getCoordinates(
             @RequestParam(required = false, defaultValue = "") String rua,
             @RequestParam(required = false, defaultValue = "") String numero,
