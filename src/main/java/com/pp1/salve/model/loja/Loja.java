@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.pp1.salve.model.baseModel.AuditEntity;
+import com.pp1.salve.model.entregador.Entregador;
 import com.pp1.salve.model.reviewRestaurante.ReviewRestaurante;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -72,6 +74,10 @@ public class Loja extends AuditEntity {
     @JsonManagedReference
     private List<ReviewRestaurante> reviews;
 
+    @OneToMany(mappedBy = "loja", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Entregador> entregadores;
+
     @Transient
     private Double rating;
     @Transient
@@ -89,6 +95,5 @@ public class Loja extends AuditEntity {
             return null;
         }
     }
-
 
 }
