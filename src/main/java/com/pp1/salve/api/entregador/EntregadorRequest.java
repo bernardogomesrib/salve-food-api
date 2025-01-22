@@ -49,6 +49,7 @@ public class EntregadorRequest {
                             .firstName(this.firstName)
                             .lastName(this.lastName)
                             .email(this.email)
+                            .phone(this.phoneNumber)
                             .build()
                 )
                 .build();

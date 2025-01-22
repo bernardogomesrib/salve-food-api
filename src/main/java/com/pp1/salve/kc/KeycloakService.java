@@ -115,7 +115,7 @@ public class KeycloakService {
         headers.set("Authorization", "Bearer " + getAdminAccessToken());
         Role role = getRoleByName(roleName);
         if(role == null){
-            throw new ResourceNotFoundException("Role de nome"+roleName+" não encontrada");
+            throw new ResourceNotFoundException("Role de nome "+roleName+" não encontrada");
         }
         Map<String, Object> roleRepresentation = new LinkedHashMap<>();
 
