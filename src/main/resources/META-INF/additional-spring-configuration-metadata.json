@@ -53,5 +53,10 @@
     "name": "keycloak.admin.role-uri",
     "type": "java.lang.String",
     "description": "A description for 'keycloak.admin.role-uri'"
+  },
+  {
+    "name": "google.maps.api.key",
+    "type": "java.lang.String",
+    "description": "A description for 'google.maps.api.key'"
   }
 ]}
