@@ -41,7 +41,7 @@ public class EnderecoService {
         }
     }
     public List<Endereco> findByUsuario(Authentication authentication) {
-        return repository.findByUsuarioId(authentication.getName());
+        return repository.findByUsuarioIdAndAtivoTrue(authentication.getName());
     }
     public Endereco update(Endereco endereco,Authentication authentication) {
         Endereco enderecoParaAtualizar = findById(endereco.getId());

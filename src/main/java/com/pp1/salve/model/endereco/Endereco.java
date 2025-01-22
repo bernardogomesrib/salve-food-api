@@ -1,6 +1,5 @@
 package com.pp1.salve.model.endereco;
 
-import org.hibernate.annotations.SQLRestriction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pp1.salve.model.usuario.Usuario;
@@ -26,7 +25,6 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-@SQLRestriction("ativo = true")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Endereco {

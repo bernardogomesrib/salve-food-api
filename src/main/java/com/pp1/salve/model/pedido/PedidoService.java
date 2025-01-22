@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.pp1.salve.api.pedido.PedidoRequest;
 import com.pp1.salve.exceptions.PedidoException;
-import com.pp1.salve.model.endereco.EnderecoService;
+import com.pp1.salve.model.endereco.EnderecoRepository;
 import com.pp1.salve.model.item.Item;
 import com.pp1.salve.model.item.ItemPedidoRepository;
 import com.pp1.salve.model.item.ItemService;
@@ -20,13 +20,14 @@ import com.pp1.salve.model.loja.LojaService;
 import com.pp1.salve.model.pedido.Pedido.Status;
 import com.pp1.salve.model.pedido.itemDoPedido.ItemPedido;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class PedidoService {
     private final PedidoRepository repository;
-    private final EnderecoService enderecoSerice;
+    private final EnderecoRepository enderecoSerice;
     private final LojaService lojaService;
     private final ItemService itemService;
     private final ItemPedidoRepository itemPedidoRepository;
@@ -41,7 +42,7 @@ public class PedidoService {
     }
 
     public Pedido findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pedido não encontrado"));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -58,7 +59,7 @@ public class PedidoService {
         //TODO: Implementar formas de pagamento e notificar loja
 
         Pedido ped = Pedido.builder()
-                .enderecoEntrega(enderecoSerice.findById(pedido.getEnderecoEntregaId()))
+                .enderecoEntrega(enderecoSerice.findById(pedido.getEnderecoEntregaId()).orElseThrow(() -> new EntityNotFoundException("Endereço não encontrado")))
                 .valorTotal(valorTotal)
                 .taxaEntrega(pedido.getTaxaEntrega())
                 .formaPagamento("AINDA NÃO IMPLEMENTADO")
