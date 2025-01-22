@@ -3,7 +3,6 @@ package com.pp1.salve.api.endereco;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -16,22 +15,25 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
+import com.pp1.salve.api.location.LocationController;
 import com.pp1.salve.model.endereco.Endereco;
 import com.pp1.salve.model.endereco.EnderecoService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 
 @RequestMapping("/api/endereco")
 @Tag(name = "Endereço", description = "pontos para interação com Endereço")
 @CrossOrigin
+@RequiredArgsConstructor
 public class EnderecoController {
-
-    @Autowired
-    private EnderecoService service;
+    private final LocationController locationController;
+    
+    private final EnderecoService service;
 
     @PreAuthorize("hasRole('usuario')")
     @GetMapping
@@ -45,22 +47,13 @@ public class EnderecoController {
         return ResponseEntity.ok(service.findById(id));
     }
 
+    @SuppressWarnings("unchecked")
     @PreAuthorize("hasRole('usuario')")
     @PostMapping
-    public ResponseEntity<Endereco> create(@RequestBody EnderecoRequest endereco, Authentication authentication) {
+    public ResponseEntity<Endereco> create(@RequestBody @Valid EnderecoRequest endereco, Authentication authentication) {
         // Obter coordenadas antes de salvar
-        RestTemplate restTemplate = new RestTemplate();
-        String url = String.format(
-                "http://localhost:8080/api/location/coordinates?rua=%s&numero=%s&bairro=%s&cidade=%s&estado=%s&cep=%s",
-                endereco.getRua(),
-                endereco.getNumero(),
-                endereco.getBairro(),
-                endereco.getCidade(),
-                endereco.getEstado(),
-                endereco.getCep());
-
-        ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
-        Map<String, Double> coordinates = response.getBody();
+    
+        Map<String, Double> coordinates = (Map<String, Double>) locationController.getCoordinates(endereco.getRua(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade(), endereco.getEstado(), endereco.getCep()).getBody();
 
         Endereco end = endereco.build();
         end.setLatitude(coordinates.get("latitude"));
