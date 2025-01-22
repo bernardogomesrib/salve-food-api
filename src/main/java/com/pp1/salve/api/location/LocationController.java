@@ -49,28 +49,27 @@ public class LocationController {
         if (enderecoFormatado.endsWith(",")) {
             enderecoFormatado = enderecoFormatado.substring(0, enderecoFormatado.length() - 1);
         }
-
         String url = String.format(
                 "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s",
                 enderecoFormatado.replace(" ", "+"),
                 apiKey);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
-
-        Map<String, Object> responseBody = response.getBody();
+        @SuppressWarnings({ "unchecked" })
+        Map<String, Object> responseBody = restTemplate.getForEntity(url, Map.class).getBody();
         if (responseBody == null || !responseBody.containsKey("results")) {
             return ResponseEntity.badRequest().body("Endereço inválido ou não encontrado");
         }
 
+        @SuppressWarnings("unchecked")
         List<Map<String, Object>> results = (List<Map<String, Object>>) responseBody.get("results");
         if (results.isEmpty()) {
             return ResponseEntity.badRequest().body("Nenhum resultado encontrado para o endereço fornecido");
         }
-
+        @SuppressWarnings("unchecked")
         Map<String, Object> geometry = (Map<String, Object>) results.get(0).get("geometry");
+        @SuppressWarnings("unchecked")
         Map<String, Double> location = (Map<String, Double>) geometry.get("location");
-
         Double latitude = location.get("lat");
         Double longitude = location.get("lng");
 

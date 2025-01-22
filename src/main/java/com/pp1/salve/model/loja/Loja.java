@@ -3,7 +3,7 @@ package com.pp1.salve.model.loja;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.pp1.salve.model.baseModel.AuditEntity;
+import com.pp1.salve.model.baseModel.AuditEntityLoja;
 import com.pp1.salve.model.entregador.Entregador;
 import com.pp1.salve.model.reviewRestaurante.ReviewRestaurante;
 
@@ -31,7 +31,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Loja extends AuditEntity {
+public class Loja extends AuditEntityLoja {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

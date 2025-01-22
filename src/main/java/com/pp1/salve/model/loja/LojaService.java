@@ -1,6 +1,5 @@
 package com.pp1.salve.model.loja;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pp1.salve.exceptions.NoDuplicatedEntityException;
 import com.pp1.salve.exceptions.UnauthorizedAccessException;
 import com.pp1.salve.kc.KeycloakService;
 import com.pp1.salve.minio.MinIOInterfacing;
@@ -32,12 +32,10 @@ public class LojaService {
 
   private final KeycloakService keycloakService;
 
-  public List<Loja> findMyLojas(Authentication authentication) throws Exception {
-    List<Loja> lojas = repository.findByCriadoPorId(authentication.getName());
-    for (Loja l : lojas) {
-      l = monta(l);
-    }
-    return lojas;
+  public Loja findMyLoja(Authentication authentication) throws Exception {
+    Loja lojas = repository.findByCriadoPorId(authentication.getName());
+    if(lojas == null) throw new EntityNotFoundException("Loja não encontrada");
+    return monta(lojas);
   }
 
   public Page<Loja> findAll(Pageable pageable) throws Exception {
@@ -78,7 +76,7 @@ public class LojaService {
 
   public Loja save(Loja loja, MultipartFile file, Authentication authentication) throws Exception {
 
-    if (this.findMyLojas(authentication).size() == 0) {
+    if (this.findMyLoja(authentication)==null) {
       keycloakService.addRoleToUser(authentication.getName(), "dono_de_loja");
 
       SegmentoLoja segmentoLoja = segmentoLojaRepository.findById(loja.getSegmentoLoja().getId())
@@ -89,7 +87,7 @@ public class LojaService {
       lojaSalva.setImage(minIOInterfacing.uploadFile(lojaSalva.getId() + LOJA, LOJA_IMAGE, file));
       return repository.save(lojaSalva);
     } else {
-      throw new UnauthorizedAccessException("Você já possui uma loja cadastrada.");
+      throw new NoDuplicatedEntityException("Você já possui uma loja cadastrada.");
     }
   }
 

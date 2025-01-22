@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.pp1.salve.api.pedido.PedidoRequest;
@@ -19,7 +20,6 @@ import com.pp1.salve.model.loja.LojaService;
 import com.pp1.salve.model.pedido.Pedido.Status;
 import com.pp1.salve.model.pedido.itemDoPedido.ItemPedido;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -31,6 +31,11 @@ public class PedidoService {
     private final ItemService itemService;
     private final ItemPedidoRepository itemPedidoRepository;
 
+    @Transactional(readOnly = true)
+    public List<Pedido> getMeusPedidos(Authentication authentication) {
+        return repository.findByCriadoPorId(authentication.getName());
+    }
+
     public Page<Pedido> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
@@ -39,7 +44,7 @@ public class PedidoService {
         return repository.findById(id).orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Pedido save(PedidoRequest pedido) {
         Loja loja = lojaService.findById(pedido.getLojaId());
         double valorTotal = 0;
@@ -50,6 +55,7 @@ public class PedidoService {
         if (!itemService.isSameStore(loja.getId(), itemIds)) {
             throw new PedidoException("Pedido com itens de lojas diferentes, por favor, faça pedidos separados");
         }
+        //TODO: Implementar formas de pagamento e notificar loja
 
         Pedido ped = Pedido.builder()
                 .enderecoEntrega(enderecoSerice.findById(pedido.getEnderecoEntregaId()))
@@ -73,8 +79,9 @@ public class PedidoService {
         return repository.save(ped);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Pedido updateStatus(Long id, Status status, Authentication authentication) {
-
+        //TODO: implementar notificação para cliente e loja
         Pedido pedido = findById(id);
         pedido.setStatus(status);
         if (pedido.getLoja().getCriadoPor().getId().equals(authentication.getName())
@@ -84,8 +91,9 @@ public class PedidoService {
             throw new PedidoException("Pedido você não pode alterar este pedido");
         }
     }
-
+    @Transactional(rollbackFor = Exception.class)
     public Pedido updateStatus(Long id, String senha, Authentication authentication) {
+        //TODO: implementar notificação para entregador, loja e cliente
         Pedido pedido = findById(id);
         if (pedido.getTrajetoriaEntregador().getEntregador().getId().equals(authentication.getName())
                 && pedido.getCriadoPor().getPhone().contains(senha)) {
@@ -95,7 +103,7 @@ public class PedidoService {
             throw new PedidoException("Pedido você não pode alterar este pedido");
         }
     }
-
+    @Transactional(rollbackFor = Exception.class)
     public void deleteById(Long id) {
         repository.deleteById(id);
     }

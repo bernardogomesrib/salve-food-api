@@ -1,6 +1,5 @@
 package com.pp1.salve.api.loja;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -46,8 +45,8 @@ public class LojaController {
   private String apiBaseUrl;
 
   @GetMapping("minha")
-  public ResponseEntity<List<Loja>> getMinhaLoja(Authentication authentication) throws Exception {
-    return ResponseEntity.ok(service.findMyLojas(authentication));
+  public ResponseEntity<Loja> getMinhaLoja(Authentication authentication) throws Exception {
+    return ResponseEntity.ok(service.findMyLoja(authentication));
   }
 
   @GetMapping
@@ -85,6 +84,7 @@ public class LojaController {
   public ResponseEntity<Loja> create(@ModelAttribute @Valid LojaRequest loja, Authentication authentication)
       throws Exception {
 
+    @SuppressWarnings("unchecked")
     Map<String, Object> cordinates = (Map<String, Object>) locationController.getCoordinates(loja.getRua(), loja.getNumero(), loja.getBairro(), loja.getCidade(), loja.getEstado()).getBody();
 
     if (cordinates == null || !cordinates.containsKey("latitude") || !cordinates.containsKey("longitude")) {

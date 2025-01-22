@@ -79,4 +79,10 @@ public class PedidosController {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("meus")
+    public ResponseEntity<?> getMeusPedidos(Authentication authentication) {
+        return ResponseEntity.ok().body(service.getMeusPedidos(authentication));
+    }
+    
 }
