@@ -52,7 +52,7 @@ public class EntregadorController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-    
+
     @PreAuthorize("hasRole('dono_de_loja')")
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<Entregador> save(
@@ -69,13 +69,14 @@ public class EntregadorController {
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new RuntimeException("Falha ao criar usuário no Keycloak: " + response.getStatusCode());
         }
-
         if (response.getHeaders().getLocation() == null) {
-            throw new RuntimeException("Resposta do Keycloak não veio com Location no header.");
+            throw new RuntimeException("Resposta Keycloak sem Location (não foi possível obter userId).");
         }
 
         String locationHeader = response.getHeaders().getLocation().toString();
-        String keycloakUserId = locationHeader.substring(locationHeader.lastIndexOf("/") + 1);
+        String keycloakUserId = locationHeader.substring(locationHeader.lastIndexOf('/') + 1);
+
+        keycloakService.addRoleToUser(keycloakUserId, "entregador");
 
         Loja loja = lojaService.findById(request.getLojaId());
         if (loja == null) {
