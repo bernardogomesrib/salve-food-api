@@ -94,8 +94,8 @@ public class ItemService {
         return i;
     }
 
-    public List<Item> findByLojaId(Long id) throws Exception {
-        return monta(repository.findByLojaId(id));
+    public Page<Item> findByLojaId(Long id,Pageable pageable) throws Exception {
+        return monta(repository.findByLojaId(id,pageable));
     }
 
     @Transactional(readOnly = true)

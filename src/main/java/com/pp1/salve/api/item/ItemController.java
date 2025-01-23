@@ -1,6 +1,5 @@
 package com.pp1.salve.api.item;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,8 +45,9 @@ public class ItemController {
 
     @Operation(summary = "Busca items por id de loja")
     @GetMapping("/{id}")
-    public List<Item> getByLojaId(@PathVariable Long id) throws Exception {
-        return service.findByLojaId(id);
+    public Page<Item> getByLojaId(@PathVariable Long id,@RequestParam(defaultValue = "0") int page,
+    @RequestParam(defaultValue = "10" )int size) throws Exception {
+        return service.findByLojaId(id, PageRequest.of(page, size, Sort.by("id").descending()));
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
