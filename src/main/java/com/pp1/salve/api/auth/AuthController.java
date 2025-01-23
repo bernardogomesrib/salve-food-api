@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pp1.salve.kc.KeycloakService;
 import com.pp1.salve.kc.LoginResponse;
 import com.pp1.salve.model.endereco.EnderecoService;
+import com.pp1.salve.model.mail.MailService;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -26,26 +27,35 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
 
-
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Authentication", description = "Authentication points")
 public class AuthController {
-    @Autowired
-    private KeycloakService keycloakService;
-    @Autowired
-    private EnderecoService enderecoService;
+	@Autowired
+	private KeycloakService keycloakService;
+	@Autowired
+	private EnderecoService enderecoService;
+	@Autowired
+	private MailService mailService;
 
-    @PostMapping("create")
-    public ResponseEntity<?> postMethodName(@RequestBody @Valid AccountCreationRequest entity) {
-        return keycloakService.createAccount(entity.getFirstName(), entity.getLastName(), entity.getEmail(),
-                entity.getPassword(), entity.getPhoneNumber());
-    }
+	@PostMapping("create")
+	public ResponseEntity<?> postMethodName(@RequestBody @Valid AccountCreationRequest entity) {
+    	ResponseEntity<?> response = keycloakService.createAccount(entity.getFirstName(), entity.getLastName(),
+            	entity.getEmail(),
+            	entity.getPassword(), entity.getPhoneNumber());
 
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Login completado, cookies definidos"),
-        @ApiResponse(responseCode = "401", description = "Não autorizado")
-    })
+    	if (response.getStatusCode().is2xxSuccessful()) {
+        	mailService.sendWelcomeEmail(entity.getEmail(), entity.getFirstName());
+    	}
+
+    	return response;
+	}
+
+	@ApiResponses(value = {
+        	@ApiResponse(responseCode = "200", description = "Login completado, cookies definidos"),
+        	@ApiResponse(responseCode = "401", description = "Não autorizado")
+	})
+
     @PostMapping("login")
     public ResponseEntity<?> postLogin(@RequestBody @Valid AuthRequest loginRequest) {
         LoginResponse response = keycloakService.login(loginRequest.getUsername(), loginRequest.getPassword())
