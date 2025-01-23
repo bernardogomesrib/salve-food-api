@@ -65,7 +65,7 @@ public class ItemService {
     public void deleteById(Long id,Authentication authentication) throws Exception {
         Item i = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
-        if(i.getLoja().getCriadoPor().getId().equals(authentication.getName())){
+        if(!i.getLoja().getCriadoPor().getId().equals(authentication.getName())){
             throw new UnauthorizedAccessException("Você não tem permissão para deletar esse item");
         }
         minIOInterfacing.deleteFile(i.getLoja().getId() + "loja", i.getId().toString());
