@@ -33,7 +33,8 @@ public class LojaService {
 
   public Loja findMyLoja(Authentication authentication) throws Exception {
     Loja lojas = repository.findByCriadoPorId(authentication.getName());
-    if(lojas == null) throw new EntityNotFoundException("Loja não encontrada");
+    if (lojas == null)
+      throw new EntityNotFoundException("Loja não encontrada");
     return monta(lojas);
   }
 
@@ -74,21 +75,21 @@ public class LojaService {
   }
 
   public Loja save(Loja loja, MultipartFile file, Authentication authentication) throws Exception {
-    try {
-      this.findMyLoja(authentication);
+
+    Loja lojaDoUsuario = repository.findByCriadoPorId(authentication.getName());
+    if (lojaDoUsuario != null) {
       throw new UnauthorizedAccessException("Você já possui uma loja cadastrada.");
-    } catch (Exception e) {
-      keycloakService.addRoleToUser(authentication.getName(), "dono_de_loja");
-  
-      SegmentoLoja segmentoLoja = segmentoLojaRepository.findById(loja.getSegmentoLoja().getId())
-          .orElseThrow(() -> new EntityNotFoundException(
-              "Segmento de Loja não encontrado com ID: " + loja.getSegmentoLoja().getId()));
-      loja.setSegmentoLoja(segmentoLoja);
-      Loja lojaSalva = repository.save(loja);
-      lojaSalva.setImage(minIOInterfacing.uploadFile(lojaSalva.getId() + LOJA, LOJA_IMAGE, file));
-      return repository.save(lojaSalva);
     }
-    
+    keycloakService.addRoleToUser(authentication.getName(), "dono_de_loja");
+
+    SegmentoLoja segmentoLoja = segmentoLojaRepository.findById(loja.getSegmentoLoja().getId())
+        .orElseThrow(() -> new EntityNotFoundException(
+            "Segmento de Loja não encontrado com ID: " + loja.getSegmentoLoja().getId()));
+    loja.setSegmentoLoja(segmentoLoja);
+    Loja lojaSalva = repository.save(loja);
+    lojaSalva.setImage(minIOInterfacing.uploadFile(lojaSalva.getId() + LOJA, LOJA_IMAGE, file));
+    return repository.save(lojaSalva);
+
   }
 
   @Transactional(rollbackFor = Exception.class)
