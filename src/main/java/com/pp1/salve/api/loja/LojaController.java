@@ -21,14 +21,19 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.pp1.salve.api.location.LocationController;
+import com.pp1.salve.minio.MinIOInterfacing;
 import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.loja.LojaService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+
+
 
 @RestController
 @RequestMapping("/api/loja")
@@ -36,7 +41,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "Loja", description = "pontos de interação com um Loja")
 @RequiredArgsConstructor
 public class LojaController {
-
+  private final MinIOInterfacing minioService;
   private final LocationController locationController;
 
   private final LojaService service;
@@ -114,4 +119,22 @@ public class LojaController {
     service.deleteById(id);
     return ResponseEntity.noContent().build();
   }
+  @PreAuthorize("hasRole('dono_de_loja')")
+  @PostMapping(value = "som", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<ResponseSons> postPostaSonsDaLoja(@ModelAttribute @NotNull MultipartFile file, Authentication authentication) throws Exception {
+      
+      return ResponseEntity.ok().body(new ResponseSons(minioService.uploadFile(service.findMyLoja(authentication).getId()+"loja","toqueMusica", file)));
+  }
+  @PreAuthorize("hasRole('dono_de_loja')")
+  @GetMapping("som")
+  public ResponseEntity<ResponseSons> getPostaSonsDaLoja(Authentication authentication) throws Exception {
+      return ResponseEntity.ok().body(new ResponseSons(minioService.getSingleUrl(service.findMyLoja(authentication).getId()+"loja","toqueMusica")));
+  }
+  @PreAuthorize("hasRole('dono_de_loja')")
+  @PutMapping(value = "som", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<ResponseSons> putSom(@ModelAttribute @NotNull MultipartFile file, Authentication authentication) throws Exception {
+      return postPostaSonsDaLoja(file, authentication);
+  }
+  
+
 }
