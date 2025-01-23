@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.pp1.salve.exceptions.NoDuplicatedEntityException;
 import com.pp1.salve.exceptions.UnauthorizedAccessException;
 import com.pp1.salve.kc.KeycloakService;
 import com.pp1.salve.minio.MinIOInterfacing;
@@ -75,10 +74,12 @@ public class LojaService {
   }
 
   public Loja save(Loja loja, MultipartFile file, Authentication authentication) throws Exception {
-
-    if (this.findMyLoja(authentication)==null) {
+    try {
+      this.findMyLoja(authentication);
+      throw new UnauthorizedAccessException("Você já possui uma loja cadastrada.");
+    } catch (Exception e) {
       keycloakService.addRoleToUser(authentication.getName(), "dono_de_loja");
-
+  
       SegmentoLoja segmentoLoja = segmentoLojaRepository.findById(loja.getSegmentoLoja().getId())
           .orElseThrow(() -> new EntityNotFoundException(
               "Segmento de Loja não encontrado com ID: " + loja.getSegmentoLoja().getId()));
@@ -86,9 +87,8 @@ public class LojaService {
       Loja lojaSalva = repository.save(loja);
       lojaSalva.setImage(minIOInterfacing.uploadFile(lojaSalva.getId() + LOJA, LOJA_IMAGE, file));
       return repository.save(lojaSalva);
-    } else {
-      throw new NoDuplicatedEntityException("Você já possui uma loja cadastrada.");
     }
+    
   }
 
   @Transactional(rollbackFor = Exception.class)
