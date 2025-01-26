@@ -68,8 +68,15 @@ public class ItemService {
         if(!i.getLoja().getCriadoPor().getId().equals(authentication.getName())){
             throw new UnauthorizedAccessException("Você não tem permissão para deletar esse item");
         }
-        minIOInterfacing.deleteFile(i.getLoja().getId() + "loja", i.getId().toString());
-        repository.delete(i);
+
+        i.setAtivo(false);
+        repository.save(i);
+        try {
+            repository.delete(i);
+            minIOInterfacing.deleteFile(i.getLoja().getId() + "loja", i.getId().toString());
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            return;
+        }
     }
 
     public Item editarItem(Long id, ItemRequest itemRequest,Authentication authentication) throws Exception {

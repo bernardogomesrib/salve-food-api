@@ -51,6 +51,11 @@ public class Item {
     @Transient
     private String itemImage;
 
+    @JsonIgnore
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean ativo = true;
+
     public Item(Long id) {
         this.id = id;
     }

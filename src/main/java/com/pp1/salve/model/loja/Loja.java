@@ -83,6 +83,11 @@ public class Loja extends AuditEntityLoja {
     @Transient
     private Double deliveryTime;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean ativo = true;
+
+
     public Double getRating() {
         if (reviews != null && !reviews.isEmpty()) {
             double rating = 0;
@@ -96,4 +101,5 @@ public class Loja extends AuditEntityLoja {
         }
     }
 
+    
 }

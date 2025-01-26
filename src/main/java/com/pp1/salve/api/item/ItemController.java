@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,6 +37,7 @@ public class ItemController {
     @Autowired
     private ItemService service;
 
+    @PreAuthorize("hasRole('admin')")
     @GetMapping
     public Page<Item> getAll(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) throws Exception {
@@ -50,16 +52,17 @@ public class ItemController {
         return service.findByLojaId(id, PageRequest.of(page, size, Sort.by("id").descending()));
     }
 
+    @PreAuthorize("hasRole('dono_de_loja')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Item create(@ModelAttribute @Valid ItemRequestSave item) throws Exception {
         return service.save(item);
     }
-
+    @PreAuthorize("hasRole('dono_de_loja')")
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Item update(@PathVariable Long id, @ModelAttribute @Valid ItemRequest item,Authentication authentication) throws Exception {
         return service.editarItem(id, item, authentication);
     }
-
+    @PreAuthorize("hasRole('dono_de_loja')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id,Authentication authentication) throws Exception {
         service.deleteById(id,authentication);

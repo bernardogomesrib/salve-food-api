@@ -51,4 +51,6 @@ public abstract class AuditEntityLoja extends BusinessEntity {
    @OneToOne
    private Usuario ultimaModificacaoPor;
 
+
+
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pp1.salve.exceptions.ResourceNotFoundException;
 import com.pp1.salve.exceptions.UnauthorizedAccessException;
 import com.pp1.salve.kc.KeycloakService;
 import com.pp1.salve.minio.MinIOInterfacing;
@@ -127,8 +128,21 @@ public class LojaService {
     return monta(repository.save(lojaLocal));
   }
 
-  public void deleteById(Long id) {
-    repository.deleteById(id);
+  public void deleteById(Long id, Authentication authentication) throws Exception {
+    Loja i = repository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Loja não encontrada com id: " + id));
+    if (!i.getCriadoPor().getId().equals(authentication.getName())) {
+      throw new UnauthorizedAccessException("Você não tem permissão para deletar esta loja");
+    }
+
+    i.setAtivo(false);
+    repository.save(i);
+    try {
+      repository.delete(i);
+      minIOInterfacing.deleteBucket(i.getId() + "loja");
+    } catch (org.springframework.dao.DataIntegrityViolationException e) {
+      return;
+    }
   }
 
   public Loja monta(Loja loja) throws Exception {

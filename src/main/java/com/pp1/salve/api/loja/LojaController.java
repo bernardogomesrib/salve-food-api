@@ -33,8 +33,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
-
-
 @RestController
 @RequestMapping("/api/loja")
 @CrossOrigin
@@ -90,7 +88,9 @@ public class LojaController {
       throws Exception {
 
     @SuppressWarnings("unchecked")
-    Map<String, Object> cordinates = (Map<String, Object>) locationController.getCoordinates(loja.getRua(), loja.getNumero(), loja.getBairro(), loja.getCidade(), loja.getEstado()).getBody();
+    Map<String, Object> cordinates = (Map<String, Object>) locationController
+        .getCoordinates(loja.getRua(), loja.getNumero(), loja.getBairro(), loja.getCidade(), loja.getEstado())
+        .getBody();
 
     if (cordinates == null || !cordinates.containsKey("latitude") || !cordinates.containsKey("longitude")) {
       throw new RuntimeException("Coordenadas não retornadas pelo serviço de localização");
@@ -115,26 +115,32 @@ public class LojaController {
 
   @PreAuthorize("hasRole('dono_de_loja')")
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Long id) {
-    service.deleteById(id);
+  public ResponseEntity<Void> delete(@PathVariable Long id, Authentication authentication) throws Exception {
+    service.deleteById(id, authentication);
     return ResponseEntity.noContent().build();
   }
+
   @PreAuthorize("hasRole('dono_de_loja')")
   @PostMapping(value = "som", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<ResponseSons> postPostaSonsDaLoja(@ModelAttribute @NotNull MultipartFile file, Authentication authentication) throws Exception {
-      
-      return ResponseEntity.ok().body(new ResponseSons(minioService.uploadFile(service.findMyLoja(authentication).getId()+"loja","toqueMusica", file)));
+  public ResponseEntity<ResponseSons> postPostaSonsDaLoja(@ModelAttribute @NotNull MultipartFile file,
+      Authentication authentication) throws Exception {
+
+    return ResponseEntity.ok().body(new ResponseSons(
+        minioService.uploadFile(service.findMyLoja(authentication).getId() + "loja", "toqueMusica", file)));
   }
+
   @PreAuthorize("hasRole('dono_de_loja')")
   @GetMapping("som")
   public ResponseEntity<ResponseSons> getPostaSonsDaLoja(Authentication authentication) throws Exception {
-      return ResponseEntity.ok().body(new ResponseSons(minioService.getSingleUrl(service.findMyLoja(authentication).getId()+"loja","toqueMusica")));
+    return ResponseEntity.ok().body(new ResponseSons(
+        minioService.getSingleUrl(service.findMyLoja(authentication).getId() + "loja", "toqueMusica")));
   }
+
   @PreAuthorize("hasRole('dono_de_loja')")
   @PutMapping(value = "som", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<ResponseSons> putSom(@ModelAttribute @NotNull MultipartFile file, Authentication authentication) throws Exception {
-      return postPostaSonsDaLoja(file, authentication);
+  public ResponseEntity<ResponseSons> putSom(@ModelAttribute @NotNull MultipartFile file, Authentication authentication)
+      throws Exception {
+    return postPostaSonsDaLoja(file, authentication);
   }
-  
 
 }
