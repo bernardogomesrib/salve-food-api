@@ -13,6 +13,7 @@ import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.loja.LojaService;
 
 import io.minio.errors.ErrorResponseException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,10 +23,15 @@ public class ReviewRestauranteService {
     public final LojaService lojaService;
     public final MinIOInterfacing minioService;
 
+    @Transactional(readOnly = true)
+    public ReviewRestaurante findByLojaIdAndCriadoPorId(Long id,Authentication authentication) throws Exception {
+        return monta(repository.findByLojaIdAndCriadoPorId(id,authentication.getName()).orElseThrow(() -> new EntityNotFoundException("Você ainda não fez uma review para esse restaurante")));
+    }
+
     @Transactional(rollbackFor = Exception.class)
-    public ReviewRestaurante save(RestauranteReviewRequest request,Authentication authentication) throws Exception {
+    public ReviewRestaurante save(RestauranteReviewRequest request, Authentication authentication) throws Exception {
         Loja loja = lojaService.findById(request.getIdLoja());
-        if(repository.existsByLojaAndCriadoPorId(loja, authentication.getName())) {
+        if (repository.existsByLojaAndCriadoPorId(loja, authentication.getName())) {
             throw new NoDuplicatedEntityException("Você já fez uma review para esse restaurante");
         }
 
@@ -42,6 +48,35 @@ public class ReviewRestauranteService {
         return review;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public ReviewRestaurante update(RestauranteReviewRequest request, Authentication authentication) throws Exception {
+        Loja loja = lojaService.findById(request.getIdLoja());
+        ReviewRestaurante review = findByLojaIdAndCriadoPorId(loja.getId(), authentication);
+        review.setNota(request.getNota());
+        review.setComentario(request.getComentario());
+        review = repository.save(review);
+        if (request.getImagem() != null) {
+            review.setImagem(
+                    minioService.uploadFile(loja.getId() + "loja", "review" + review.getId(), request.getImagem()));
+        }else if(request.getDeleteImage()==true){
+            minioService.deleteFile(loja.getId() + "loja", "review" + review.getId());
+            review.setImagem(null);
+        }else{
+            review.setImagem(minioService.getSingleUrl(loja.getId() + "loja", "review" + review.getId()));
+        }
+        return review;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(Long id, Authentication authentication) throws Exception {
+        ReviewRestaurante review = findByLojaIdAndCriadoPorId(id, authentication);
+        repository.delete(review);
+
+        minioService.deleteFile(review.getLoja().getId() + "loja", "review" + review.getId());
+    }
+
+
+
     @Transactional(readOnly = true)
     public Page<ReviewRestaurante> findAllByResturante(Long id, Pageable pageable) throws Exception {
 
@@ -56,7 +91,7 @@ public class ReviewRestauranteService {
 
     @Transactional(readOnly = true)
     private Page<ReviewRestaurante> monta(Page<ReviewRestaurante> reviews) throws Exception {
-        
+
         for (ReviewRestaurante review : reviews) {
             review = monta(review);
         }
@@ -72,7 +107,7 @@ public class ReviewRestauranteService {
                 review.setImagem(null);
             } else {
                 throw e;
-            } 
+            }
         }
         return review;
     }

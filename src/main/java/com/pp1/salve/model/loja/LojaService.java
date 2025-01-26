@@ -1,5 +1,6 @@
 package com.pp1.salve.model.loja;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -13,6 +14,8 @@ import com.pp1.salve.exceptions.ResourceNotFoundException;
 import com.pp1.salve.exceptions.UnauthorizedAccessException;
 import com.pp1.salve.kc.KeycloakService;
 import com.pp1.salve.minio.MinIOInterfacing;
+import com.pp1.salve.model.item.Item;
+import com.pp1.salve.model.item.ItemRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +28,7 @@ public class LojaService {
   private static final String LOJA = "loja";
   private static final String LOJA_IMAGE = "lojaImage";
   private final MinIOInterfacing minIOInterfacing;
-
+  private final ItemRepository itemRepository;
   private final LojaRepository repository;
 
   private final SegmentoLojaRepository segmentoLojaRepository;
@@ -79,7 +82,20 @@ public class LojaService {
 
     Loja lojaDoUsuario = repository.findByCriadoPorId(authentication.getName());
     if (lojaDoUsuario != null) {
-      throw new UnauthorizedAccessException("Você já possui uma loja cadastrada.");
+      if(lojaDoUsuario.isAtivo()==true){
+        throw new UnauthorizedAccessException("Você já possui uma loja cadastrada.");
+      }else{
+        keycloakService.addRoleToUser(authentication.getName(), "dono_de_loja");
+
+        SegmentoLoja segmentoLoja = segmentoLojaRepository.findById(loja.getSegmentoLoja().getId())
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Segmento de Loja não encontrado com ID: " + loja.getSegmentoLoja().getId()));
+        lojaDoUsuario.setSegmentoLoja(segmentoLoja);
+        lojaDoUsuario.setAtivo(true);
+        lojaDoUsuario = repository.save(lojaDoUsuario);
+        lojaDoUsuario.setImage(minIOInterfacing.uploadFile(lojaDoUsuario.getId() + LOJA, LOJA_IMAGE, file));
+        return repository.save(lojaDoUsuario);
+      }
     }
     keycloakService.addRoleToUser(authentication.getName(), "dono_de_loja");
 
@@ -137,6 +153,16 @@ public class LojaService {
 
     i.setAtivo(false);
     repository.save(i);
+    List<Item> itens = itemRepository.findByLoja(i);
+    for (Item item : itens) {
+      try {
+        itemRepository.delete(item);
+        minIOInterfacing.deleteFile(i.getId() + "loja", item.getId().toString());
+      } catch (org.springframework.dao.DataIntegrityViolationException e) {
+        item.setAtivo(false);
+        itemRepository.save(item);
+      }
+    }
     try {
       repository.delete(i);
       minIOInterfacing.deleteBucket(i.getId() + "loja");

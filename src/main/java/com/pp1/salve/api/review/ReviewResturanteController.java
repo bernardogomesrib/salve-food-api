@@ -21,6 +21,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 
@@ -48,5 +50,9 @@ public class ReviewResturanteController {
         System.out.println("chegou aqui");
         return ResponseEntity.ok(service.findMyRestauranteReviews(pageable, authentication));
     }
-    
+    @PutMapping(consumes = "multipart/form-data")
+    public ReviewRestaurante put(@ModelAttribute @Valid @RequestBody RestauranteReviewRequest request,Authentication authentication) throws Exception {
+        return service.update(request,authentication);
+    }
+        
 }

@@ -86,6 +86,10 @@ public class MinIOInterfacing {
     @Transactional
     public void deleteFile(String bucketName, String fileName) throws Exception {
         try {
+            if (!(minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(fileName).build()).size()>0)) {
+                return;
+            }
+
             minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(fileName).build());
         } catch (Exception e) {
             throw e;

@@ -23,5 +23,7 @@ public class RestauranteReviewRequest {
     private Long idLoja;
 
     private MultipartFile imagem;
+
+    private Boolean deleteImage;
     
 }
