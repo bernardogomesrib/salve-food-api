@@ -28,8 +28,8 @@ import com.pp1.salve.model.pedido.itemDoPedido.ItemPedido;
 import com.pp1.salve.model.usuario.Usuario;
 import com.pp1.salve.model.usuario.UsuarioService;
 import com.stripe.StripeClient;
-import com.stripe.model.Customer;
-import com.stripe.param.CustomerCreateParams;
+import com.stripe.model.PaymentIntent;
+import com.stripe.param.PaymentIntentCreateParams;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -134,16 +134,17 @@ public class PedidoService {
                         .build();
                 Payment payment = mercadoPagoClient.create(createRequest);
                 pedidoResposta.setPagamento(payment);
-                
+
             } else if (formaPagamento.equals("STRIPE_CARD")) {
-                CustomerCreateParams params = CustomerCreateParams
-                        .builder()
-                        .setPaymentMethod("pm_card_visa")
+
+                PaymentIntent resp = stripeClient.paymentIntents().create(PaymentIntentCreateParams.builder()
+                        .setAmount((long) (ped.getValorTotal() * 100))
+                        .setCurrency("brl")
+                        .addPaymentMethodType("card")
+                        .setCustomer(usuario.getEmail())
                         .setDescription(loja.getNome() + " - pedido de id - " + ped.getId())
-                        .setEmail(usuario.getEmail())
-                        .build();
-                Customer customer = stripeClient.customers().create(params);
-                pedidoResposta.setPagamento(customer);
+                        .build());
+                pedidoResposta.setPagamento(resp);
             }
         }
 
