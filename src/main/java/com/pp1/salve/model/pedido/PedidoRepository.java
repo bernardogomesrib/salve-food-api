@@ -10,4 +10,6 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     Page<Pedido> findByCriadoPorId(String id, Pageable pageable);
 
     Page<Pedido> findByLoja(Loja loja, Pageable pageable);
+
+    
 }

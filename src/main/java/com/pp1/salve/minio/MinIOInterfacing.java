@@ -15,6 +15,7 @@ import io.minio.PutObjectArgs;
 import io.minio.RemoveBucketArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.Result;
+import io.minio.StatObjectArgs;
 import io.minio.http.Method;
 import io.minio.messages.Item;
 import jakarta.transaction.Transactional;
@@ -27,6 +28,9 @@ public class MinIOInterfacing {
     @Transactional
     public String getSingleUrl(String bucketName, String fileName) throws Exception {
         try {
+            if (!(minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(fileName).build()).size()>0)) {
+                return null;
+            }
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)

@@ -83,8 +83,8 @@ services:
       SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 10MB
       LOCAL_IP: ${LOCAL_IP}
       MINIO_URL: http://${LOCAL_IP}:9001
-      MINIO_ACCESS_KEY: 9AmF1hfTKjWvnXNQntBW
-      MINIO_SECRET_KEY: LRou1qQPMGBvHavUg59WL21PYg38WGEdEmF1CSUP
+      MINIO_ACCESS_KEY: RoNHWxprGCgAVlnhOGbi
+      MINIO_SECRET_KEY: 4f8FWguq4ZkWphPIGCATdsR7uFUmwuGhi2HzL4at
       KEYCLOAK_ISSUER_URI: http://${LOCAL_IP}:9080/realms/salve
       KEYCLOAK_JWK_SET_URI: http://${LOCAL_IP}:9080/realms/salve/protocol/openid-connect/certs
       KEYCLOAK_LOGOUT_URI: http://${LOCAL_IP}:9080/realms/salve/protocol/openid-connect/logout
