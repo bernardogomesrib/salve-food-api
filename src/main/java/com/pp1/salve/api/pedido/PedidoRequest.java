@@ -26,5 +26,6 @@ public class PedidoRequest {
     private Double taxaEntrega;
     @NotNull
     private Long lojaId;
-    
+    @NotNull
+    private String formaPagamento;
 }
