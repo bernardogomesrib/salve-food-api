@@ -19,12 +19,13 @@ import com.pp1.salve.api.pedido.PedidoRequest;
 import com.pp1.salve.exceptions.PedidoException;
 import com.pp1.salve.model.endereco.EnderecoRepository;
 import com.pp1.salve.model.item.Item;
-import com.pp1.salve.model.item.ItemPedidoRepository;
 import com.pp1.salve.model.item.ItemService;
 import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.loja.LojaService;
 import com.pp1.salve.model.pedido.Pedido.Status;
 import com.pp1.salve.model.pedido.itemDoPedido.ItemPedido;
+import com.pp1.salve.model.pedido.itemDoPedido.ItemPedidoFront;
+import com.pp1.salve.model.pedido.itemDoPedido.ItemPedidoRepository;
 import com.pp1.salve.model.usuario.Usuario;
 import com.pp1.salve.model.usuario.UsuarioService;
 import com.stripe.StripeClient;
@@ -91,10 +92,13 @@ public class PedidoService {
     public PedidoResposta save(PedidoRequest pedido, Authentication authentication) throws Exception {
         Loja loja = lojaService.findById(pedido.getLojaId());
         double valorTotal = 0;
-        List<Long> itemIds = pedido.getItens().stream()
-                .map(item -> item.getId())
-                .collect(Collectors.toList());
+        List<ItemPedidoFront> itensDoFront = pedido.getItens();
 
+        List<Long> itemIds = itensDoFront.stream().map(ItemPedidoFront::getProduct).map(Item::getId)
+                .collect(Collectors.toList()); 
+
+        List<ItemPedido> itensParaSalvar = itensDoFront.stream().map(ItemPedidoFront::toItemPedido)
+                .collect(Collectors.toList());
         if (!itemService.isSameStore(loja.getId(), itemIds)) {
             throw new PedidoException("Pedido com itens de lojas diferentes, por favor, faça pedidos separados");
         }
@@ -108,11 +112,11 @@ public class PedidoService {
                 .valorTotal(valorTotal)
                 .taxaEntrega(pedido.getTaxaEntrega())
                 .formaPagamento(formaPagamento)
-                .status(Status.A_PAGAR)
+                .status(Status.PENDENTE)
                 .loja(loja)
                 .build();
         ped = repository.save(ped);
-        for (ItemPedido p : pedido.getItens()) {
+        for (ItemPedido p : itensParaSalvar) {
             Item item = itemService.findOne(p.getItem().getId());
             p.setValorUnitario(item.getValor());
             p.setItem(item);
@@ -121,7 +125,7 @@ public class PedidoService {
             itemPedidoRepository.save(p);
         }
         ped.setValorTotal(valorTotal + ped.getTaxaEntrega());
-        ped.setItens(pedido.getItens());
+        ped.setItens(itensParaSalvar);
 
         PedidoResposta pedidoResposta = PedidoResposta.builder().pedido(repository.save(ped)).build();
         if (isHabilitadoPagamento) {

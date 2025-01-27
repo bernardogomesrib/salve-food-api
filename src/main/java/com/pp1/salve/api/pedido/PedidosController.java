@@ -40,8 +40,8 @@ public class PedidosController {
 
     @GetMapping
     public Page<Pedido> getAll(@RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size)  {
-        Pageable pageable = PageRequest.of(page, size,Sort.by("id").descending());
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         return service.findAll(pageable);
     }
 
@@ -51,30 +51,34 @@ public class PedidosController {
     }
 
     @PostMapping
-    public ResponseEntity<PedidoResposta> create(@RequestBody PedidoRequest pedido,Authentication authentication) throws Exception {
-        return ResponseEntity.ok(service.save(pedido,authentication));
+    public ResponseEntity<PedidoResposta> create(@RequestBody PedidoRequest pedido, Authentication authentication)
+            throws Exception {
+        return ResponseEntity.ok(service.save(pedido, authentication));
     }
 
     @PreAuthorize("hasRole('dono_de_loja')")
     @PutMapping("/{id}/preparando")
-    public ResponseEntity<Pedido> atualizarPedidoPreparando(@PathVariable Long id,Authentication authentication) {
-        return ResponseEntity.ok(service.updateStatus(id, Status.PREPARANDO,authentication));
+    public ResponseEntity<Pedido> atualizarPedidoPreparando(@PathVariable Long id, Authentication authentication) {
+        return ResponseEntity.ok(service.updateStatus(id, Status.PREPARANDO, authentication));
     }
+
     @PreAuthorize("hasRole('dono_de_loja')")
     @PutMapping("{id}/aguardando-entregador")
-    public ResponseEntity<Pedido> atualizarPedidoAguardando(@PathVariable Long id,Authentication authentication) {
-        return ResponseEntity.ok(service.updateStatus(id, Status.AGUARDANDO_ENTREGADOR,authentication));
+    public ResponseEntity<Pedido> atualizarPedidoAguardando(@PathVariable Long id, Authentication authentication) {
+        return ResponseEntity.ok(service.updateStatus(id, Status.AGUARDANDO_ENTREGADOR, authentication));
     }
+
     @PreAuthorize("hasRole('dono_de_loja')")
     @PutMapping("{id}/cancelado")
-    public ResponseEntity<Pedido> cancelado(@PathVariable Long id,Authentication authentication) {
-        return ResponseEntity.ok(service.updateStatus(id, Status.CANCELADO,authentication));
+    public ResponseEntity<Pedido> cancelado(@PathVariable Long id, Authentication authentication) {
+        return ResponseEntity.ok(service.updateStatus(id, Status.CANCELADO, authentication));
     }
 
     @PreAuthorize("hasRole('entregador')")
     @PutMapping("/{id}/entregue")
-    public ResponseEntity<Pedido> entregue(@PathVariable Long id, @RequestBody @Min(4) @Max(4)String senha,Authentication authentication) {
-        return ResponseEntity.ok(service.updateStatus(id,senha,authentication));
+    public ResponseEntity<Pedido> entregue(@PathVariable Long id, @RequestBody @Min(4) @Max(4) String senha,
+            Authentication authentication) {
+        return ResponseEntity.ok(service.updateStatus(id, senha, authentication));
     }
 
     @PreAuthorize("hasRole('admin')")
@@ -84,18 +88,22 @@ public class PedidosController {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
     @Operation(summary = "Obter meus pedidos", description = "Retorna uma lista paginada dos pedidos do usuário autenticado.")
     @GetMapping("meus")
     public ResponseEntity<?> getMeusPedidos(@RequestParam(defaultValue = "0") int page,
-    @RequestParam(defaultValue = "10") int size,Authentication authentication) throws Exception {
-        return ResponseEntity.ok().body(service.getMeusPedidos(authentication,PageRequest.of(page, size,Sort.by("id").descending())));
+            @RequestParam(defaultValue = "10") int size, Authentication authentication) throws Exception {
+        return ResponseEntity.ok()
+                .body(service.getMeusPedidos(authentication, PageRequest.of(page, size, Sort.by("id").descending())));
     }
+
     @Operation(summary = "Obter pedidos da minha loja", description = "Retorna uma lista paginada dos pedidos da minha loja.")
     @PreAuthorize("hasRole('dono_de_loja')")
     @GetMapping("/loja")
-    public ResponseEntity<?> getMeusPedidos(Authentication authentication,@RequestParam(defaultValue = "0") int page,
-    @RequestParam(defaultValue = "10") int size) throws Exception {
-        return ResponseEntity.ok().body(service.getPedidosDaMinhaLoja(authentication,PageRequest.of(page, size,Sort.by("id").descending())));
+    public ResponseEntity<?> getMeusPedidos(Authentication authentication, @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) throws Exception {
+        return ResponseEntity.ok().body(
+                service.getPedidosDaMinhaLoja(authentication, PageRequest.of(page, size, Sort.by("id").descending())));
     }
-    
+
 }

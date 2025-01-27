@@ -1,7 +1,7 @@
 package com.pp1.salve.api.pedido;
 import java.util.List;
 
-import com.pp1.salve.model.pedido.itemDoPedido.ItemPedido;
+import com.pp1.salve.model.pedido.itemDoPedido.ItemPedidoFront;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class PedidoRequest {
     @NotNull
     @NotBlank(message = "O usuario não pode ser vazio")
-    private List<ItemPedido> itens;
+    private List<ItemPedidoFront> itens;
     @NotNull
     private Long enderecoEntregaId;
     @NotNull
