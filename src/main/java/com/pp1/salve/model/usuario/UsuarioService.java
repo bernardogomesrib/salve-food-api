@@ -17,4 +17,8 @@ public class UsuarioService {
     public Usuario findUsuario(Authentication authentication) {
         return usuarioRepository.findById(authentication.getName()).orElseThrow(() -> new ResourceNotFoundException("Usuario não encontrado"));
     }
+
+    public Usuario findUsuarioByEmail(String email) {
+        return usuarioRepository.findByEmail(email).orElse(null);
+    }
 }

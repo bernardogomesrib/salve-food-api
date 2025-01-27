@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -51,15 +52,20 @@ public class AuthController {
     	return response;
 	}
 
-	@ApiResponses(value = {
-        	@ApiResponse(responseCode = "200", description = "Login completado, cookies definidos"),
-        	@ApiResponse(responseCode = "401", description = "Não autorizado")
-	})
-
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Login completado, cookies definidos"),
+        @ApiResponse(responseCode = "401", description = "Não autorizado"),
+        @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
     @PostMapping("login")
     public ResponseEntity<?> postLogin(@RequestBody @Valid AuthRequest loginRequest) {
-        LoginResponse response = keycloakService.login(loginRequest.getUsername(), loginRequest.getPassword())
-                .getBody();
+        ResponseEntity<?> responseEntity = keycloakService.login(loginRequest.getUsername(), loginRequest.getPassword());
+
+        if(responseEntity.getStatusCode() != HttpStatus.OK) {
+            return responseEntity;
+        }
+
+        LoginResponse response = (LoginResponse) responseEntity.getBody();
 
         Cookie refreshTokenCookie = new Cookie("refresh_token", response.getRefreshToken());
         refreshTokenCookie.setHttpOnly(true);

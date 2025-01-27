@@ -6,6 +6,7 @@ import com.pp1.salve.model.entregador.Entregador;
 import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.usuario.Usuario;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,19 +20,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EntregadorRequest {
 
-    @NotBlank
-    private String firstName;
+  @NotBlank(message = "O nome não pode ser vazio")
+  private String firstName;
 
-    @NotBlank
+    @NotBlank(message = "O sobrenome não pode ser vazio")
     private String lastName;
 
-    @NotBlank
+    @NotBlank(message = "O email não pode ser vazio")
+    @Email(message = "Email inválido")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "A senha não pode ser vazio")
     private String password;
 
-    @NotBlank
+    @NotBlank(message = "O celular não pode ser vazio")
     private String phoneNumber;
 
     @NotNull

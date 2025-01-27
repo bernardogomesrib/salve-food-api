@@ -1,23 +1,26 @@
 package com.pp1.salve.api.auth;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class AccountCreationRequest {
-    @NotNull
-    @NotBlank
+  @NotNull(message = "O nome não pode ser nulo")
+  @NotBlank(message = "O nome não pode ser vazio")
     private String firstName;
-    @NotNull
-    @NotBlank
+    @NotNull(message = "O sobrenome não pode ser nulo")
+    @NotBlank(message = "O sobrenome não pode ser vazio")
     private String lastName;
-    @NotBlank
-    @NotNull
+    @NotNull(message = "O email não pode ser nulo")
+    @NotBlank(message = "O email não pode ser vazio")
+    @Email(message = "Email inválido")
     private String email;
-    @NotBlank
-    @NotNull
+    @NotNull(message = "A senha não pode ser nula")
+    @NotBlank(message = "A senha não pode ser vazio")
+    @Email(message = "Email inválido")
     private String password;
-    @NotNull
+    @NotNull(message = "O celular não pode ser nulo")
     private String phoneNumber;
 }
