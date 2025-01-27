@@ -3,7 +3,6 @@ package com.pp1.salve.model.entregador;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.pp1.salve.model.baseModel.AuditEntity;
 import com.pp1.salve.model.loja.Loja;
-import com.pp1.salve.model.usuario.Usuario;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
@@ -34,6 +32,9 @@ public class Entregador extends AuditEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(nullable = false, length = 60)
+    private String nome;
+
     @Transient
     private String image;
 
@@ -45,7 +46,4 @@ public class Entregador extends AuditEntity {
     @JsonBackReference
     private Loja loja;
 
-    @OneToOne
-    @JoinColumn(nullable = false)
-    private Usuario usuario;
 }

@@ -143,7 +143,7 @@ public class ItemService {
     }
     @Transactional(readOnly = true)
     public boolean isSameStore(Long lojaId,List<Long> ids) {
-        return !repository.existsItemNotBelongingToLoja(lojaId,ids);
+        return repository.existsItemNotBelongingToLoja(lojaId,ids);
     }
     public List<Item> findAllByLoja(Loja loja) {
         return repository.findByLoja(loja);
