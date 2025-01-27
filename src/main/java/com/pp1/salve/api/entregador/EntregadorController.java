@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pp1.salve.kc.KeycloakService;
 import com.pp1.salve.model.entregador.Entregador;
 import com.pp1.salve.model.entregador.EntregadorService;
 import com.pp1.salve.model.loja.Loja;
@@ -36,9 +35,6 @@ public class EntregadorController {
 
     @Autowired
     private EntregadorService service;
-
-    @Autowired
-    private KeycloakService keycloakService;
 
     @Autowired
     private LojaService lojaService;
@@ -60,31 +56,14 @@ public class EntregadorController {
             @ModelAttribute @Valid EntregadorRequest request,
             Authentication authentication) throws Exception {
 
-        ResponseEntity<?> response = keycloakService.createAccount(
-                request.getFirstName(),
-                request.getLastName(),
-                request.getEmail(),
-                request.getPassword(),
-                request.getPhoneNumber());
 
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("Falha ao criar usuário no Keycloak: " + response.getStatusCode());
-        }
-        if (response.getHeaders().getLocation() == null) {
-            throw new RuntimeException("Resposta Keycloak sem Location (não foi possível obter userId).");
-        }
-
-        String locationHeader = response.getHeaders().getLocation().toString();
-        String keycloakUserId = locationHeader.substring(locationHeader.lastIndexOf('/') + 1);
-
-        keycloakService.addRoleToUser(keycloakUserId, "entregador");
 
         Loja loja = lojaService.findById(request.getLojaId());
         if (loja == null) {
             throw new Exception("Loja não encontrada com o ID fornecido: " + request.getLojaId());
         }
 
-        Entregador entregador = request.build(loja, keycloakUserId);
+        Entregador entregador = request.build(loja);
 
         Entregador savedEntregador = service.save(entregador, request.getFile(), authentication);
 

@@ -2,16 +2,12 @@ package com.pp1.salve.model.entregador;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.pp1.salve.exceptions.ResourceNotFoundException;
 import com.pp1.salve.minio.MinIOInterfacing;
-import com.pp1.salve.model.usuario.Usuario;
-import com.pp1.salve.model.usuario.UsuarioRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,12 +19,8 @@ public class EntregadorService {
     private final MinIOInterfacing minIOInterfacing;
     private final EntregadorRepository repository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
     public Entregador save(Entregador entregador, MultipartFile file, Authentication authentication) throws Exception {
-        Usuario savedUsuario = usuarioRepository.save(entregador.getUsuario());
-        entregador.setUsuario(savedUsuario);
 
         Entregador entregadorSave = repository.save(entregador);
 
