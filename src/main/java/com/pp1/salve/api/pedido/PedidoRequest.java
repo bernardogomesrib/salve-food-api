@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PedidoRequest {
     @NotNull
-    @NotBlank
+    @NotBlank(message = "O usuario não pode ser vazio")
     private List<ItemPedido> itens;
     @NotNull
     private Long enderecoEntregaId;
