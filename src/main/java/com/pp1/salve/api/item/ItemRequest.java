@@ -16,9 +16,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemRequest {
-  @NotBlank
+  @NotBlank(message = "O nome do item não pode ser vazio")
   private String nome;
-  @NotBlank
+  @NotBlank(message = "A descrição do item não pode ser vazia")
   private String descricao;
   @NotNull
   private Double valor;
