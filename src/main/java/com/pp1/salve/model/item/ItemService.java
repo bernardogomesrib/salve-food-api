@@ -62,14 +62,36 @@ public class ItemService {
         return i;
     }
 
+
+    public void deleteByItem(Item item,Authentication authentication) throws Exception{
+        if(!item.getCriadoPor().getId().equals(authentication.getName())){
+            throw new UnauthorizedAccessException("Você não tem permissão para deletar esse item");
+        }
+        item.setAtivo(false);
+        repository.save(item);
+        try {
+            repository.delete(item);
+            minIOInterfacing.deleteFile(item.getLoja().getId() + "loja", item.getId().toString());
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            return;
+        }
+    }
+
     public void deleteById(Long id,Authentication authentication) throws Exception {
         Item i = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
         if(!i.getLoja().getCriadoPor().getId().equals(authentication.getName())){
             throw new UnauthorizedAccessException("Você não tem permissão para deletar esse item");
         }
-        minIOInterfacing.deleteFile(i.getLoja().getId() + "loja", i.getId().toString());
-        repository.delete(i);
+
+        i.setAtivo(false);
+        repository.save(i);
+        try {
+            repository.delete(i);
+            minIOInterfacing.deleteFile(i.getLoja().getId() + "loja", i.getId().toString());
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            return;
+        }
     }
 
     public Item editarItem(Long id, ItemRequest itemRequest,Authentication authentication) throws Exception {
@@ -123,5 +145,7 @@ public class ItemService {
     public boolean isSameStore(Long lojaId,List<Long> ids) {
         return !repository.existsItemNotBelongingToLoja(lojaId,ids);
     }
-
+    public List<Item> findAllByLoja(Loja loja) {
+        return repository.findByLoja(loja);
+    }
 }

@@ -24,6 +24,7 @@ import com.pp1.salve.model.entregador.EntregadorService;
 import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.loja.LojaService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -102,5 +103,12 @@ public class EntregadorController {
     public ResponseEntity<Void> delete(@PathVariable Long id, Authentication authentication) throws Exception {
         service.delete(id, authentication);
         return ResponseEntity.noContent().build();
+    }
+    
+    @PreAuthorize("hasRole('dono_de_loja')")
+    @Operation(summary = "Busca entregador por id")
+    @GetMapping("/unico/{id}")
+    public Entregador getById(@RequestParam Long id) throws Exception {
+        return service.findById(id);
     }
 }

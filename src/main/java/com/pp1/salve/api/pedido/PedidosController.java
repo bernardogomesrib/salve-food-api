@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pp1.salve.model.pedido.Pedido;
 import com.pp1.salve.model.pedido.PedidoService;
 import com.pp1.salve.model.pedido.Pedido.Status;
+import com.pp1.salve.model.pedido.PedidoResposta;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -50,8 +51,8 @@ public class PedidosController {
     }
 
     @PostMapping
-    public ResponseEntity<Pedido> create(@RequestBody PedidoRequest pedido) {
-        return ResponseEntity.ok(service.save(pedido));
+    public ResponseEntity<PedidoResposta> create(@RequestBody PedidoRequest pedido,Authentication authentication) throws Exception {
+        return ResponseEntity.ok(service.save(pedido,authentication));
     }
 
     @PreAuthorize("hasRole('dono_de_loja')")

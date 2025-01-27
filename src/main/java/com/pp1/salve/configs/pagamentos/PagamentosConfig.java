@@ -1,0 +1,319 @@
+package com.pp1.salve.configs.pagamentos;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.mercadopago.MercadoPagoConfig;
+import com.mercadopago.client.payment.PaymentClient;
+import com.stripe.StripeClient;
+
+@Configuration
+public class PagamentosConfig {
+    @Value("${mercado.pago}")
+    private String MERCADO_PAGO_KEY;
+    @Value("${stripe.key}")
+    private String STRIPE_KEY;
+    @Bean
+    public PaymentClient mercadoPagoPaymentClient() {
+        MercadoPagoConfig.setAccessToken(MERCADO_PAGO_KEY);
+        PaymentClient client = new PaymentClient();
+        return client;
+    }
+    @Bean
+    public StripeClient stripeClient() {
+        StripeClient client = new StripeClient(STRIPE_KEY);
+        return client;
+    }
+}
+
+
+/* 
+
+MERCADO PAGO EXEMPLOS DO GIT
+
+import com.mercadopago.*;
+
+import com.mercadopago.client.payment.PaymentClient;
+import com.mercadopago.client.payment.PaymentCreateRequest;
+import com.mercadopago.client.payment.PaymentPayerRequest;
+import com.mercadopago.exceptions.MPApiException;
+import com.mercadopago.exceptions.MPException;
+import com.mercadopago.resources.payment.Payment;
+import java.math.BigDecimal;
+
+public class Example {
+
+  public static void main(String[] args) {
+    MercadoPagoConfig.setAccessToken("YOUR_ACCESS_TOKEN");
+
+    PaymentClient client = new PaymentClient();
+
+    PaymentCreateRequest createRequest =
+        PaymentCreateRequest.builder()
+            .transactionAmount(new BigDecimal(1000))
+            .token("your_cardtoken")
+            .description("description")
+            .installments(1)
+            .paymentMethodId("visa")
+            .payer(PaymentPayerRequest.builder().email("dummy_email").build())
+            .build();
+
+    try {
+      Payment payment = client.create(createRequest);
+      System.out.println(payment);
+    } catch (MPApiException ex) {
+      System.out.printf(
+          "MercadoPago Error. Status: %s, Content: %s%n",
+          ex.getApiResponse().getStatusCode(), ex.getApiResponse().getContent());
+    } catch (MPException ex) {
+      ex.printStackTrace();
+    }
+  }
+}
+Per-request Configuration
+All the request methods accept an optional MPRequestOptions object. With this you can set a custom access token, custom timeouts or even any custom headers you want, like an idempotency key for example.
+
+public class Example {
+
+  public static void main(String[] args) {
+    PaymentClient client = new PaymentClient();
+
+    Map<String, String> customHeaders = new HashMap<>();
+    customHeaders.put("x-idempotency-key", "...");
+
+    MPRequestOptions requestOptions =
+        MPRequestOptions.builder()
+            .accessToken("custom_access_token")
+            .connectionRequestTimeout(2000)
+            .connectionTimeout(2000)
+            .socketTimeout(2000)
+            .customHeaders(customHeaders)
+            .build();
+
+    try {
+      Payment payment = client.create(createRequest, requestOptions);
+      System.out.println(payment);
+    } catch (MPException | MPApiException ex) {
+      ex.printStackTrace();
+    }
+  }
+}
+SDK configurations
+You can also set some customizations directly at MercadoPagoConfig class, for example set custom timeouts, a custom http client, log configurations, etc...
+
+public class Example {
+
+  public static void main(String[] args) {
+
+    MercadoPagoConfig.setConnectionRequestTimeout(2000);
+    MercadoPagoConfig.setSocketTimeout(2000);
+    MercadoPagoConfig.setLoggingLevel(Level.FINEST);
+  }
+}
+Custom Http Client
+You can use a custom http client instead of using the default MPDefaultHttpClient by implementing the MPHttpClient interface.
+
+public class CustomHttpClient implements MPHttpClient {
+  //...
+}
+  
+STRIPE EXEMPLOS DO GIT
+Usage
+StripeExample.java
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.stripe.StripeClient;
+import com.stripe.exception.StripeException;
+import com.stripe.model.Customer;
+import com.stripe.net.RequestOptions;
+import com.stripe.param.CustomerCreateParams;
+
+public class StripeExample {
+
+    public static void main(String[] args) {
+        StripeClient client = new StripeClient("sk_test_...");
+        CustomerCreateParams params =
+            CustomerCreateParams
+                .builder()
+                .setDescription("Example description")
+                .setEmail("test@example.com")
+                .setPaymentMethod("pm_card_visa")  // obtained via Stripe.js
+                .build();
+
+        try {
+            Customer customer = client.customers().create(params);
+            System.out.println(customer);
+        } catch (StripeException e) {
+            e.printStackTrace();
+        }
+    }
+}
+See the project's functional tests for more examples.
+
+Per-request Configuration
+All of the request methods accept an optional RequestOptions object. This is used if you want to set an idempotency key, if you are using Stripe Connect, or if you want to pass the secret API key on each method.
+
+RequestOptions requestOptions = RequestOptions.builder()
+    .setApiKey("sk_test_...")
+    .setIdempotencyKey("a1b2c3...")
+    .setStripeAccount("acct_...")
+    .build();
+
+client.customers().list(requestOptions);
+
+client.customers().retrieve("cus_123456789", requestOptions);
+Configuring automatic retries
+The library can be configured to automatically retry requests that fail due to an intermittent network problem or other knowingly non-deterministic errors. This can be enabled globally:
+
+StripeClient client = StripeClient.builder()
+        .setMaxNetworkRetries(2)
+        .build();
+Or on a finer grain level using RequestOptions:
+
+RequestOptions options = RequestOptions.builder()
+    .setMaxNetworkRetries(2)
+    .build();
+client.customers().create(params, options);
+Idempotency keys are added to requests to guarantee that retries are safe.
+
+Configuring Timeouts
+Connect and read timeouts can be configured globally:
+
+StripeClient client = StripeClient.builder()
+        .setConnectTimeout(30 * 1000); // in milliseconds
+        .setReadTimeout(80 * 1000);
+        .build();
+Or on a finer grain level using RequestOptions:
+
+RequestOptions options = RequestOptions.builder()
+    .setConnectTimeout(30 * 1000) // in milliseconds
+    .setReadTimeout(80 * 1000)
+    .build();
+client.customers().create(params, options);
+Please take care to set conservative read timeouts. Some API requests can take some time, and a short timeout increases the likelihood of a problem within our servers.
+
+Configuring DNS Cache TTL
+We cannot guarantee that the IP address of the Stripe API will be static. Commonly, default JVM configurations can have their DNS cache TTL set to forever. If Stripe's IP address changes, your application's requests to Stripe will all fail until the JVM restarts. Therefore we recommend that you modify the JVM's networkaddress.cache.ttl property to 60 seconds.
+
+How to use undocumented parameters and properties
+stripe-java is a typed library and it supports all public properties or parameters.
+
+Stripe sometimes has beta which introduces new properties or parameters that are not immediately public. The library does not support these properties or parameters until they are public but there is still an approach that allows you to use them.
+
+Parameters
+To pass undocumented parameters to Stripe using stripe-java you need to use the putExtraParam() method, as shown below:
+
+CustomerCreateParams params =
+  CustomerCreateParams.builder()
+    .setEmail("jenny.rosen@example.com")
+    .putExtraParam("secret_feature_enabled", "true")
+    .putExtraParam("secret_parameter[primary]", "primary value")
+    .putExtraParam("secret_parameter[secondary]", "secondary value")
+    .build();
+
+client.customers().create(params);
+Properties
+To retrieve undocumented properties from Stripe using Java you can use an option in the library to return the raw JSON object and return the property as a native type. An example of this is shown below:
+
+final Customer customer = client.customers().retrieve("cus_1234");
+Boolean featureEnabled =
+  customer.getRawJsonObject()
+    .getAsJsonPrimitive("secret_feature_enabled")
+    .getAsBoolean();
+String primaryValue =
+  customer.getRawJsonObject()
+    .getAsJsonObject("secret_parameter")
+    .getAsJsonPrimitive("primary")
+    .getAsString();
+String secondaryValue =
+  customer.getRawJsonObject()
+    .getAsJsonObject("secret_parameter")
+    .getAsJsonPrimitive("secondary")
+    .getAsString();
+Writing a plugin
+If you're writing a plugin that uses the library, we'd appreciate it if you identified using Stripe.setAppInfo():
+
+Stripe.setAppInfo("MyAwesomePlugin", "1.2.34", "https://myawesomeplugin.info");
+This information is passed along when the library makes calls to the Stripe API.
+
+Request latency telemetry
+By default, the library sends request latency telemetry to Stripe. These numbers help Stripe improve the overall latency of its API for all users.
+
+You can disable this behavior if you prefer:
+
+Stripe.enableTelemetry = false;
+Beta SDKs
+Stripe has features in the beta phase that can be accessed via the beta version of this package. We would love for you to try these and share feedback with us before these features reach the stable phase. To install a beta version of stripe-java follow steps installation steps above using the beta library version.
+
+Note There can be breaking changes between beta versions. Therefore we recommend pinning the package version to a specific version. This way you can install the same version each time without breaking changes unless you are intentionally looking for the latest beta version.
+
+We highly recommend keeping an eye on when the beta feature you are interested in goes from beta to stable so that you can move from using a beta version of the SDK to the stable version.
+
+If your beta feature requires a Stripe-Version header to be sent, set the Stripe.stripeVersion field by calling Stripe.addBetaVersion:
+
+Note Beta version headers can only be set in beta versions of the library.
+
+Stripe.addBetaVersion("feature_beta", "v3");
+Custom requests
+If you would like to send a request to an undocumented API (for example you are in a private beta), or if you prefer to bypass the method definitions in the library and specify your request details directly, you can use the rawRequest method on StripeClient.
+
+// (Optional) Create a RawRequestOptions object, allowing you to set per-request
+// configuration options like additional headers.
+Map<String, String> stripeVersionHeader = new HashMap<>();
+stripeVersionHeader.put("Stripe-Version", "2024-09-30.acacia");
+RawRequestOptions options = RawRequestOptions.builder()
+        .setAdditionalHeaders(stripeVersionHeader)
+        .build();
+
+// Make the request using the StripeClient.rawRequest() method.
+StripeClient client = new StripeClient("sk_test_...");
+final StripeResponse response =
+        client.rawRequest(
+                ApiResource.RequestMethod.POST, "/v1/customers", "name=johndoe&email=johndoe@example.com", options);
+
+// (Optional) response.body() is a string. You can call
+// StripeClient.deserialize() to get a StripeObject
+// Pass ApiMode.V2 if the endpoint you are targeting starts with "/v2", else pass ApiMode.V1
+StripeObject object = client.deserialize(response.body(), ApiMode.V1);
+// or cast it if a corresponding response class exists in the SDK
+Customer customer = (Customer) client.deserialize(response.body(), ApiMode.V1);
+Support
+New features and bug fixes are released on the latest major version of the Stripe Java client library. If you are on an older major version, we recommend that you upgrade to the latest in order to use the new features and bug fixes including those for security vulnerabilities. Older major versions of the package will continue to be available for use, but will not be receiving any updates.
+
+Development
+Contribution guidelines for this project
+
+JDK 17 is required to build the Stripe Java library. By default, tests use the same Java runtime as the build. To use a custom version of Java runtime for tests set the JAVA_TEST_HOME environment variable to runtime's home directory.
+
+The test suite depends on stripe-mock, so make sure to fetch and run it from a background terminal (stripe-mock's README also contains instructions for installing via Homebrew and other methods):
+
+go get -u github.com/stripe/stripe-mock
+stripe-mock
+We use just for conveniently running development tasks. You can use them directly, or copy the commands out of the justfile. To our help docs, run just.
+
+To run all checks (tests and code formatting):
+
+./gradlew check
+To run the tests:
+
+just test
+# or: ./gradlew test
+You can run particular tests by passing --tests Class#method. Make sure you use the fully qualified class name. For example:
+
+just test-one com.stripe.model.AccountTest
+just test-one com.stripe.functional.CustomerTest
+just test-one com.stripe.functional.CustomerTest.testCustomerCreate
+# or: ./gradlew test --tests com.stripe.model.AccountTest
+# or: ./gradlew test --tests com.stripe.functional.CustomerTest
+# or: ./gradlew test --tests com.stripe.functional.CustomerTest.testCustomerCreate
+The library uses Spotless along with google-java-format for code formatting. Code must be formatted before PRs are submitted, otherwise CI will fail. Run the formatter with:
+
+just format
+# or: ./gradlew spotlessApply
+The library uses Project Lombok. While it is not a requirement, you might want to install a plugin for your favorite IDE to facilitate development.
+
+*/
+

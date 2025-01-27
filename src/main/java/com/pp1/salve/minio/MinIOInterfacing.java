@@ -8,11 +8,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import io.minio.BucketExistsArgs;
 import io.minio.GetPresignedObjectUrlArgs;
+import io.minio.ListObjectsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveBucketArgs;
 import io.minio.RemoveObjectArgs;
+import io.minio.Result;
+import io.minio.StatObjectArgs;
 import io.minio.http.Method;
+import io.minio.messages.Item;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -23,6 +28,9 @@ public class MinIOInterfacing {
     @Transactional
     public String getSingleUrl(String bucketName, String fileName) throws Exception {
         try {
+            if (!(minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(fileName).build()).size()>0)) {
+                return null;
+            }
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
@@ -78,7 +86,25 @@ public class MinIOInterfacing {
     @Transactional
     public void deleteFile(String bucketName, String fileName) throws Exception {
         try {
+            if (!(minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(fileName).build()).size()>0)) {
+                return;
+            }
+
             minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(fileName).build());
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+    @Transactional
+    public void deleteBucket(String bucketName) throws Exception {
+        try {
+
+            Iterable<Result<Item>> objects = minioClient.listObjects(ListObjectsArgs.builder().bucket(bucketName).build());
+            for (Result<Item> result : objects) {
+                Item item = result.get();
+                minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(item.objectName()).build());
+            }
+            minioClient.removeBucket(RemoveBucketArgs.builder().bucket(bucketName).build());
         } catch (Exception e) {
             throw e;
         }

@@ -60,6 +60,6 @@ public class Pedido extends AuditEntityPedido{
     private TrajetoriaEntregador trajetoriaEntregador;
 
     public enum Status {
-        PENDENTE, PREPARANDO, AGUARDANDO_ENTREGADOR, A_CAMINHO, ENTREGUE, CANCELADO;
+        A_PAGAR,PENDENTE, PREPARANDO, AGUARDANDO_ENTREGADOR, A_CAMINHO, ENTREGUE, CANCELADO;
     }
 }

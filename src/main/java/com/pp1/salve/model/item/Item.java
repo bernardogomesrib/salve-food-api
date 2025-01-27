@@ -1,6 +1,7 @@
 package com.pp1.salve.model.item;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pp1.salve.model.baseModel.AuditEntityItem;
 import com.pp1.salve.model.loja.Loja;
 
 import jakarta.persistence.Column;
@@ -14,12 +15,10 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Data
 @Entity
 @Table(name = "Item")
 @Builder
@@ -27,7 +26,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Item {
+public class Item extends AuditEntityItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,6 +49,11 @@ public class Item {
     private CategoriaItem categoriaItem;
     @Transient
     private String itemImage;
+
+    @JsonIgnore
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean ativo = true;
 
     public Item(Long id) {
         this.id = id;

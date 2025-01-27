@@ -1,0 +1,99 @@
+PUT /admin/realms/{realm}/users/{user-id}/send-verify-email
+Send an email-verification email to the user An email contains a link the user can click to verify their email address.
+
+Description
+The redirectUri, clientId and lifespan parameters are optional. The default for the redirect is the account client. The default for the lifespan is 12 hours
+
+Parameters
+Path Parameters
+Name	Description	Default	Pattern
+realm
+required
+
+realm name (not id!)
+
+null
+
+user-id
+required
+
+null
+
+Query Parameters
+Name	Description	Default	Pattern
+client_id
+optional
+
+Client id
+
+null
+
+lifespan
+optional
+
+Number of seconds after which the generated token expires
+
+null
+
+redirect_uri
+optional
+
+Redirect uri
+
+PUT /admin/realms/{realm}/users/{user-id}/reset-password-email
+Send an email to the user with a link they can click to reset their password.
+
+Description
+The redirectUri and clientId parameters are optional. The default for the redirect is the account client. This endpoint has been deprecated. Please use the execute-actions-email passing a list with UPDATE_PASSWORD within it.
+
+
+PUT /admin/realms/{realm}/users/{user-id}/execute-actions-email
+Send an email to the user with a link they can click to execute particular actions.
+
+Description
+An email contains a link the user can click to perform a set of required actions. The redirectUri and clientId parameters are optional. If no redirect is given, then there will be no link back to click after actions have completed. Redirect uri must be a valid uri for the particular clientId.
+
+Parameters
+Path Parameters
+Name	Description	Default	Pattern
+realm
+required
+
+realm name (not id!)
+
+null
+
+user-id
+required
+
+null
+
+Body Parameter
+Name	Description	Default	Pattern
+string
+optional
+
+[string]
+
+Query Parameters
+Name	Description	Default	Pattern
+client_id
+optional
+
+Client id
+
+null
+
+lifespan
+optional
+
+Number of seconds after which the generated token expires
+
+null
+
+redirect_uri
+optional
+
+Redirect uri
+
+null

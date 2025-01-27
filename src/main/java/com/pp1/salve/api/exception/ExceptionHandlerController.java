@@ -42,6 +42,7 @@ public class ExceptionHandlerController {
         Map<String, Object> response = new HashMap<>();
         Map<String, String> error = new HashMap<>();
         error.put("message", ex.getMessage());
+        error.put("cause", ex.getCause().toString());
         response.put("error", error);
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -51,6 +52,7 @@ public class ExceptionHandlerController {
         Map<String, Object> response = new HashMap<>();
         Map<String, String> error = new HashMap<>();
         error.put("message", ex.getMessage());
+        error.put("Class", ex.getClass().toString());
         if (ex.getCause() != null) {
             error.put("cause", ex.getCause().toString());
         }
@@ -136,5 +138,17 @@ public class ExceptionHandlerController {
 
         response.put("error", error);
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+    @ExceptionHandler(io.minio.errors.ErrorResponseException.class)
+    public ResponseEntity<Map<String, Object>> handleMinioException(io.minio.errors.ErrorResponseException ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        error.put("details", ex.getCause());
+        error.put("cause", ex.getCause());
+        error.put("response", ex.errorResponse());
+        error.put("status", ex.errorResponse().code());
+        response.put("error", error);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
