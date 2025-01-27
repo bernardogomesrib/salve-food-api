@@ -52,6 +52,13 @@ public class ItemController {
         return service.findByLojaId(id, PageRequest.of(page, size, Sort.by("id").descending()));
     }
 
+    @Operation(summary = "Busca item por id")
+    @GetMapping("/unico/{id}")
+    public Item getById(@RequestParam Long id) throws Exception {
+        return service.findById(id);
+    }
+    
+
     @PreAuthorize("hasRole('dono_de_loja')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Item create(@ModelAttribute @Valid ItemRequestSave item) throws Exception {

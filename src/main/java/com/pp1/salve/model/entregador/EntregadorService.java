@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pp1.salve.exceptions.ResourceNotFoundException;
 import com.pp1.salve.minio.MinIOInterfacing;
 import com.pp1.salve.model.usuario.Usuario;
 import com.pp1.salve.model.usuario.UsuarioRepository;
@@ -41,7 +42,7 @@ public class EntregadorService {
 
     public List<Entregador> findByLoja(Long lojaId) throws Exception {
         if (!repository.existsByLojaId(lojaId)) {
-            throw new Exception("Loja não encontrada com o ID fornecido: " + lojaId);
+            throw new ResourceNotFoundException("Loja não encontrada com o ID fornecido: " + lojaId);
         }
     
         return repository.findByLojaId(lojaId);
@@ -49,7 +50,7 @@ public class EntregadorService {
 
     public Entregador updateStatus(Long id, Boolean disponivel, Authentication authentication) throws Exception {
         Entregador entregador = repository.findById(id)
-                .orElseThrow(() -> new Exception("Entregador não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Entregador não encontrado"));
 
         entregador.setDisponivel(disponivel);
         return repository.save(entregador);
@@ -57,9 +58,12 @@ public class EntregadorService {
 
     public void delete(Long id, Authentication authentication) throws Exception {
         repository.findById(id)
-                .orElseThrow(() -> new Exception("Entregador não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Entregador não encontrado"));
         repository.deleteById(id);
     }
-
+    public Entregador findById(Long id) throws Exception {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Entregador não encontrado"));
+    }
 
 }
