@@ -56,8 +56,6 @@ public class EntregadorController {
             @ModelAttribute @Valid EntregadorRequest request,
             Authentication authentication) throws Exception {
 
-
-
         Loja loja = lojaService.findById(request.getLojaId());
         if (loja == null) {
             throw new Exception("Loja não encontrada com o ID fornecido: " + request.getLojaId());
@@ -83,7 +81,7 @@ public class EntregadorController {
         service.delete(id, authentication);
         return ResponseEntity.noContent().build();
     }
-    
+
     @PreAuthorize("hasRole('dono_de_loja')")
     @Operation(summary = "Busca entregador por id")
     @GetMapping("/unico/{id}")

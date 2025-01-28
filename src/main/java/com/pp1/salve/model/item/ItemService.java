@@ -148,4 +148,16 @@ public class ItemService {
     public List<Item> findAllByLoja(Loja loja) {
         return repository.findByLoja(loja);
     }
+
+    public Item changeDisponibilidade(Long id,Authentication authentication) throws Exception {
+        Item i = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado com id: " + id));
+        if(!i.getCriadoPor().getId().equals(authentication.getName())){
+            throw new UnauthorizedAccessException("Você não tem permissão para editar esse item");
+        }
+        i.setDisponivel(!i.getDisponivel());
+
+        return monta(repository.save(i));
+    }
+
 }

@@ -82,9 +82,9 @@ public class LojaService {
 
     Loja lojaDoUsuario = repository.findByCriadoPorId(authentication.getName());
     if (lojaDoUsuario != null) {
-      if(lojaDoUsuario.isAtivo()==true){
+      if (lojaDoUsuario.isAtivo() == true) {
         throw new UnauthorizedAccessException("Você já possui uma loja cadastrada.");
-      }else{
+      } else {
         keycloakService.addRoleToUser(authentication.getName(), "dono_de_loja");
 
         SegmentoLoja segmentoLoja = segmentoLojaRepository.findById(loja.getSegmentoLoja().getId())
@@ -92,6 +92,19 @@ public class LojaService {
                 "Segmento de Loja não encontrado com ID: " + loja.getSegmentoLoja().getId()));
         lojaDoUsuario.setSegmentoLoja(segmentoLoja);
         lojaDoUsuario.setAtivo(true);
+        lojaDoUsuario.setHorarioAbertura(loja.getHorarioAbertura());
+        lojaDoUsuario.setHorarioFechamento(loja.getHorarioFechamento());
+        lojaDoUsuario.setDiasFuncionamento(loja.getDiasFuncionamento());
+        lojaDoUsuario.setNome(loja.getNome());
+        lojaDoUsuario.setDescricao(loja.getDescricao());
+        lojaDoUsuario.setRua(loja.getRua());
+        lojaDoUsuario.setNumero(loja.getNumero());
+        lojaDoUsuario.setBairro(loja.getBairro());
+        lojaDoUsuario.setCidade(loja.getCidade());
+        lojaDoUsuario.setEstado(loja.getEstado());
+        lojaDoUsuario.setLatitude(loja.getLatitude());
+        lojaDoUsuario.setLongitude(loja.getLongitude());
+        lojaDoUsuario.setTiposPagamento(loja.getTiposPagamento());
         lojaDoUsuario = repository.save(lojaDoUsuario);
         lojaDoUsuario.setImage(minIOInterfacing.uploadFile(lojaDoUsuario.getId() + LOJA, LOJA_IMAGE, file));
         return repository.save(lojaDoUsuario);
@@ -133,6 +146,10 @@ public class LojaService {
     lojaLocal.setNome(loja.getNome());
     lojaLocal.setNumero(loja.getNumero());
     lojaLocal.setRua(loja.getRua());
+    lojaLocal.setTiposPagamento(loja.getTiposPagamento());
+    lojaLocal.setHorarioAbertura(loja.getHorarioAbertura());
+    lojaLocal.setHorarioFechamento(loja.getHorarioFechamento());
+    lojaLocal.setDiasFuncionamento(loja.getDiasFuncionamento());
     lojaLocal.setSegmentoLoja(segmentoLoja);
 
     if (file != null) {
@@ -183,16 +200,16 @@ public class LojaService {
   }
 
   public double deliveryTimeCalculator(Loja loja, double latitude, double longitude) {
-    double lojaLatitude = loja.getLatitude();
-    double lojaLongitude = loja.getLongitude();
-
-    return calculateTravelTime(lojaLatitude, lojaLongitude, latitude, longitude);
+    return calculateTravelTime(loja, latitude, longitude);
   }
 
-  public static double calculateTravelTime(double storeLatitude, double storeLongitude, double userLatitude,
+  public static double calculateTravelTime(Loja loja, double userLatitude,
       double userLongitude) {
     // Raio médio da Terra em quilômetros
     final double EARTH_RADIUS_KM = 6371.0;
+
+    double storeLatitude = loja.getLatitude();
+    double storeLongitude = loja.getLongitude();
 
     // Converter as latitudes e longitudes de graus para radianos
     double latDistance = Math.toRadians(storeLatitude - userLatitude);
@@ -206,7 +223,7 @@ public class LojaService {
 
     // Distância em quilômetros
     double distance = EARTH_RADIUS_KM * c;
-
+    loja.setDistancia(distance);
     // Tempo de viagem em horas
     double travelTimeHours = distance / 15;
 

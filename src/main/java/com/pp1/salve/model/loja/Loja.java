@@ -1,5 +1,6 @@
 package com.pp1.salve.model.loja;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -37,22 +38,35 @@ public class Loja extends AuditEntityLoja {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false, length = 45)
+    private Boolean fechaMaisCedoFinsDeSemana;
+
+    @Column(nullable = true)
+    private LocalTime horarioAbertura;
+
+    @Column(nullable = true)
+    private LocalTime horarioFechamento;
+
+    @Column
+    private List<DiasFuncionamento> diasFuncionamento;
+    @Column
+    private List<TipoPagamento> tiposPagamento;
+
+    @Column(nullable = false, length = 100)
     private String nome;
 
     @Column(length = 500)
     private String descricao;
 
-    @Column(nullable = false, length = 45)
+    @Column(nullable = false, length = 100)
     private String rua;
 
-    @Column(nullable = false, length = 45)
+    @Column(nullable = false, length = 100)
     private String numero;
 
-    @Column(nullable = false, length = 45)
+    @Column(nullable = false, length = 100)
     private String bairro;
 
-    @Column(nullable = false, length = 45)
+    @Column(nullable = false, length = 100)
     private String cidade;
 
     @Column(nullable = false, length = 45)
@@ -87,6 +101,8 @@ public class Loja extends AuditEntityLoja {
     @Column(nullable = false)
     private boolean ativo = true;
 
+    @Transient
+    private Double distancia;
 
     public Double getRating() {
         if (reviews != null && !reviews.isEmpty()) {

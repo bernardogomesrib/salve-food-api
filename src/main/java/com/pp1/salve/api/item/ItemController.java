@@ -75,4 +75,10 @@ public class ItemController {
         service.deleteById(id,authentication);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasRole('dono_de_loja')")
+    @PutMapping(value = "/{id}/disponibilidade")
+    public ResponseEntity<Item> changeDisponibilidade(@PathVariable Long id,Authentication authentication) throws Exception {
+        return ResponseEntity.ok().body(service.changeDisponibilidade(id, authentication));
+    }
 }

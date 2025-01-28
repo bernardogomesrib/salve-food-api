@@ -50,6 +50,11 @@ public class Item extends AuditEntityItem {
     @Transient
     private String itemImage;
 
+    @Column
+    @Builder.Default
+    private Boolean disponivel = true;
+
+
     @JsonIgnore
     @Builder.Default
     @Column(nullable = false)

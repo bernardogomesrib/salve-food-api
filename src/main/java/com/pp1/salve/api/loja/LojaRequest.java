@@ -1,9 +1,14 @@
 package com.pp1.salve.api.loja;
 
+import java.time.LocalTime;
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pp1.salve.model.loja.DiasFuncionamento;
 import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.loja.SegmentoLoja;
+import com.pp1.salve.model.loja.TipoPagamento;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -32,9 +37,18 @@ public class LojaRequest {
   private String estado;
   @NotNull
   private Long segmentoLojaId;
-
+  @NotNull
   private MultipartFile file;
-
+  @NotNull
+  private LocalTime horarioAbertura;
+  @NotNull
+  private LocalTime horarioFechamento;
+  @NotNull
+  private List<DiasFuncionamento> diasFuncionamento;
+  @NotNull
+  private List<TipoPagamento> tiposPagamento;
+  @NotNull
+  private Boolean fechaMaisCedoFinsDeSemana;
   public Loja build() {
     return Loja.builder()
         .nome(nome)
@@ -45,6 +59,11 @@ public class LojaRequest {
         .estado(estado)
         .segmentoLoja(SegmentoLoja.builder().id(segmentoLojaId).build())
         .descricao(descricao)
+        .horarioAbertura(horarioAbertura)
+        .horarioFechamento(horarioFechamento)
+        .diasFuncionamento(diasFuncionamento)
+        .tiposPagamento(tiposPagamento)
+        .fechaMaisCedoFinsDeSemana(fechaMaisCedoFinsDeSemana)
         .build();
   }
 }
