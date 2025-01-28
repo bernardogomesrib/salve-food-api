@@ -1,6 +1,5 @@
 package com.pp1.salve.api.loja;
 
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,7 +37,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LojaController {
   private final MinIOInterfacing minioService;
-  
 
   private final LojaService service;
 
@@ -84,8 +82,6 @@ public class LojaController {
   @PostMapping(consumes = "multipart/form-data")
   public ResponseEntity<Loja> create(@ModelAttribute @Valid LojaRequest loja, Authentication authentication)
       throws Exception {
-
- 
 
     return ResponseEntity.ok(service.save(service.findCoordenates(loja.build()), loja.getFile(), authentication));
   }

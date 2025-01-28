@@ -78,7 +78,8 @@ public class PedidosController {
     @PutMapping("/{id}/entregue")
     public ResponseEntity<Pedido> entregue(@PathVariable Long id, @RequestBody @Min(4) @Max(4) String senha,
             Authentication authentication) {
-        return ResponseEntity.ok(service.updateStatus(id, senha, authentication));
+        //return ResponseEntity.ok(service.updateStatus(id, senha, authentication));
+        throw new UnsupportedOperationException("Unimplemented method");
     }
 
     @PreAuthorize("hasRole('admin')")
@@ -106,4 +107,12 @@ public class PedidosController {
                 service.getPedidosDaMinhaLoja(authentication, PageRequest.of(page, size, Sort.by("id").descending())));
     }
 
+
+    @Operation(summary = "define um entregador para um pedido", description = "define um entregador para um pedido com base no id do entregador e no id do pedido")
+    @PreAuthorize("hasRole('dono_de_loja')")
+    @PutMapping("/{id}/entregador/{entregadorId}")
+    public ResponseEntity<Pedido> setEntregador(@PathVariable Long id, @PathVariable Long entregadorId,
+            Authentication authentication) {
+        return ResponseEntity.ok(service.setEntregador(id, entregadorId, authentication));
+    }
 }

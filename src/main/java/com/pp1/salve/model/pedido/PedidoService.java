@@ -16,8 +16,12 @@ import com.mercadopago.client.payment.PaymentCreateRequest;
 import com.mercadopago.client.payment.PaymentPayerRequest;
 import com.mercadopago.resources.payment.Payment;
 import com.pp1.salve.api.pedido.PedidoRequest;
-import com.pp1.salve.exceptions.PedidoException;
+import com.pp1.salve.exceptions.UnauthorizedAccessException;
 import com.pp1.salve.model.endereco.EnderecoRepository;
+import com.pp1.salve.model.entregador.Entregador;
+import com.pp1.salve.model.entregador.EntregadorService;
+import com.pp1.salve.model.entregador.TrajetoriaEntregador;
+import com.pp1.salve.model.entregador.TrajetoriaEntregadorRepository;
 import com.pp1.salve.model.item.Item;
 import com.pp1.salve.model.item.ItemService;
 import com.pp1.salve.model.loja.Loja;
@@ -39,6 +43,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PedidoService {
     private final UsuarioService usuarioService;
+    private final EntregadorService entregadorService;
+    private final TrajetoriaEntregadorRepository trajetoriaEntregadorRepository;
     private final PedidoRepository repository;
     private final EnderecoRepository enderecoSerice;
     private final LojaService lojaService;
@@ -95,12 +101,13 @@ public class PedidoService {
         List<ItemPedidoFront> itensDoFront = pedido.getItens();
 
         List<Long> itemIds = itensDoFront.stream().map(ItemPedidoFront::getProduct).map(Item::getId)
-                .collect(Collectors.toList()); 
+                .collect(Collectors.toList());
 
         List<ItemPedido> itensParaSalvar = itensDoFront.stream().map(ItemPedidoFront::toItemPedido)
                 .collect(Collectors.toList());
         if (!itemService.isSameStore(loja.getId(), itemIds)) {
-            throw new PedidoException("Pedido com itens de lojas diferentes, por favor, faça pedidos separados");
+            throw new UnauthorizedAccessException(
+                    "Pedido com itens de lojas diferentes, por favor, faça pedidos separados");
         }
         // TODO: terminar de implementar formas de pagamento e notificar loja
         Usuario usuario = usuarioService.findUsuario(authentication);
@@ -134,7 +141,8 @@ public class PedidoService {
                         .transactionAmount(BigDecimal.valueOf(ped.getValorTotal()))
                         .paymentMethodId("PIX")
                         .description(loja.getNome() + " - pedido de id - " + ped.getId())
-                        .payer(PaymentPayerRequest.builder().email(usuario.getEmail()).firstName(usuario.getFirstName()).lastName(usuario.getLastName()).build())
+                        .payer(PaymentPayerRequest.builder().email(usuario.getEmail()).firstName(usuario.getFirstName())
+                                .lastName(usuario.getLastName()).build())
                         .build();
                 Payment payment = mercadoPagoClient.create(createRequest);
                 pedidoResposta.setPagamento(payment);
@@ -160,24 +168,23 @@ public class PedidoService {
         // TODO: implementar notificação para cliente e loja
         Pedido pedido = findById(id);
         pedido.setStatus(status);
-        if (pedido.getLoja().getCriadoPor().getId().equals(authentication.getName())
-                || pedido.getTrajetoriaEntregador().getEntregador().getId().equals(authentication.getName())) {
+        if (pedido.getLoja().getCriadoPor().getId().equals(authentication.getName())) {
             return repository.save(pedido);
         } else {
-            throw new PedidoException("Pedido você não pode alterar este pedido");
+            throw new UnauthorizedAccessException("Pedido você não pode alterar este pedido");
         }
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Pedido updateStatus(Long id, String senha, Authentication authentication) {
+    public Pedido updateStatus(Long id, String senha, Long entregadorId/* Authentication authentication */) {
         // TODO: implementar notificação para entregador, loja e cliente
         Pedido pedido = findById(id);
-        if (pedido.getTrajetoriaEntregador().getEntregador().getId().equals(authentication.getName())
+        if (pedido.getTrajetoriaEntregador().getEntregador().getId().equals(entregadorId)
                 && pedido.getCriadoPor().getPhone().contains(senha)) {
             pedido.setStatus(Status.ENTREGUE);
             return repository.save(pedido);
         } else {
-            throw new PedidoException("Pedido você não pode alterar este pedido");
+            throw new UnauthorizedAccessException("Pedido você não pode alterar este pedido");
         }
     }
 
@@ -185,4 +192,25 @@ public class PedidoService {
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Pedido setEntregador(Long id, Long entregadorId, Authentication authentication) {
+
+        Pedido pedido = findById(id);
+
+        if (pedido.getLoja().getCriadoPor().getId().equals(authentication.getName())) {
+
+            Entregador entregador = entregadorService.findMeuEntregador(entregadorId, pedido.getLoja());
+            TrajetoriaEntregador trajetoria = TrajetoriaEntregador.builder()
+                    .entregador(entregador)
+                    .pedido(pedido)
+                    .build();
+            trajetoria = trajetoriaEntregadorRepository.save(trajetoria);
+            pedido.setTrajetoriaEntregador(trajetoria);
+            return repository.save(pedido);
+        } else {
+            throw new UnauthorizedAccessException("Pedido você não pode alterar este pedido");
+        }
+    }
+
 }

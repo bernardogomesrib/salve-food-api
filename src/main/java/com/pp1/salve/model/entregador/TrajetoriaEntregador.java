@@ -2,7 +2,6 @@ package com.pp1.salve.model.entregador;
 
 
 import com.pp1.salve.model.pedido.Pedido;
-import com.pp1.salve.model.usuario.Usuario;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +35,8 @@ public class TrajetoriaEntregador {
 
     @ManyToOne
     @JoinColumn(name = "entregador_id", nullable = false)
-    private Usuario entregador;
+    private Entregador entregador;
+
 
     @Column(columnDefinition = "json")
     private String trajetoria;

@@ -46,4 +46,6 @@ public class Entregador extends AuditEntity {
     @JsonBackReference
     private Loja loja;
 
+    
+
 }

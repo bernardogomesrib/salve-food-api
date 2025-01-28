@@ -46,6 +46,14 @@ public class LojaService {
     return monta(lojas);
   }
 
+  public Loja findMyLojaNoFile(Authentication authentication){
+    Loja loja =repository.findByCriadoPorId(authentication.getName());
+    if (loja == null)
+      throw new EntityNotFoundException("Loja não encontrada");
+    return loja;
+  }
+
+
   public Page<Loja> findAll(Pageable pageable) throws Exception {
     Page<Loja> loja = repository.findAll(pageable);
     for (Loja l : loja) {

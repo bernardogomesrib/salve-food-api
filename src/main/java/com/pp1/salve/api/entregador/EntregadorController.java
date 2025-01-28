@@ -88,4 +88,11 @@ public class EntregadorController {
     public Entregador getById(@RequestParam Long id) throws Exception {
         return service.findById(id);
     }
+
+    @PreAuthorize("hasRole('dono_de_loja')")
+    @GetMapping("meus")
+    public ResponseEntity<List<Entregador>> getMeusEntregadores(Authentication authentication) throws Exception {
+        return ResponseEntity.ok().body(service.findMeusEntregadoresDisponiveis(authentication));
+    }
+
 }

@@ -8,6 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.pp1.salve.exceptions.ResourceNotFoundException;
 import com.pp1.salve.minio.MinIOInterfacing;
+import com.pp1.salve.model.loja.Loja;
+import com.pp1.salve.model.loja.LojaService;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -15,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class EntregadorService {
   private static final String ENTREGADOR = "entregador";
   private static final String ENTREGADOR_IMAGE = "entregadorImage";
-
+  private final LojaService lojaService;
   private final MinIOInterfacing minIOInterfacing;
   private final EntregadorRepository repository;
 
@@ -64,8 +67,21 @@ public class EntregadorService {
     return entregador;
   }
 
+  public List<Entregador> findMeusEntregadoresDisponiveis(Authentication authentication) throws Exception {
+    return monta(repository.findEntregadorOnlineDisponivel(lojaService.findMyLojaNoFile(authentication)));
+  }
   public Entregador monta(Entregador entregador) throws Exception {
     entregador.setImage(minIOInterfacing.getSingleUrl(ENTREGADOR, entregador.getId() + ENTREGADOR_IMAGE));
     return entregador;
+  }
+  public List<Entregador>  monta(List<Entregador> entregadores) throws Exception {
+    for (Entregador entregador : entregadores) {
+      entregador = monta(entregador);
+    }
+    return entregadores;
+  }
+
+  public Entregador findMeuEntregador(Long id, Loja loja){
+      return repository.findByIdAndLoja(id, loja).orElseThrow(() -> new ResourceNotFoundException("Entregador não encontrado na loja"));
   }
 }
