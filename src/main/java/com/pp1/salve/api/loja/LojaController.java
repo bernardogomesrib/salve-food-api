@@ -1,6 +1,5 @@
 package com.pp1.salve.api.loja;
 
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.pp1.salve.api.location.LocationController;
 import com.pp1.salve.minio.MinIOInterfacing;
 import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.loja.LojaService;
@@ -40,7 +38,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LojaController {
   private final MinIOInterfacing minioService;
-  private final LocationController locationController;
+  
 
   private final LojaService service;
 
@@ -87,30 +85,16 @@ public class LojaController {
   public ResponseEntity<Loja> create(@ModelAttribute @Valid LojaRequest loja, Authentication authentication)
       throws Exception {
 
-    @SuppressWarnings("unchecked")
-    Map<String, Object> cordinates = (Map<String, Object>) locationController
-        .getCoordinates(loja.getRua(), loja.getNumero(), loja.getBairro(), loja.getCidade(), loja.getEstado())
-        .getBody();
+ 
 
-    if (cordinates == null || !cordinates.containsKey("latitude") || !cordinates.containsKey("longitude")) {
-      throw new RuntimeException("Coordenadas não retornadas pelo serviço de localização");
-    }
-
-    Double latitude = (Double) cordinates.get("latitude");
-    Double longitude = (Double) cordinates.get("longitude");
-
-    Loja lojaEntity = loja.build();
-    lojaEntity.setLatitude(latitude);
-    lojaEntity.setLongitude(longitude);
-
-    return ResponseEntity.ok(service.save(lojaEntity, loja.getFile(), authentication));
+    return ResponseEntity.ok(service.save(service.findCoordenates(loja.build()), loja.getFile(), authentication));
   }
 
   @PreAuthorize("hasRole('dono_de_loja')")
   @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Loja> update(@PathVariable Long id, @ModelAttribute @Valid LojaRequest loja,
       Authentication authentication) throws Exception {
-    return ResponseEntity.ok(service.update(id, loja.build(), loja.getFile(), authentication));
+    return ResponseEntity.ok(service.update(id, service.findCoordenates(loja.build()), loja.getFile(), authentication));
   }
 
   @PreAuthorize("hasRole('dono_de_loja')")

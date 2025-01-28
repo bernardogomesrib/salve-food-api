@@ -1,6 +1,7 @@
 package com.pp1.salve.model.loja;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pp1.salve.api.location.LocationController;
 import com.pp1.salve.exceptions.ResourceNotFoundException;
 import com.pp1.salve.exceptions.UnauthorizedAccessException;
 import com.pp1.salve.kc.KeycloakService;
@@ -18,6 +20,7 @@ import com.pp1.salve.model.item.Item;
 import com.pp1.salve.model.item.ItemRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +34,7 @@ public class LojaService {
   private final ItemRepository itemRepository;
   private final LojaRepository repository;
 
+  private final LocationController locationController;
   private final SegmentoLojaRepository segmentoLojaRepository;
 
   private final KeycloakService keycloakService;
@@ -78,8 +82,7 @@ public class LojaService {
     return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Loja não encontrada"));
   }
 
-  public Loja save(Loja loja, MultipartFile file, Authentication authentication) throws Exception {
-
+  public Loja save(Loja loja,@NotNull MultipartFile file, Authentication authentication) throws Exception {
     Loja lojaDoUsuario = repository.findByCriadoPorId(authentication.getName());
     if (lojaDoUsuario != null) {
       if (lojaDoUsuario.isAtivo() == true) {
@@ -234,4 +237,26 @@ public class LojaService {
   private String getUniqueName(Long id) {
     return id + "" + LOJA;
   }
+
+  public Loja findCoordenates(Loja loja){
+       @SuppressWarnings("unchecked")
+    Map<String, Object> cordinates = (Map<String, Object>) locationController
+        .getCoordinates(loja.getRua(), loja.getNumero(), loja.getBairro(), loja.getCidade(), loja.getEstado())
+        .getBody();
+
+    if (cordinates == null || !cordinates.containsKey("latitude") || !cordinates.containsKey("longitude")) {
+      throw new RuntimeException("Coordenadas não retornadas pelo serviço de localização");
+    }
+
+    Double latitude = (Double) cordinates.get("latitude");
+    Double longitude = (Double) cordinates.get("longitude");
+
+    
+
+    loja.setLatitude(latitude);
+    loja.setLongitude(longitude);
+    return loja;
+  }
+
+
 }
