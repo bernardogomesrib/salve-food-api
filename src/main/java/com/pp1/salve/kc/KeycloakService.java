@@ -15,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -22,7 +25,9 @@ import org.springframework.web.client.HttpClientErrorException.BadRequest;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.pp1.salve.configs.interceptor.UserMapper;
 import com.pp1.salve.exceptions.ResourceNotFoundException;
+import com.pp1.salve.model.usuario.UsuarioRepository;
 import com.pp1.salve.model.usuario.UsuarioService;
 
 import jakarta.transaction.Transactional;
@@ -39,11 +44,15 @@ public class KeycloakService {
     private String roleUri;
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private UsuarioRepository userRepository;
 
     @Transactional
     public ResponseEntity<?> createAccount(String firstName, String lastName, String username, String password,
             String phone) {
-
+        System.out.println("começando a criar conta");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + getAdminAccessToken());
@@ -60,7 +69,7 @@ public class KeycloakService {
 
     public ResponseEntity<?> login(String username, String password) {
         try {
-            if(usuarioService.findUsuarioByEmail(username) == null) {
+            if (usuarioService.findUsuarioByEmail(username) == null) {
                 Map<String, Object> errorResponse = new HashMap<>();
                 errorResponse.put("message", "Usuário não encontrado!");
                 errorResponse.put("status", 404);
@@ -77,13 +86,13 @@ public class KeycloakService {
 
             HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
             RestTemplate restTemplate = new RestTemplate();
-            
+
             ResponseEntity<LoginResponse> response = restTemplate.postForEntity(url, entity, LoginResponse.class);
             return response;
 
         } catch (HttpClientErrorException e) {
             Map<String, Object> errorResponse = new HashMap<>();
-            
+
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 errorResponse.put("message", "Credenciais inválidas!");
                 errorResponse.put("status", 401);
@@ -125,7 +134,8 @@ public class KeycloakService {
 
         try {
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<LoginResponse> response = restTemplate.postForEntity(issuerUri + "/protocol/openid-connect/token",
+            ResponseEntity<LoginResponse> response = restTemplate.postForEntity(
+                    issuerUri + "/protocol/openid-connect/token",
                     request, LoginResponse.class);
             return response;
         } catch (BadRequest e) {
@@ -142,8 +152,8 @@ public class KeycloakService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + getAdminAccessToken());
         Role role = getRoleByName(roleName);
-        if(role == null){
-            throw new ResourceNotFoundException("Role de nome "+roleName+" não encontrada");
+        if (role == null) {
+            throw new ResourceNotFoundException("Role de nome " + roleName + " não encontrada");
         }
         Map<String, Object> roleRepresentation = new LinkedHashMap<>();
 
@@ -162,9 +172,9 @@ public class KeycloakService {
         return response;
     }
 
+    public ResponseEntity<?> editProfile(String email, String firstName, String lastName, String phone,
+            Authentication authentication) {
 
-    public ResponseEntity<?> editProfile(String email,String firstName, String lastName, String phone,Authentication authentication) {
-        
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + getAdminAccessToken());
@@ -175,23 +185,54 @@ public class KeycloakService {
         requestBody.put("attributes", Map.of("phone", List.of(phone)));
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
         RestTemplate restTemplate = new RestTemplate();
-        
-        ResponseEntity<?> response = restTemplate.exchange(realmLinkCriacao + "/" + authentication.getName(), HttpMethod.PUT, entity,
+
+        ResponseEntity<?> response = restTemplate.exchange(realmLinkCriacao + "/" + authentication.getName(),
+                HttpMethod.PUT, entity,
                 Object.class);
         return response;
     }
 
-
-
-
-    public ResponseEntity<?> listAllRoles(){
+    public ResponseEntity<?> listAllRoles() {
         return ResponseEntity.status(200).body(KcAdmin.getRoles());
     }
+
     private String getAdminAccessToken() {
 
         return KcAdmin.getAdminAccessToken();
     }
+
     private Role getRoleByName(String roleName) {
         return KcAdmin.getRoleByName(roleName);
     }
+
+    public ResponseEntity<LoginResponse> firstlogin(String username, String password) {
+        try {
+
+            String url = issuerUri + "/protocol/openid-connect/token";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            String requestBody = String.format(
+                    "client_id=salve&grant_type=password&username=%s&password=%s",
+                    username, password);
+
+            HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+            RestTemplate restTemplate = new RestTemplate();
+
+            ResponseEntity<LoginResponse> response = restTemplate.postForEntity(url, entity, LoginResponse.class);
+
+           System.out.println("chegando na parte do token");
+            String jwtToken = response.getBody().getAccessToken();
+            JwtDecoder jwtDecoder = JwtDecoders.fromIssuerLocation(issuerUri);
+            Jwt jwt = jwtDecoder.decode(jwtToken);
+            Map<String, Object> claims = new HashMap<>(jwt.getClaims());
+            userRepository.save(userMapper.toUsuario(claims));
+
+            return response;
+
+        } catch (HttpClientErrorException e) {
+            throw e;
+        }
+    }
+
 }

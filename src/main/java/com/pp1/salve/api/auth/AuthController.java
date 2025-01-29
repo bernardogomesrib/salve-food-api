@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pp1.salve.kc.KeycloakService;
 import com.pp1.salve.kc.LoginResponse;
 import com.pp1.salve.model.endereco.EnderecoService;
-import com.pp1.salve.model.mail.MailService;
+/* import com.pp1.salve.model.mail.MailService; */
 import com.pp1.salve.model.usuario.UsuarioService;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,8 +37,8 @@ public class AuthController {
 	private KeycloakService keycloakService;
 	@Autowired
 	private EnderecoService enderecoService;
-	@Autowired
-	private MailService mailService;
+	/* @Autowired */
+	/* private MailService mailService; */
     @Autowired
     private UsuarioService usuarioService;
 
@@ -51,7 +51,9 @@ public class AuthController {
     	// if (response.getStatusCode().is2xxSuccessful()) {
         // 	mailService.sendWelcomeEmail(entity.getEmail(), entity.getFirstName());
     	// }
-
+        System.out.println("First login");
+        
+        keycloakService.firstlogin(entity.getEmail(), entity.getPassword());
     	return response;
 	}
 
