@@ -15,6 +15,7 @@ import io.minio.PutObjectArgs;
 import io.minio.RemoveBucketArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.Result;
+import io.minio.SetBucketPolicyArgs;
 import io.minio.StatObjectArgs;
 import io.minio.http.Method;
 import io.minio.messages.Item;
@@ -28,7 +29,8 @@ public class MinIOInterfacing {
     @Transactional
     public String getSingleUrl(String bucketName, String fileName) throws Exception {
         try {
-            if (!(minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(fileName).build()).size()>0)) {
+            if (!(minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(fileName).build())
+                    .size() > 0)) {
                 return null;
             }
             return minioClient.getPresignedObjectUrl(
@@ -83,10 +85,12 @@ public class MinIOInterfacing {
             throw e;
         }
     }
+
     @Transactional
     public void deleteFile(String bucketName, String fileName) throws Exception {
         try {
-            if (!(minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(fileName).build()).size()>0)) {
+            if (!(minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(fileName).build())
+                    .size() > 0)) {
                 return;
             }
 
@@ -95,16 +99,71 @@ public class MinIOInterfacing {
             throw e;
         }
     }
+
     @Transactional
     public void deleteBucket(String bucketName) throws Exception {
         try {
 
-            Iterable<Result<Item>> objects = minioClient.listObjects(ListObjectsArgs.builder().bucket(bucketName).build());
+            Iterable<Result<Item>> objects = minioClient
+                    .listObjects(ListObjectsArgs.builder().bucket(bucketName).build());
             for (Result<Item> result : objects) {
                 Item item = result.get();
-                minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(item.objectName()).build());
+                minioClient
+                        .removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(item.objectName()).build());
             }
             minioClient.removeBucket(RemoveBucketArgs.builder().bucket(bucketName).build());
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Transactional
+    public String salvarProfilePicture(String bucketName, String nomeUnico, MultipartFile file) throws Exception {
+        try {
+            if (!bucketExists(bucketName)) {
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+                minioClient.setBucketPolicy(SetBucketPolicyArgs.builder()
+                        .bucket(bucketName)
+                        .config("{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"*\"},\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::"
+                                + bucketName + "/*\"}]}")
+                        .build());
+            }
+            InputStream inputStream = file.getInputStream();
+
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(nomeUnico)
+                            .stream(inputStream, inputStream.available(), -1)
+                            .contentType(file.getContentType())
+                            .build());
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(bucketName)
+                            .object(nomeUnico)
+                            .build())
+                    .split("\\?")[0];
+
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Transactional
+    public String pegarImagemDePerfil(String bucketName, String nomeUnico) throws Exception {
+        try {
+            if (!(minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(nomeUnico).build())
+                    .size() > 0)) {
+                return null;
+            }
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(bucketName)
+                            .object(nomeUnico)
+                            .build())
+                    .split("\\?")[0];
         } catch (Exception e) {
             throw e;
         }

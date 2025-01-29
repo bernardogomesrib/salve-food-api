@@ -21,6 +21,7 @@ import com.pp1.salve.kc.KeycloakService;
 import com.pp1.salve.kc.LoginResponse;
 import com.pp1.salve.model.endereco.EnderecoService;
 import com.pp1.salve.model.mail.MailService;
+import com.pp1.salve.model.usuario.UsuarioService;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -38,6 +39,8 @@ public class AuthController {
 	private EnderecoService enderecoService;
 	@Autowired
 	private MailService mailService;
+    @Autowired
+    private UsuarioService usuarioService;
 
 	@PostMapping("create")
 	public ResponseEntity<?> postMethodName(@RequestBody @Valid AccountCreationRequest entity) {
@@ -133,10 +136,11 @@ public class AuthController {
 
     @PreAuthorize("hasRole('usuario')")
     @GetMapping("introspect")
-    public ResponseEntity<Map<String, Object>> getUserInfo(@AuthenticationPrincipal Jwt jwt,Authentication authentication) {
+    public ResponseEntity<Map<String, Object>> getUserInfo(@AuthenticationPrincipal Jwt jwt,Authentication authentication) throws Exception {
 
         Map<String, Object> claims = new HashMap<>(jwt.getClaims());
         claims.put("enderecos", enderecoService.findByUsuario(authentication));
+        claims.put("pfp",usuarioService.getImage(authentication));
         return ResponseEntity.ok(claims);
     }
 
