@@ -1,6 +1,5 @@
 package com.pp1.salve.model.loja;
 
-import java.time.LocalTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -37,14 +36,6 @@ public class Loja extends AuditEntityLoja {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    private Boolean fechaMaisCedoFinsDeSemana;
-
-    @Column(nullable = true)
-    private LocalTime horarioAbertura;
-
-    @Column(nullable = true)
-    private LocalTime horarioFechamento;
 
     @Column
     private List<DiasFuncionamento> diasFuncionamento;

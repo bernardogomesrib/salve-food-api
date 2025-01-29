@@ -103,8 +103,6 @@ public class LojaService {
                 "Segmento de Loja não encontrado com ID: " + loja.getSegmentoLoja().getId()));
         lojaDoUsuario.setSegmentoLoja(segmentoLoja);
         lojaDoUsuario.setAtivo(true);
-        lojaDoUsuario.setHorarioAbertura(loja.getHorarioAbertura());
-        lojaDoUsuario.setHorarioFechamento(loja.getHorarioFechamento());
         lojaDoUsuario.setDiasFuncionamento(loja.getDiasFuncionamento());
         lojaDoUsuario.setNome(loja.getNome());
         lojaDoUsuario.setDescricao(loja.getDescricao());
@@ -158,8 +156,6 @@ public class LojaService {
     lojaLocal.setNumero(loja.getNumero());
     lojaLocal.setRua(loja.getRua());
     lojaLocal.setTiposPagamento(loja.getTiposPagamento());
-    lojaLocal.setHorarioAbertura(loja.getHorarioAbertura());
-    lojaLocal.setHorarioFechamento(loja.getHorarioFechamento());
     lojaLocal.setDiasFuncionamento(loja.getDiasFuncionamento());
     lojaLocal.setSegmentoLoja(segmentoLoja);
 

@@ -1,6 +1,5 @@
 package com.pp1.salve.api.loja;
 
-import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -40,15 +39,9 @@ public class LojaRequest {
   @NotNull
   private MultipartFile file;
   @NotNull
-  private LocalTime horarioAbertura;
-  @NotNull
-  private LocalTime horarioFechamento;
-  @NotNull
   private List<DiasFuncionamento> diasFuncionamento;
   @NotNull
   private List<TipoPagamento> tiposPagamento;
-  @NotNull
-  private Boolean fechaMaisCedoFinsDeSemana;
   public Loja build() {
     return Loja.builder()
         .nome(nome)
@@ -59,11 +52,8 @@ public class LojaRequest {
         .estado(estado)
         .segmentoLoja(SegmentoLoja.builder().id(segmentoLojaId).build())
         .descricao(descricao)
-        .horarioAbertura(horarioAbertura)
-        .horarioFechamento(horarioFechamento)
         .diasFuncionamento(diasFuncionamento)
         .tiposPagamento(tiposPagamento)
-        .fechaMaisCedoFinsDeSemana(fechaMaisCedoFinsDeSemana)
         .build();
   }
 }

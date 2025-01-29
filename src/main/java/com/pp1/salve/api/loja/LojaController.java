@@ -82,7 +82,7 @@ public class LojaController {
   @PostMapping(consumes = "multipart/form-data")
   public ResponseEntity<Loja> create(@ModelAttribute @Valid LojaRequest loja, Authentication authentication)
       throws Exception {
-
+        
     return ResponseEntity.ok(service.save(service.findCoordenates(loja.build()), loja.getFile(), authentication));
   }
 
