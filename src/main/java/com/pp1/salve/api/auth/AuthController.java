@@ -48,9 +48,9 @@ public class AuthController {
             	entity.getEmail(),
             	entity.getPassword(), entity.getPhoneNumber());
 
-    	if (response.getStatusCode().is2xxSuccessful()) {
-        	mailService.sendWelcomeEmail(entity.getEmail(), entity.getFirstName());
-    	}
+    	// if (response.getStatusCode().is2xxSuccessful()) {
+        // 	mailService.sendWelcomeEmail(entity.getEmail(), entity.getFirstName());
+    	// }
 
     	return response;
 	}

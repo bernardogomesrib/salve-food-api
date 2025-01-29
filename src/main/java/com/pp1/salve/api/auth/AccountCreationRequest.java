@@ -19,7 +19,6 @@ public class AccountCreationRequest {
     private String email;
     @NotNull(message = "A senha não pode ser nula")
     @NotBlank(message = "A senha não pode ser vazio")
-    @Email(message = "Email inválido")
     private String password;
     @NotNull(message = "O celular não pode ser nulo")
     private String phoneNumber;
