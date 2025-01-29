@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,7 +22,6 @@ import com.pp1.salve.model.usuario.UsuarioService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -59,10 +57,10 @@ public class UsuarioController {
         Map<String, Object> usuario = authController.getUserInfo(jwt,authentication).getBody();
         return keycloakService.addRoleToUser(usuario.get("sub").toString(), "entregador");
     }
-    @PostMapping(path = "pfp", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> postPfp(Authentication authentication, @ModelAttribute @Valid @RequestBody MultipartFile file) throws Exception {
-        
-        return ResponseEntity.ok().body(usuarioService.image(authentication, file));
+    @PostMapping(path = "pfp", consumes = "multipart/form-data")
+    public ResponseEntity<?> postPfp(Authentication authentication, @ModelAttribute @Valid @RequestBody PfpRequest file) throws Exception {
+            System.out.println("chegou aqui");
+        return ResponseEntity.ok().body(usuarioService.image(authentication, file.getFile()));
     }
     
 }
