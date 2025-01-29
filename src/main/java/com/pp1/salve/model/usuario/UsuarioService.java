@@ -3,7 +3,6 @@ package com.pp1.salve.model.usuario;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.pp1.salve.exceptions.ResourceNotFoundException;
 import com.pp1.salve.minio.MinIOInterfacing;
@@ -25,8 +24,8 @@ public class UsuarioService {
         return usuarioRepository.findByEmail(email.toLowerCase()).orElse(null);
     }
 
-    public PfpResponse image(Authentication authentication,@NotNull MultipartFile file) throws Exception {
-        return new PfpResponse(minIOInterfacing.salvarProfilePicture(authentication.getName(), "pfp", file));
+    public PfpResponse image(Authentication authentication,@NotNull byte[] file,String mimetype) throws Exception {
+        return new PfpResponse(minIOInterfacing.salvarProfilePicture(authentication.getName(), "pfp", file, mimetype));
     }
     public String getImage(Authentication authentication) throws Exception {
         return minIOInterfacing.pegarImagemDePerfil(authentication.getName(), "pfp");

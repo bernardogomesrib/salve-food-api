@@ -1,5 +1,6 @@
 package com.pp1.salve.minio;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +119,7 @@ public class MinIOInterfacing {
     }
 
     @Transactional
-    public String salvarProfilePicture(String bucketName, String nomeUnico, MultipartFile file) throws Exception {
+    public String salvarProfilePicture(String bucketName, String nomeUnico, byte[] file,String mimetype) throws Exception {
         try {
             if (!bucketExists(bucketName)) {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
@@ -128,14 +129,14 @@ public class MinIOInterfacing {
                                 + bucketName + "/*\"}]}")
                         .build());
             }
-            InputStream inputStream = file.getInputStream();
+            InputStream inputStream = new ByteArrayInputStream(file);
 
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)
                             .object(nomeUnico)
-                            .stream(inputStream, inputStream.available(), -1)
-                            .contentType(file.getContentType())
+                            .stream(inputStream, file.length, -1)
+                            .contentType(mimetype)
                             .build());
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
