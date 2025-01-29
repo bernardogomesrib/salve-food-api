@@ -1,5 +1,6 @@
 package com.pp1.salve.api.loja;
 
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,7 +40,7 @@ public class LojaController {
   private final MinIOInterfacing minioService;
 
   private final LojaService service;
-
+  
   @Value("${api.url}")
   private String apiBaseUrl;
 
@@ -79,11 +80,11 @@ public class LojaController {
     return ResponseEntity.ok(service.findById(id));
   }
 
-  @PostMapping(consumes = "multipart/form-data")
-  public ResponseEntity<Loja> create(@ModelAttribute @Valid LojaRequest loja, Authentication authentication)
+  
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<Loja> create(@ModelAttribute @Valid LojaRequest lojaRequest, Authentication authentication)
       throws Exception {
-        
-    return ResponseEntity.ok(service.save(service.findCoordenates(loja.build()), loja.getFile(), authentication));
+    return ResponseEntity.ok(service.save(service.findCoordenates(lojaRequest.build()), lojaRequest.getFile(), authentication));
   }
 
   @PreAuthorize("hasRole('dono_de_loja')")

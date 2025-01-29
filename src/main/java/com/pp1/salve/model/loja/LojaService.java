@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.pp1.salve.api.location.LocationController;
+import com.pp1.salve.exceptions.LocationException;
 import com.pp1.salve.exceptions.ResourceNotFoundException;
 import com.pp1.salve.exceptions.UnauthorizedAccessException;
 import com.pp1.salve.kc.KeycloakService;
@@ -46,13 +47,12 @@ public class LojaService {
     return monta(lojas);
   }
 
-  public Loja findMyLojaNoFile(Authentication authentication){
-    Loja loja =repository.findByCriadoPorId(authentication.getName());
+  public Loja findMyLojaNoFile(Authentication authentication) {
+    Loja loja = repository.findByCriadoPorId(authentication.getName());
     if (loja == null)
       throw new EntityNotFoundException("Loja não encontrada");
     return loja;
   }
-
 
   public Page<Loja> findAll(Pageable pageable) throws Exception {
     Page<Loja> loja = repository.findAll(pageable);
@@ -90,7 +90,7 @@ public class LojaService {
     return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Loja não encontrada"));
   }
 
-  public Loja save(Loja loja,@NotNull MultipartFile file, Authentication authentication) throws Exception {
+  public Loja save(Loja loja, @NotNull MultipartFile file, Authentication authentication) throws Exception {
     Loja lojaDoUsuario = repository.findByCriadoPorId(authentication.getName());
     if (lojaDoUsuario != null) {
       if (lojaDoUsuario.isAtivo() == true) {
@@ -242,25 +242,27 @@ public class LojaService {
     return id + "" + LOJA;
   }
 
-  public Loja findCoordenates(Loja loja){
-       @SuppressWarnings("unchecked")
-    Map<String, Object> cordinates = (Map<String, Object>) locationController
-        .getCoordinates(loja.getRua(), loja.getNumero(), loja.getBairro(), loja.getCidade(), loja.getEstado())
-        .getBody();
+  public Loja findCoordenates(Loja loja) {
+    try {
 
-    if (cordinates == null || !cordinates.containsKey("latitude") || !cordinates.containsKey("longitude")) {
-      throw new RuntimeException("Coordenadas não retornadas pelo serviço de localização");
+      @SuppressWarnings("unchecked")
+      Map<String, Object> cordinates = (Map<String, Object>) locationController
+          .getCoordinates(loja.getRua(), loja.getNumero(), loja.getBairro(), loja.getCidade(), loja.getEstado())
+          .getBody();
+
+      if (cordinates == null || !cordinates.containsKey("latitude") || !cordinates.containsKey("longitude")) {
+        throw new RuntimeException("Coordenadas não retornadas pelo serviço de localização");
+      }
+
+      Double latitude = (Double) cordinates.get("latitude");
+      Double longitude = (Double) cordinates.get("longitude");
+
+      loja.setLatitude(latitude);
+      loja.setLongitude(longitude);
+    } catch (Exception e) {
+      throw new LocationException("não foi possível pegar a localização com os dados informados");
     }
-
-    Double latitude = (Double) cordinates.get("latitude");
-    Double longitude = (Double) cordinates.get("longitude");
-
-    
-
-    loja.setLatitude(latitude);
-    loja.setLongitude(longitude);
     return loja;
   }
-
 
 }

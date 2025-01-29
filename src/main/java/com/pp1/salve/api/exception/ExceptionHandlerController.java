@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 
+import com.pp1.salve.exceptions.LocationException;
 import com.pp1.salve.exceptions.NoDuplicatedEntityException;
 import com.pp1.salve.exceptions.ResourceNotFoundException;
 import com.pp1.salve.exceptions.UnauthorizedAccessException;
@@ -150,5 +151,13 @@ public class ExceptionHandlerController {
         error.put("status", ex.errorResponse().code());
         response.put("error", error);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(LocationException.class)
+    public ResponseEntity<Map<String, Object>> handleLocationException(LocationException ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        response.put("error", error);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

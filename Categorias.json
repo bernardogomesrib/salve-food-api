@@ -468,7 +468,7 @@
     "SegmentoRestaurante":[
       {
         "id": 1,
-        "nome": "japonêsa",
+        "nome": "Japonêsa",
         "emoji": "🇯🇵"
       },
       {
@@ -593,8 +593,8 @@
       },
       {
         "id": 27,
-        "nome": "Japonesa",
-        "emoji": "🇯🇵"
+        "nome": "Tailandesa",
+        "emoji": "🍜"
       },
       {
         "id": 28,
@@ -628,88 +628,88 @@
       },
       {
         "id": 34,
-        "nome": "Tailandesa",
-        "emoji": "🍜"
-      },
-      {
-        "id": 35,
         "nome": "Coreana",
         "emoji": "🇰🇷"
       },
       {
-        "id": 36,
+        "id": 35,
         "nome": "Mediterrânea",
         "emoji": "🥗"
       },
       {
-        "id": 37,
+        "id": 36,
         "nome": "Espanhola",
         "emoji": "🇪🇸"
       },
       {
-        "id": 38,
+        "id": 37,
         "nome": "Alemã",
         "emoji": "🇩🇪"
       },
       {
-        "id": 39,
+        "id": 38,
         "nome": "Portuguesa",
         "emoji": "🇵🇹"
       },
       {
-        "id": 40,
+        "id": 39,
         "nome": "Peruana",
         "emoji": "🇵🇪"
       },
       {
-        "id": 41,
+        "id": 40,
         "nome": "Americana",
         "emoji": "🇺🇸"
       },
       {
-        "id": 42,
+        "id": 41,
         "nome": "Africana",
         "emoji": "🍲"
       },
       {
-        "id": 43,
+        "id": 42,
         "nome": "Turca",
         "emoji": "🇹🇷"
       },
       {
-        "id": 44,
+        "id": 43,
         "nome": "Vietnamita",
         "emoji": "🇻🇳"
       },
       {
-        "id": 45,
+        "id": 44,
         "nome": "Australiana",
         "emoji": "🇦🇺"
       },
       {
-        "id": 46,
+        "id": 45,
         "nome": "Nordestina",
         "emoji": "🌵"
       },
       {
-        "id": 47,
+        "id": 46,
         "nome": "Mineira",
         "emoji": "🍲"
       },
       {
-        "id": 48,
+        "id": 47,
         "nome": "Gaúcha",
         "emoji": "🍖"
       },
       {
-        "id": 49,
+        "id": 48,
         "nome": "Amazônica",
         "emoji": "🍃"
       },
       {
-        "id": 50,
+        "id": 49,
         "nome": "Étnica",
         "emoji": "🌍"
+      },
+      {
+        "id": 50,
+        "nome": "Havaiana",
+        "emoji": "🌺"
       }
       ]
 }
