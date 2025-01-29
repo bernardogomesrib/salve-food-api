@@ -153,6 +153,9 @@ public class MinIOInterfacing {
     @Transactional
     public String pegarImagemDePerfil(String bucketName, String nomeUnico) throws Exception {
         try {
+            if(!bucketExists(bucketName)){
+                return null;
+            }
             if (!(minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(nomeUnico).build())
                     .size() > 0)) {
                 return null;
