@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
+/* import org.springframework.web.bind.annotation.PatchMapping; */
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,20 +61,22 @@ public class EntregadorController {
             throw new Exception("Loja não encontrada com o ID fornecido: " + request.getLojaId());
         }
 
-        Entregador entregador = request.build(loja);
-
-        Entregador savedEntregador = service.save(entregador, request.getFile(), authentication);
+        Entregador savedEntregador = service.save(request.getEmail(), authentication);
 
         return ResponseEntity.ok(savedEntregador);
     }
 
-    @PreAuthorize("hasRole('dono_de_loja')")
-    @PatchMapping(value = "/{id}/status")
-    public ResponseEntity<Entregador> updateStatus(@PathVariable Long id, @RequestParam Boolean disponivel,
-            Authentication authentication) throws Exception {
-        return ResponseEntity.ok(service.updateStatus(id, disponivel, authentication));
-    }
-
+    /*
+     * @PreAuthorize("hasRole('dono_de_loja')")
+     * 
+     * @PatchMapping(value = "/{id}/status")
+     * public ResponseEntity<Entregador> updateStatus(@PathVariable Long
+     * id, @RequestParam Boolean disponivel,
+     * Authentication authentication) throws Exception {
+     * return ResponseEntity.ok(service.updateStatus(id, disponivel,
+     * authentication));
+     * }
+     */
     @PreAuthorize("hasRole('dono_de_loja')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id, Authentication authentication) throws Exception {
@@ -89,6 +91,7 @@ public class EntregadorController {
         return service.findById(id);
     }
 
+    @Operation(summary = "Busca entregadores disponíveis da sua loja", description = "Busca entregadores disponíveis da sua loja, ordenados do que estiver mais recentemente logado, o usuario tem uma variavel online para definir se ele está online ou não, basicamente é online se tiver interagido com o back nos ultimos 5 minutos ou algo assim")
     @PreAuthorize("hasRole('dono_de_loja')")
     @GetMapping("meus")
     public ResponseEntity<List<Entregador>> getMeusEntregadores(Authentication authentication) throws Exception {

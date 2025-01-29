@@ -2,6 +2,7 @@ package com.pp1.salve.model.pedido;
 
 import java.util.List;
 
+
 import com.pp1.salve.model.baseModel.AuditEntityPedido;
 import com.pp1.salve.model.endereco.Endereco;
 import com.pp1.salve.model.entregador.TrajetoriaEntregador;
@@ -58,6 +59,10 @@ public class Pedido extends AuditEntityPedido{
 
     @OneToOne
     private TrajetoriaEntregador trajetoriaEntregador;
+    
+    @Column(name = "senha",length = 5,nullable = true)
+    private String senha;
+   
 
     public enum Status {
         PENDENTE, PREPARANDO, AGUARDANDO_ENTREGADOR, A_CAMINHO, ENTREGUE, CANCELADO;

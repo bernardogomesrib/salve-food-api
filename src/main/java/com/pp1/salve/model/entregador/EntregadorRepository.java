@@ -17,9 +17,8 @@ public interface EntregadorRepository extends JpaRepository<Entregador, Long> {
 
     boolean existsByLojaId(Long lojaId);
 
-    @Query("SELECT e FROM Entregador e LEFT JOIN Pedido p ON e.id = p.trajetoriaEntregador.entregador.id WHERE p.status != 'A_CAMINHO' AND e.disponivel = true AND e.loja = :loja")
+    @Query("SELECT e FROM Entregador e LEFT JOIN Pedido p ON e.id = p.trajetoriaEntregador.entregador.id WHERE p.status != 'A_CAMINHO' AND e.loja = :loja ORDER BY e.usuario.lastSeenAt DESC")
     List<Entregador> findEntregadorOnlineDisponivel(Loja loja);
-
 
     Optional<Entregador> findByIdAndLoja(Long id, Loja loja);
 } 

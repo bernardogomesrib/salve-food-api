@@ -26,8 +26,6 @@ import com.pp1.salve.model.pedido.PedidoResposta;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 
 @RestController
 @RequestMapping("/api/pedidos")
@@ -76,10 +74,9 @@ public class PedidosController {
 
     @PreAuthorize("hasRole('entregador')")
     @PutMapping("/{id}/entregue")
-    public ResponseEntity<Pedido> entregue(@PathVariable Long id, @RequestBody @Min(4) @Max(4) String senha,
+    public ResponseEntity<Pedido> entregue(@PathVariable Long id, @RequestBody String senha,
             Authentication authentication) {
-        //return ResponseEntity.ok(service.updateStatus(id, senha, authentication));
-        throw new UnsupportedOperationException("Unimplemented method");
+        return ResponseEntity.ok(service.updateStatus(id, senha, authentication));
     }
 
     @PreAuthorize("hasRole('admin')")
