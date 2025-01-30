@@ -89,7 +89,7 @@ public class LojaController {
 
   @PreAuthorize("hasRole('dono_de_loja')")
   @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<Loja> update(@PathVariable Long id, @ModelAttribute @Valid LojaRequest loja,
+  public ResponseEntity<Loja> update(@PathVariable Long id, @ModelAttribute @Valid LojaRequestEdit loja,
       Authentication authentication) throws Exception {
     return ResponseEntity.ok(service.update(id, service.findCoordenates(loja.build()), loja.getFile(), authentication));
   }
