@@ -114,7 +114,7 @@ public class LojaController {
   @GetMapping("som")
   public ResponseEntity<ResponseSons> getPostaSonsDaLoja(Authentication authentication) throws Exception {
     return ResponseEntity.ok().body(new ResponseSons(
-        minioService.getSingleUrl(service.findMyLoja(authentication).getId() + "loja", "toqueMusica")));
+        minioService.getMusica(service.findMyLoja(authentication).getId() + "loja", "toqueMusica")));
   }
 
   @PreAuthorize("hasRole('dono_de_loja')")

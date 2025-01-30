@@ -172,4 +172,21 @@ public class MinIOInterfacing {
             throw e;
         }
     }
+
+
+    @Transactional
+    public String getMusica(String bucketname, String nomeUnico) throws Exception {
+        try {
+            if(!bucketExists(bucketname)){
+                return null;
+            }
+            if (!(minioClient.statObject(StatObjectArgs.builder().bucket(bucketname).object(nomeUnico).build())
+                    .size() > 0)) {
+                return getSingleUrl("defaultmusic", nomeUnico);
+            }
+            return getSingleUrl(bucketname, nomeUnico);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 }
