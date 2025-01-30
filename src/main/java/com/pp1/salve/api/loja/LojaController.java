@@ -26,6 +26,7 @@ import com.pp1.salve.minio.MinIOInterfacing;
 import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.loja.LojaService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -44,11 +45,13 @@ public class LojaController {
   @Value("${api.url}")
   private String apiBaseUrl;
 
+  @Operation(summary = "Pega a loja do usuario logado", description = "Pega a loja do usuario logado, caso não tenha uma loja retona um erro")
   @GetMapping("minha")
   public ResponseEntity<Loja> getMinhaLoja(Authentication authentication) throws Exception {
     return ResponseEntity.ok(service.findMyLoja(authentication));
   }
-
+  
+  @Operation(summary = "Pega todas as lojas", description = "Pega todas as lojas organizando por id caso não tenha lat e longi")
   @GetMapping
   public Page<Loja> getAll(@RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size,
@@ -62,6 +65,7 @@ public class LojaController {
     }
   }
 
+  @Operation(summary = "Pega as lojas pelo segmento", description = "Pega as lojas pelo segmento")
   @GetMapping("segmento/{id}")
   public Page<Loja> getViaSegmento(@PathVariable long id, @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size,
@@ -75,18 +79,20 @@ public class LojaController {
     }
   }
 
+  @Operation(summary = "Pega a loja pelo id", description = "Pega a loja pelo id")
   @GetMapping("/{id}")
   public ResponseEntity<Loja> getById(@PathVariable Long id) {
     return ResponseEntity.ok(service.findById(id));
   }
 
-  
+  @Operation(summary = "Cria a loja", description = "Cria a loja, é obrigatorio enviar imagem")
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Loja> create(@ModelAttribute @Valid LojaRequest lojaRequest, Authentication authentication)
       throws Exception {
     return ResponseEntity.ok(service.save(service.findCoordenates(lojaRequest.build()), lojaRequest.getFile(), authentication));
   }
 
+  @Operation(summary = "Atualiza a loja", description = "Atualiza a loja, não é obrigatorio enviar imagem")
   @PreAuthorize("hasRole('dono_de_loja')")
   @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Loja> update(@PathVariable Long id, @ModelAttribute @Valid LojaRequestEdit loja,
@@ -94,6 +100,7 @@ public class LojaController {
     return ResponseEntity.ok(service.update(id, service.findCoordenates(loja.build()), loja.getFile(), authentication));
   }
 
+  @Operation(summary = "Deleta a loja", description = "Deleta a loja")
   @PreAuthorize("hasRole('dono_de_loja')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable Long id, Authentication authentication) throws Exception {
@@ -101,6 +108,7 @@ public class LojaController {
     return ResponseEntity.noContent().build();
   }
 
+  @Operation(summary = "Posta o som da loja", description = "Posta a musica de notificação da loja")
   @PreAuthorize("hasRole('dono_de_loja')")
   @PostMapping(value = "som", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<ResponseSons> postPostaSonsDaLoja(@ModelAttribute @NotNull MultipartFile file,
@@ -110,6 +118,7 @@ public class LojaController {
         minioService.uploadFile(service.findMyLoja(authentication).getId() + "loja", "toqueMusica", file)));
   }
 
+  @Operation(summary = "Pega o som da loja", description = "Pega a musica de notificação da loja")
   @PreAuthorize("hasRole('dono_de_loja')")
   @GetMapping("som")
   public ResponseEntity<ResponseSons> getPostaSonsDaLoja(Authentication authentication) throws Exception {
@@ -117,6 +126,9 @@ public class LojaController {
         minioService.getMusica(service.findMyLoja(authentication).getId() + "loja", "toqueMusica")));
   }
 
+
+
+  @Operation(summary = "Atualiza o som da loja", description = "Atualiza a musica de notificação da loja")
   @PreAuthorize("hasRole('dono_de_loja')")
   @PutMapping(value = "som", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<ResponseSons> putSom(@ModelAttribute @NotNull MultipartFile file, Authentication authentication)
