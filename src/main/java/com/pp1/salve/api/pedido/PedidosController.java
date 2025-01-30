@@ -26,8 +26,6 @@ import com.pp1.salve.model.pedido.PedidoResposta;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 
 @RestController
 @RequestMapping("/api/pedidos")
@@ -74,12 +72,10 @@ public class PedidosController {
         return ResponseEntity.ok(service.updateStatus(id, Status.CANCELADO, authentication));
     }
 
-    @PreAuthorize("hasRole('entregador')")
+    @PreAuthorize("hasRole('dono_de_loja')")
     @PutMapping("/{id}/entregue")
-    public ResponseEntity<Pedido> entregue(@PathVariable Long id, @RequestBody @Min(4) @Max(4) String senha,
-            Authentication authentication) {
-        //return ResponseEntity.ok(service.updateStatus(id, senha, authentication));
-        throw new UnsupportedOperationException("Unimplemented method");
+    public ResponseEntity<Pedido> entregue(@PathVariable Long id,@RequestBody PedidoConclusaoRequest pedidoConclusaoRequest, Authentication authentication) {
+        return ResponseEntity.ok(service.updateStatus(id, pedidoConclusaoRequest.getSenha(),pedidoConclusaoRequest.getIdEntregador(), authentication));
     }
 
     @PreAuthorize("hasRole('admin')")
@@ -106,7 +102,6 @@ public class PedidosController {
         return ResponseEntity.ok().body(
                 service.getPedidosDaMinhaLoja(authentication, PageRequest.of(page, size, Sort.by("id").descending())));
     }
-
 
     @Operation(summary = "define um entregador para um pedido", description = "define um entregador para um pedido com base no id do entregador e no id do pedido")
     @PreAuthorize("hasRole('dono_de_loja')")

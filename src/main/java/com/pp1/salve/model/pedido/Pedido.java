@@ -50,6 +50,10 @@ public class Pedido extends AuditEntityPedido{
     @Column(name = "forma_pagamento", nullable = false)
     private String formaPagamento;
 
+    @Column(name = "senha",length = 5,nullable = true)
+    private String senha;
+   
+
     @OneToMany
     private List<ItemPedido> itens;
 

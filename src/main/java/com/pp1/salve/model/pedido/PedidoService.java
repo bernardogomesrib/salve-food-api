@@ -1,6 +1,7 @@
 package com.pp1.salve.model.pedido;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,6 +81,7 @@ public class PedidoService {
                 for (ItemPedido i : p.getItens()) {
                     i.setItem(itemService.monta(i.getItem()));
                 }
+                p.setSenha(null);
             }
             return pedido;
         }
@@ -133,7 +135,7 @@ public class PedidoService {
         }
         ped.setValorTotal(valorTotal + ped.getTaxaEntrega());
         ped.setItens(itensParaSalvar);
-
+        ped.setSenha(generateSenha());
         PedidoResposta pedidoResposta = PedidoResposta.builder().pedido(repository.save(ped)).build();
         if (isHabilitadoPagamento) {
             if (formaPagamento.equals("MERCADO_PAGO_PIX")) {
@@ -176,13 +178,18 @@ public class PedidoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Pedido updateStatus(Long id, String senha, Long entregadorId/* Authentication authentication */) {
+    public Pedido updateStatus(Long id, String senha, Long entregadorId, Authentication authentication) {
         // TODO: implementar notificação para entregador, loja e cliente
+
         Pedido pedido = findById(id);
         if (pedido.getTrajetoriaEntregador().getEntregador().getId().equals(entregadorId)
-                && pedido.getCriadoPor().getPhone().contains(senha)) {
-            pedido.setStatus(Status.ENTREGUE);
-            return repository.save(pedido);
+                && pedido.getLoja().getCriadoPor().getId().equals(authentication.getName())) {
+            if (pedido.getSenha().equals(senha)) {
+                pedido.setStatus(Status.ENTREGUE);
+                return repository.save(pedido);
+            } else {
+                throw new UnauthorizedAccessException("Senha incorreta para o pedido");
+            }
         } else {
             throw new UnauthorizedAccessException("Pedido você não pode alterar este pedido");
         }
@@ -211,6 +218,15 @@ public class PedidoService {
         } else {
             throw new UnauthorizedAccessException("Pedido você não pode alterar este pedido");
         }
+    }
+
+    public String generateSenha() {
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder(5);
+        for (int i = 0; i < 5; i++) {
+            sb.append((char) ('A' + random.nextInt(26)));
+        }
+        return sb.toString();
     }
 
 }
