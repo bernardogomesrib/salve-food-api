@@ -143,8 +143,8 @@ public class MinIOInterfacing {
                             .method(Method.GET)
                             .bucket(bucketName)
                             .object(nomeUnico)
-                            .build())
-                    .split("\\?")[0];
+                            .build());
+                   
 
         } catch (Exception e) {
             throw e;
@@ -166,8 +166,8 @@ public class MinIOInterfacing {
                             .method(Method.GET)
                             .bucket(bucketName)
                             .object(nomeUnico)
-                            .build())
-                    .split("\\?")[0];
+                            .build());
+                   
         } catch (Exception e) {
             throw e;
         }

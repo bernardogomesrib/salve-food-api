@@ -265,4 +265,8 @@ public class LojaService {
     return loja;
   }
 
+public Loja findById(Long id, Double lat, Double longi) throws Exception {
+    return monta(findById(id), lat, longi);
+}
+
 }

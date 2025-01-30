@@ -81,8 +81,15 @@ public class LojaController {
 
   @Operation(summary = "Pega a loja pelo id", description = "Pega a loja pelo id")
   @GetMapping("/{id}")
-  public ResponseEntity<Loja> getById(@PathVariable Long id) {
-    return ResponseEntity.ok(service.findById(id));
+  public ResponseEntity<Loja> getById(@RequestParam(required = false) Double lat,
+  @RequestParam(required = false) Double longi,@PathVariable Long id) throws Exception {
+    Loja loja = null;
+    if(lat != null && longi != null){
+      loja = service.findById(id, lat, longi);
+    }else{
+      loja = service.findById(id);
+    }
+    return ResponseEntity.ok(loja);
   }
 
   @Operation(summary = "Cria a loja", description = "Cria a loja, é obrigatorio enviar imagem")
