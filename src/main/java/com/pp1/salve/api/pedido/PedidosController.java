@@ -36,6 +36,8 @@ public class PedidosController {
     @Autowired
     private PedidoService service;
 
+    @Operation(summary = "Pega todos os pedidos", description = "Pega todos os pedidos organizando por id, disponivel apenas para administrador")
+    @PreAuthorize("hasRole('admin')")
     @GetMapping
     public Page<Pedido> getAll(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -43,43 +45,51 @@ public class PedidosController {
         return service.findAll(pageable);
     }
 
+    @Operation(summary = "Pega um pedido pelo id", description = "não coloquei nem uma restrição")
     @GetMapping("/{id}")
     public ResponseEntity<Pedido> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
+    @Operation(summary = "Cria um pedido para ser aceito ou negado por uma loja")
     @PostMapping
     public ResponseEntity<PedidoResposta> create(@RequestBody PedidoRequest pedido, Authentication authentication)
             throws Exception {
         return ResponseEntity.ok(service.save(pedido, authentication));
     }
 
+    @Operation(summary = "Atualiza o status do pedido para aceito", description = "Atualiza o status do pedido para aceito, precisa de role de dono de loja")
     @PreAuthorize("hasRole('dono_de_loja')")
     @PutMapping("/{id}/preparando")
     public ResponseEntity<Pedido> atualizarPedidoPreparando(@PathVariable Long id, Authentication authentication) {
         return ResponseEntity.ok(service.updateStatus(id, Status.PREPARANDO, authentication));
     }
 
+    @Operation(summary = "Atualiza o pedido para aguardando o entregador")
     @PreAuthorize("hasRole('dono_de_loja')")
     @PutMapping("{id}/aguardando-entregador")
     public ResponseEntity<Pedido> atualizarPedidoAguardando(@PathVariable Long id, Authentication authentication) {
         return ResponseEntity.ok(service.updateStatus(id, Status.AGUARDANDO_ENTREGADOR, authentication));
     }
 
+    @Operation(summary = "Atualiza o pedido para cancelado")
     @PreAuthorize("hasRole('dono_de_loja')")
     @PutMapping("{id}/cancelado")
     public ResponseEntity<Pedido> cancelado(@PathVariable Long id, Authentication authentication) {
         return ResponseEntity.ok(service.updateStatus(id, Status.CANCELADO, authentication));
     }
 
+    @Operation(summary = "Atualiza o pedido para entregue", description = "Atualiza o pedido para entregue, precisa da senha do pedido")
     @PreAuthorize("hasRole('dono_de_loja')")
     @PutMapping("/{id}/entregue")
-    public ResponseEntity<Pedido> entregue(@PathVariable Long id,@RequestBody PedidoConclusaoRequest pedidoConclusaoRequest, Authentication authentication) {
-        return ResponseEntity.ok(service.updateStatus(id, pedidoConclusaoRequest.getSenha(),pedidoConclusaoRequest.getIdEntregador(), authentication));
+    public ResponseEntity<Pedido> entregue(@PathVariable Long id,
+            @RequestBody PedidoConclusaoRequest pedidoConclusaoRequest, Authentication authentication) {
+        return ResponseEntity.ok(service.updateStatus(id, pedidoConclusaoRequest.getSenha(),
+                pedidoConclusaoRequest.getIdEntregador(), authentication));
     }
 
-    @PreAuthorize("hasRole('admin')")
     @Operation(summary = "Deletar pedido", description = "Deleta um pedido pelo id. precisa de role de admin")
+    @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.deleteById(id);
