@@ -27,12 +27,16 @@ import com.pp1.salve.model.item.Item;
 import com.pp1.salve.model.item.ItemService;
 import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.loja.LojaService;
+import com.pp1.salve.model.notification.DBNotificationService;
 import com.pp1.salve.model.pedido.Pedido.Status;
 import com.pp1.salve.model.pedido.itemDoPedido.ItemPedido;
 import com.pp1.salve.model.pedido.itemDoPedido.ItemPedidoFront;
 import com.pp1.salve.model.pedido.itemDoPedido.ItemPedidoRepository;
 import com.pp1.salve.model.usuario.Usuario;
 import com.pp1.salve.model.usuario.UsuarioService;
+import com.pp1.salve.webSocket.notification.Notification;
+import com.pp1.salve.webSocket.notification.NotificationService;
+import com.pp1.salve.webSocket.notification.NotificationType;
 import com.stripe.StripeClient;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
@@ -53,6 +57,8 @@ public class PedidoService {
     private final ItemPedidoRepository itemPedidoRepository;
     private final PaymentClient mercadoPagoClient;
     private final StripeClient stripeClient;
+    private final NotificationService notificationService;
+    private final DBNotificationService dbNotificationService;
     @Value("${boolean.habilitado-pagamentos}")
     private Boolean isHabilitadoPagamento;
 
@@ -111,7 +117,7 @@ public class PedidoService {
             throw new UnauthorizedAccessException(
                     "Pedido com itens de lojas diferentes, por favor, faça pedidos separados");
         }
-        // TODO: terminar de implementar formas de pagamento e notificar loja
+        // TODO: terminar de implementar formas de pagamento
         Usuario usuario = usuarioService.findUsuario(authentication);
         final String formaPagamento = pedido.getFormaPagamento();
 
@@ -136,7 +142,8 @@ public class PedidoService {
         ped.setValorTotal(valorTotal + ped.getTaxaEntrega());
         ped.setItens(itensParaSalvar);
         ped.setSenha(generateSenha());
-        PedidoResposta pedidoResposta = PedidoResposta.builder().pedido(repository.save(ped)).build();
+        ped = repository.save(ped);
+        PedidoResposta pedidoResposta = PedidoResposta.builder().pedido(ped).build();
         if (isHabilitadoPagamento) {
             if (formaPagamento.equals("MERCADO_PAGO_PIX")) {
                 PaymentCreateRequest createRequest = PaymentCreateRequest.builder()
@@ -162,16 +169,38 @@ public class PedidoService {
             }
         }
 
+        final String lojaCriadorId = loja.getCriadoPor().getId();
+        notificationService.sendNotification(lojaCriadorId, Notification.builder()
+                .notificationType(NotificationType.PEDIDO_NOVO)
+                .message("Você tem um novo pedido")
+                .pedidoId(pedidoResposta.getPedido().getId())
+                .senderName(usuario.getFirstName() + " " + usuario.getLastName())
+                .receverId(lojaCriadorId)
+                .build());
+
         return pedidoResposta;
     }
 
     @Transactional(rollbackFor = Exception.class)
     public Pedido updateStatus(Long id, Status status, Authentication authentication) {
-        // TODO: implementar notificação para cliente e loja
+        // implementar notificação para cliente e loja
         Pedido pedido = findById(id);
         pedido.setStatus(status);
         if (pedido.getLoja().getCriadoPor().getId().equals(authentication.getName())) {
-            return repository.save(pedido);
+            Pedido p = repository.save(pedido);
+            final String idUsuario = pedido.getCriadoPor().getId();
+
+            Notification notification = Notification.builder()
+                    .notificationType(NotificationType.PEDIDO_ATUALIZADO)
+                    .message("seu pedido foi atualizado para " + status.toString())
+                    .pedidoId(pedido.getId())
+                    .senderName(pedido.getLoja().getNome())
+                    .receverId(idUsuario)
+                    .build();
+            notificationService.sendNotification(
+                    idUsuario, notification);
+            dbNotificationService.save(Notification.toEntity(notification));
+            return p;
         } else {
             throw new UnauthorizedAccessException("Pedido você não pode alterar este pedido");
         }
@@ -179,14 +208,27 @@ public class PedidoService {
 
     @Transactional(rollbackFor = Exception.class)
     public Pedido updateStatus(Long id, String senha, Long entregadorId, Authentication authentication) {
-        // TODO: implementar notificação para entregador, loja e cliente
+        // implementar notificação para entregador, loja e cliente
 
         Pedido pedido = findById(id);
         if (pedido.getTrajetoriaEntregador().getEntregador().getId().equals(entregadorId)
                 && pedido.getLoja().getCriadoPor().getId().equals(authentication.getName())) {
             if (pedido.getSenha().equals(senha)) {
                 pedido.setStatus(Status.ENTREGUE);
-                return repository.save(pedido);
+                Pedido p = repository.save(pedido);
+                final String idUsuario = pedido.getCriadoPor().getId();
+                Notification notification = Notification.builder()
+                        .notificationType(NotificationType.PEDIDO_ATUALIZADO)
+                        .message("seu pedido foi atualizado para " + Status.ENTREGUE.toString())
+                        .pedidoId(pedido.getId())
+                        .senderName(pedido.getLoja().getNome())
+                        .receverId(idUsuario)
+                        .build();
+                notificationService.sendNotification(
+                        idUsuario,
+                        notification);
+                dbNotificationService.save(Notification.toEntity(notification));
+                return p;
             } else {
                 throw new UnauthorizedAccessException("Senha incorreta para o pedido");
             }

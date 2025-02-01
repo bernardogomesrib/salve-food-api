@@ -93,7 +93,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: adminsalve
       KEYCLOAK_REALM_URI: http://${LOCAL_IP}:9080/realms/master
       KEYCLOAK_CREATE_USER_URI: http://${LOCAL_IP}:9080/admin/realms/salve/users
-      APPLICATION_URL: http://${LOCAL_IP}:5173,http://${LOCAL_IP}:8080,http://${LOCAL_IP}:9080
+      APPLICATION_URL: http://${LOCAL_IP}:5173,http://${LOCAL_IP}:8080,http://${LOCAL_IP}:9080,ws://${LOCAL_IP}:8080
     ports:
       - 8080:8080
     depends_on:
