@@ -170,14 +170,16 @@ public class PedidoService {
         }
 
         final String lojaCriadorId = loja.getCriadoPor().getId();
-        notificationService.sendNotification(lojaCriadorId, Notification.builder()
-                .notificationType(NotificationType.PEDIDO_NOVO)
-                .message("Você tem um novo pedido")
-                .pedidoId(pedidoResposta.getPedido().getId())
-                .senderName(usuario.getFirstName() + " " + usuario.getLastName())
-                .receverId(lojaCriadorId)
-                .build());
+        Notification notification = Notification.builder()
+        .notificationType(NotificationType.PEDIDO_NOVO)
+        .message("Você tem um novo pedido")
+        .pedidoId(pedidoResposta.getPedido().getId())
+        .senderName(usuario.getFirstName() + " " + usuario.getLastName())
+        .receverId(lojaCriadorId)
+        .build();
+        notificationService.sendNotification(lojaCriadorId, notification);
 
+        dbNotificationService.save(Notification.toEntity(notification));
         return pedidoResposta;
     }
 

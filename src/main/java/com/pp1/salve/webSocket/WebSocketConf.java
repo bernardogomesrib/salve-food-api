@@ -21,6 +21,7 @@ import org.springframework.security.messaging.context.AuthenticationPrincipalArg
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,9 +37,9 @@ public class WebSocketConf implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(@NonNull StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns(applicationUrl)
-                //.setHandshakeHandler(new DefaultHandshakeHandler())
+                .setHandshakeHandler(new DefaultHandshakeHandler());
                 //.addInterceptors(new CustomHandshakeInterceptor());
-                .withSockJS();
+                //.withSockJS();
     }
 
     @Override
