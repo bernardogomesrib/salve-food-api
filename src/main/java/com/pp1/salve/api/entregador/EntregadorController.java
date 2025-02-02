@@ -99,10 +99,10 @@ public class EntregadorController {
 
     @Operation(summary = "Atualiza entregador", description = "Atualiza entregador, se quizer alterar a imagem, envie o arquivo, caso não, pode deixar de boas, se quiser editar o status também mande o status, caso não é de boas também, irá ser ignorado o status")
     @PreAuthorize("hasRole('dono_de_loja')")
-    @PutMapping()
-    public ResponseEntity<Entregador> putEntregador(Authentication authentication, @Valid @ModelAttribute EntregadorEditRequest request) throws Exception {
+    @PutMapping("{id}")
+    public ResponseEntity<Entregador> putEntregador(@RequestParam Long id,Authentication authentication, @Valid @ModelAttribute EntregadorEditRequest request) throws Exception {
         
-        return ResponseEntity.ok(service.atualizarEntregador(authentication, request));
+        return ResponseEntity.ok(service.atualizarEntregador(authentication, request, id));
     }
 
 }

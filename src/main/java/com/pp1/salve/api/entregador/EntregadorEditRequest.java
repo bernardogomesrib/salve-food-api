@@ -18,8 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EntregadorEditRequest {
 
-  @NotNull
-  private Long id;
+
 
   @NotBlank(message = "O nome não pode ser vazio")
   private String nome;

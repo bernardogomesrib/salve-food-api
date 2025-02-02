@@ -85,9 +85,9 @@ public class EntregadorService {
   public Entregador findMeuEntregador(Long id, Loja loja){
       return repository.findByIdAndLoja(id, loja).orElseThrow(() -> new ResourceNotFoundException("Entregador não encontrado na loja"));
   }
-  public Entregador atualizarEntregador(Authentication authentication, EntregadorEditRequest request) throws Exception {
+  public Entregador atualizarEntregador(Authentication authentication, EntregadorEditRequest request,Long id) throws Exception {
     Loja loja = lojaService.findMyLoja(authentication);
-    Entregador entregador = findMeuEntregador(request.getId(), loja);
+    Entregador entregador = findMeuEntregador(id, loja);
     entregador.setNome(request.getNome());
     if(request.getFile() != null && !request.getFile().isEmpty()){
       String imagePath = minIOInterfacing.uploadFile(ENTREGADOR, entregador.getId() + ENTREGADOR_IMAGE, request.getFile());
