@@ -6,7 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.pp1.salve.api.entregador.EntregadorEditRequest;
+import com.pp1.salve.api.entregador.EntregadorRequest;
 import com.pp1.salve.exceptions.ResourceNotFoundException;
 import com.pp1.salve.minio.MinIOInterfacing;
 import com.pp1.salve.model.loja.Loja;
@@ -85,19 +85,19 @@ public class EntregadorService {
   public Entregador findMeuEntregador(Long id, Loja loja){
       return repository.findByIdAndLoja(id, loja).orElseThrow(() -> new ResourceNotFoundException("Entregador não encontrado na loja"));
   }
-  public Entregador atualizarEntregador(Authentication authentication, EntregadorEditRequest request,Long id) throws Exception {
-    Loja loja = lojaService.findMyLoja(authentication);
+  public Entregador atualizarEntregador(Long id, EntregadorRequest entregadorRequest, Authentication authentication) throws Exception {
+    Loja loja = lojaService.findById(entregadorRequest.getLojaId());
     Entregador entregador = findMeuEntregador(id, loja);
-    entregador.setNome(request.getNome());
-    if(request.getFile() != null && !request.getFile().isEmpty()){
-      String imagePath = minIOInterfacing.uploadFile(ENTREGADOR, entregador.getId() + ENTREGADOR_IMAGE, request.getFile());
+
+    entregador.setNome(entregadorRequest.getNome());
+
+    if(entregadorRequest.getFile() != null && !entregadorRequest.getFile().isEmpty()){
+      String imagePath = minIOInterfacing.uploadFile(ENTREGADOR, entregador.getId() + ENTREGADOR_IMAGE, entregadorRequest.getFile());
       entregador.setImage(imagePath);
     }else{
       entregador.setImage(minIOInterfacing.getSingleUrl(ENTREGADOR, entregador.getId() + ENTREGADOR_IMAGE));
     }
-    if(request.getDisponivel() != null){
-      entregador.setDisponivel(request.getDisponivel());
-    }
+    
     return repository.save(entregador);
   }
 }

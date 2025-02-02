@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -99,10 +100,10 @@ public class EntregadorController {
 
     @Operation(summary = "Atualiza entregador", description = "Atualiza entregador, se quizer alterar a imagem, envie o arquivo, caso não, pode deixar de boas, se quiser editar o status também mande o status, caso não é de boas também, irá ser ignorado o status")
     @PreAuthorize("hasRole('dono_de_loja')")
-    @PutMapping("{id}")
-    public ResponseEntity<Entregador> putEntregador(@RequestParam Long id,Authentication authentication, @Valid @ModelAttribute EntregadorEditRequest request) throws Exception {
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Entregador> putEntregador(@PathVariable Long id, @Valid @ModelAttribute EntregadorRequest entregador, Authentication authentication) throws Exception {
         
-        return ResponseEntity.ok(service.atualizarEntregador(authentication, request, id));
+        return ResponseEntity.ok(service.atualizarEntregador(id, entregador, authentication));
     }
 
 }
