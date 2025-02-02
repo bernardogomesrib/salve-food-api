@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.client.payment.PaymentCreateRequest;
@@ -20,9 +20,7 @@ import com.pp1.salve.api.pedido.PedidoRequest;
 import com.pp1.salve.exceptions.UnauthorizedAccessException;
 import com.pp1.salve.model.endereco.EnderecoRepository;
 import com.pp1.salve.model.entregador.Entregador;
-import com.pp1.salve.model.entregador.EntregadorService;
-import com.pp1.salve.model.entregador.TrajetoriaEntregador;
-import com.pp1.salve.model.entregador.TrajetoriaEntregadorRepository;
+import com.pp1.salve.model.entregador.EntregadorRepository;
 import com.pp1.salve.model.item.Item;
 import com.pp1.salve.model.item.ItemService;
 import com.pp1.salve.model.loja.Loja;
@@ -48,8 +46,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PedidoService {
     private final UsuarioService usuarioService;
-    private final EntregadorService entregadorService;
-    private final TrajetoriaEntregadorRepository trajetoriaEntregadorRepository;
+    private final EntregadorRepository entregadorRepository;
     private final PedidoRepository repository;
     private final EnderecoRepository enderecoSerice;
     private final LojaService lojaService;
@@ -213,7 +210,7 @@ public class PedidoService {
         // implementar notificação para entregador, loja e cliente
 
         Pedido pedido = findById(id);
-        if (pedido.getTrajetoriaEntregador().getEntregador().getId().equals(entregadorId)
+        if (pedido.getEntregador().getId().equals(entregadorId)
                 && pedido.getLoja().getCriadoPor().getId().equals(authentication.getName())) {
             if (pedido.getSenha().equals(senha)) {
                 pedido.setStatus(Status.ENTREGUE);
@@ -245,22 +242,31 @@ public class PedidoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Pedido setEntregador(Long id, Long entregadorId, Authentication authentication) {
-
-        Pedido pedido = findById(id);
-
+    public Pedido setEntregador(Long pedidoId, Long entregadorId, Authentication authentication) {
+        Pedido pedido = findById(pedidoId);
+        
         if (pedido.getLoja().getCriadoPor().getId().equals(authentication.getName())) {
-
-            Entregador entregador = entregadorService.findMeuEntregador(entregadorId, pedido.getLoja());
-            TrajetoriaEntregador trajetoria = TrajetoriaEntregador.builder()
-                    .entregador(entregador)
-                    .pedido(pedido)
-                    .build();
-            trajetoria = trajetoriaEntregadorRepository.save(trajetoria);
-            pedido.setTrajetoriaEntregador(trajetoria);
+            Entregador entregador = entregadorRepository.findById(entregadorId)
+                .orElseThrow(() -> new EntityNotFoundException("Entregador não encontrado"));
+            
+            if (!entregador.getLoja().getId().equals(pedido.getLoja().getId())) {
+                throw new UnauthorizedAccessException("Este entregador não pertence a esta loja");
+            }
+            
+            if (!entregador.getDisponivel()) {
+                throw new IllegalStateException("Este entregador não está disponível no momento");
+            }
+            
+            if (repository.existsByEntregadorAndStatusNot(entregador, Pedido.Status.ENTREGUE)) {
+                throw new IllegalStateException("Este entregador já está associado a outro pedido em andamento");
+            }
+            
+            pedido.setEntregador(entregador);
+            pedido.setStatus(Pedido.Status.A_CAMINHO);
+            
             return repository.save(pedido);
         } else {
-            throw new UnauthorizedAccessException("Pedido você não pode alterar este pedido");
+            throw new UnauthorizedAccessException("Você não pode alterar este pedido");
         }
     }
 
@@ -273,4 +279,19 @@ public class PedidoService {
         return sb.toString();
     }
 
+    @Transactional(readOnly = true)
+  public Page<Pedido> getPedidosDaMinhaLojaPorStatus(Authentication authentication, Status status, Pageable pageable) throws Exception {
+      Loja loja = lojaService.findMyLoja(authentication);
+      if (loja != null) {
+          Page<Pedido> pedido = repository.findByLojaAndStatusOrderByDataPedidoDesc(loja, status, pageable);
+          for (Pedido p : pedido) {
+              for (ItemPedido i : p.getItens()) {
+                  i.setItem(itemService.monta(i.getItem()));
+              }
+              p.setSenha(null);
+          }
+          return pedido;
+      }
+      throw new EntityNotFoundException("Loja não encontrada ao procurar pedidos, você tem uma loja mesmo?");
+  }
 }

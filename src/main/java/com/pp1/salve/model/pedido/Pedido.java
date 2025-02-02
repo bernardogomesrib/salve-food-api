@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.pp1.salve.model.baseModel.AuditEntityPedido;
 import com.pp1.salve.model.endereco.Endereco;
-import com.pp1.salve.model.entregador.TrajetoriaEntregador;
+import com.pp1.salve.model.entregador.Entregador;
 import com.pp1.salve.model.loja.Loja;
 import com.pp1.salve.model.pedido.itemDoPedido.ItemPedido;
 
@@ -15,7 +15,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,8 +59,9 @@ public class Pedido extends AuditEntityPedido{
     @ManyToOne
     private Loja loja;
 
-    @OneToOne
-    private TrajetoriaEntregador trajetoriaEntregador;
+    @ManyToOne
+    @JoinColumn(name = "entregador_id", nullable = true)
+    private Entregador entregador;
 
     public enum Status {
         PENDENTE, PREPARANDO, AGUARDANDO_ENTREGADOR, A_CAMINHO, ENTREGUE, CANCELADO;
