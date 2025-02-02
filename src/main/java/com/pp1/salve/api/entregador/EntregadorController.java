@@ -26,6 +26,8 @@ import com.pp1.salve.model.loja.LojaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
 @RequestMapping("/api/entregador")
@@ -93,6 +95,14 @@ public class EntregadorController {
     @GetMapping("meus")
     public ResponseEntity<List<Entregador>> getMeusEntregadores(Authentication authentication) throws Exception {
         return ResponseEntity.ok().body(service.findMeusEntregadoresDisponiveis(authentication));
+    }
+
+    @Operation(summary = "Atualiza entregador", description = "Atualiza entregador, se quizer alterar a imagem, envie o arquivo, caso não, pode deixar de boas, se quiser editar o status também mande o status, caso não é de boas também, irá ser ignorado o status")
+    @PreAuthorize("hasRole('dono_de_loja')")
+    @PutMapping()
+    public ResponseEntity<Entregador> putEntregador(Authentication authentication, @Valid @ModelAttribute EntregadorEditRequest request) throws Exception {
+        
+        return ResponseEntity.ok(service.atualizarEntregador(authentication, request));
     }
 
 }

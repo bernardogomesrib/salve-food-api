@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pp1.salve.api.entregador.EntregadorEditRequest;
 import com.pp1.salve.exceptions.ResourceNotFoundException;
 import com.pp1.salve.minio.MinIOInterfacing;
 import com.pp1.salve.model.loja.Loja;
@@ -83,5 +84,20 @@ public class EntregadorService {
 
   public Entregador findMeuEntregador(Long id, Loja loja){
       return repository.findByIdAndLoja(id, loja).orElseThrow(() -> new ResourceNotFoundException("Entregador não encontrado na loja"));
+  }
+  public Entregador atualizarEntregador(Authentication authentication, EntregadorEditRequest request) throws Exception {
+    Loja loja = lojaService.findMyLoja(authentication);
+    Entregador entregador = findMeuEntregador(request.getId(), loja);
+    entregador.setNome(request.getNome());
+    if(request.getFile() != null && !request.getFile().isEmpty()){
+      String imagePath = minIOInterfacing.uploadFile(ENTREGADOR, entregador.getId() + ENTREGADOR_IMAGE, request.getFile());
+      entregador.setImage(imagePath);
+    }else{
+      entregador.setImage(minIOInterfacing.getSingleUrl(ENTREGADOR, entregador.getId() + ENTREGADOR_IMAGE));
+    }
+    if(request.getDisponivel() != null){
+      entregador.setDisponivel(request.getDisponivel());
+    }
+    return repository.save(entregador);
   }
 }
