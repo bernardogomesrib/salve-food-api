@@ -49,7 +49,7 @@ public class PedidosController {
 
   @Operation(summary = "Pega um pedido pelo id", description = "não coloquei nem uma restrição")
   @GetMapping("/{id}")
-  public ResponseEntity<Pedido> getById(@PathVariable Long id) {
+  public ResponseEntity<Pedido> getById(@PathVariable Long id) throws Exception {
     return ResponseEntity.ok(service.findById(id));
   }
 
@@ -63,21 +63,21 @@ public class PedidosController {
   @Operation(summary = "Atualiza o status do pedido para aceito", description = "Atualiza o status do pedido para aceito, precisa de role de dono de loja")
   @PreAuthorize("hasRole('dono_de_loja')")
   @PutMapping("/{id}/preparando")
-  public ResponseEntity<Pedido> atualizarPedidoPreparando(@PathVariable Long id, Authentication authentication) {
+  public ResponseEntity<Pedido> atualizarPedidoPreparando(@PathVariable Long id, Authentication authentication) throws Exception {
     return ResponseEntity.ok(service.updateStatus(id, Status.PREPARANDO, authentication));
   }
 
   @Operation(summary = "Atualiza o pedido para aguardando o entregador")
   @PreAuthorize("hasRole('dono_de_loja')")
   @PutMapping("{id}/aguardando-entregador")
-  public ResponseEntity<Pedido> atualizarPedidoAguardando(@PathVariable Long id, Authentication authentication) {
+  public ResponseEntity<Pedido> atualizarPedidoAguardando(@PathVariable Long id, Authentication authentication) throws Exception {
     return ResponseEntity.ok(service.updateStatus(id, Status.AGUARDANDO_ENTREGADOR, authentication));
   }
 
   @Operation(summary = "Atualiza o pedido para cancelado")
   @PreAuthorize("hasRole('dono_de_loja')")
   @PutMapping("{id}/cancelado")
-  public ResponseEntity<Pedido> cancelado(@PathVariable Long id, Authentication authentication) {
+  public ResponseEntity<Pedido> cancelado(@PathVariable Long id, Authentication authentication) throws Exception {
     return ResponseEntity.ok(service.updateStatus(id, Status.CANCELADO, authentication));
   }
 
@@ -85,7 +85,7 @@ public class PedidosController {
   @PreAuthorize("hasRole('dono_de_loja')")
   @PutMapping("/{id}/entregue")
   public ResponseEntity<Pedido> entregue(@PathVariable Long id,
-      @RequestBody PedidoConclusaoRequest pedidoConclusaoRequest, Authentication authentication) {
+      @RequestBody PedidoConclusaoRequest pedidoConclusaoRequest, Authentication authentication) throws Exception {
     return ResponseEntity.ok(service.updateStatus(id, pedidoConclusaoRequest.getSenha(),
         pedidoConclusaoRequest.getIdEntregador(), authentication));
   }
@@ -119,7 +119,7 @@ public class PedidosController {
   @PreAuthorize("hasRole('dono_de_loja')")
   @PutMapping("/{id}/entregador/{entregadorId}")
   public ResponseEntity<Pedido> setEntregador(@PathVariable Long id, @PathVariable Long entregadorId,
-      Authentication authentication) {
+      Authentication authentication) throws Exception {
     return ResponseEntity.ok(service.setEntregador(id, entregadorId, authentication));
   }
 

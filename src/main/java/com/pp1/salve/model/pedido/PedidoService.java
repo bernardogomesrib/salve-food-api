@@ -3,6 +3,7 @@ package com.pp1.salve.model.pedido;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -95,8 +96,12 @@ public class PedidoService {
         return repository.findAll(pageable);
     }
 
-    public Pedido findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pedido não encontrado"));
+    public Pedido findById(Long id) throws Exception {
+      Pedido pedido = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pedido não encontrado"));
+      for (ItemPedido i : pedido.getItens()) {
+          i.setItem(itemService.monta(i.getItem()));
+      }
+      return pedido;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -181,7 +186,7 @@ public class PedidoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Pedido updateStatus(Long id, Status status, Authentication authentication) {
+    public Pedido updateStatus(Long id, Status status, Authentication authentication) throws Exception {
         // implementar notificação para cliente e loja
         Pedido pedido = findById(id);
         pedido.setStatus(status);
@@ -206,7 +211,7 @@ public class PedidoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Pedido updateStatus(Long id, String senha, Long entregadorId, Authentication authentication) {
+    public Pedido updateStatus(Long id, String senha, Long entregadorId, Authentication authentication) throws Exception {
         // implementar notificação para entregador, loja e cliente
 
         Pedido pedido = findById(id);
@@ -242,7 +247,7 @@ public class PedidoService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Pedido setEntregador(Long pedidoId, Long entregadorId, Authentication authentication) {
+    public Pedido setEntregador(Long pedidoId, Long entregadorId, Authentication authentication) throws Exception {
         Pedido pedido = findById(pedidoId);
         
         if (pedido.getLoja().getCriadoPor().getId().equals(authentication.getName())) {
