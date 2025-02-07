@@ -25,8 +25,9 @@ public class ReviewRestaurante extends AuditEntityReview {
     @ManyToOne
     @JsonBackReference
     private Loja loja;
+    @Column(nullable = false)
     private double nota;
-    @Column(nullable = false, length = 500)
+    @Column(length = 500, nullable = true)
     private String comentario;
     @Transient
     private String imagem;
