@@ -60,7 +60,7 @@ public class LojaController {
       @RequestParam(required = false) Double longi) throws Exception {
     Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
     if (lat != null && longi != null) {
-      pageable = PageRequest.of(page, size, JpaSort.unsafe("(6371 * acos(cos(radians(" + lat + ")) * cos(radians(latitude)) * cos(radians(longitude) - radians(" + longi + ")) + sin(radians(" + lat + ")) * sin(radians(latitude))))").descending());
+      pageable = PageRequest.of(page, size, JpaSort.unsafe("(6371 * acos(cos(radians(" + lat + ")) * cos(radians(latitude)) * cos(radians(longitude) - radians(" + longi + ")) + sin(radians(" + lat + ")) * sin(radians(latitude))))").ascending());
       return service.findAll(pageable, lat, longi);
     } else {
       return service.findAll(pageable);
@@ -75,7 +75,7 @@ public class LojaController {
       @RequestParam(required = false) Double longi) throws Exception {
     Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
     if (lat != null && longi != null) {
-      pageable = PageRequest.of(page, size, JpaSort.unsafe("(6371 * acos(cos(radians(" + lat + ")) * cos(radians(latitude)) * cos(radians(longitude) - radians(" + longi + ")) + sin(radians(" + lat + ")) * sin(radians(latitude))))").descending());
+      pageable = PageRequest.of(page, size, JpaSort.unsafe("(6371 * acos(cos(radians(" + lat + ")) * cos(radians(latitude)) * cos(radians(longitude) - radians(" + longi + ")) + sin(radians(" + lat + ")) * sin(radians(latitude))))").ascending());
       return service.findAllSegmento(id, pageable, lat, longi);
     } else {
       return service.findAllSegmento(id, pageable);
