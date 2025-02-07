@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -42,6 +43,16 @@ public class ReviewResturanteController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("updatedAt"), Sort.Order.desc("createdAt")));
         return ResponseEntity.ok(service.findAllByResturante(id, pageable));
     }
+
+    @GetMapping("/verificar/{id}")
+    public ResponseEntity<Boolean> verificarReview(@PathVariable Long id, Authentication authentication) {
+        try {
+            return ResponseEntity.ok(service.existsByLojaIdAndAuthUser(id, authentication));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(false);
+        }
+    }
+
     @GetMapping("/minha")
     public ResponseEntity<Page<ReviewRestaurante>> getMyReviews(@RequestParam(defaultValue = "0") int page,
     @RequestParam(defaultValue = "10") int size, Authentication authentication) throws Exception {

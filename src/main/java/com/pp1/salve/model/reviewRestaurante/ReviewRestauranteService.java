@@ -28,6 +28,11 @@ public class ReviewRestauranteService {
         return monta(repository.findByLojaIdAndCriadoPorId(id,authentication.getName()).orElseThrow(() -> new EntityNotFoundException("Você ainda não fez uma review para esse restaurante")));
     }
 
+    public boolean existsByLojaIdAndAuthUser(Long idLoja, Authentication authentication) throws Exception {
+        Loja loja = lojaService.findById(idLoja);
+        return repository.existsByLojaAndCriadoPorId(loja, authentication.getName());
+    }
+  
     @Transactional(rollbackFor = Exception.class)
     public ReviewRestaurante save(RestauranteReviewRequest request, Authentication authentication) throws Exception {
         Loja loja = lojaService.findById(request.getIdLoja());
