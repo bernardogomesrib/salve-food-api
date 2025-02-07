@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -59,6 +60,7 @@ public class LojaController {
       @RequestParam(required = false) Double longi) throws Exception {
     Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
     if (lat != null && longi != null) {
+      pageable = PageRequest.of(page, size, JpaSort.unsafe("(6371 * acos(cos(radians(" + lat + ")) * cos(radians(latitude)) * cos(radians(longitude) - radians(" + longi + ")) + sin(radians(" + lat + ")) * sin(radians(latitude))))").descending());
       return service.findAll(pageable, lat, longi);
     } else {
       return service.findAll(pageable);
@@ -73,6 +75,7 @@ public class LojaController {
       @RequestParam(required = false) Double longi) throws Exception {
     Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
     if (lat != null && longi != null) {
+      pageable = PageRequest.of(page, size, JpaSort.unsafe("(6371 * acos(cos(radians(" + lat + ")) * cos(radians(latitude)) * cos(radians(longitude) - radians(" + longi + ")) + sin(radians(" + lat + ")) * sin(radians(latitude))))").descending());
       return service.findAllSegmento(id, pageable, lat, longi);
     } else {
       return service.findAllSegmento(id, pageable);

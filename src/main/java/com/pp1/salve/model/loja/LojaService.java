@@ -63,7 +63,7 @@ public class LojaService {
   }
 
   public Page<Loja> findAll(Pageable pageable, double lat, double longi) throws Exception {
-    Page<Loja> loja = repository.findAll(pageable, lat, longi);
+    Page<Loja> loja = repository.findAllByPosition(lat, longi, pageable);
     for (Loja l : loja) {
       l = monta(l, lat, longi);
     }
@@ -79,7 +79,7 @@ public class LojaService {
   }
 
   public Page<Loja> findAllSegmento(Long id, Pageable pageable, double lat, double longi) throws Exception {
-    Page<Loja> loja = repository.findBySegmentoLojaId(id, pageable, lat, longi);
+    Page<Loja> loja = repository.findBySegmentoLojaId(id, lat, longi, pageable);
     for (Loja l : loja) {
       l = monta(l, lat, longi);
     }
@@ -265,8 +265,8 @@ public class LojaService {
     return loja;
   }
 
-public Loja findById(Long id, Double lat, Double longi) throws Exception {
+  public Loja findById(Long id, Double lat, Double longi) throws Exception {
     return monta(findById(id), lat, longi);
-}
+  }
 
 }
