@@ -3,7 +3,6 @@ package com.pp1.salve.model.pedido;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
